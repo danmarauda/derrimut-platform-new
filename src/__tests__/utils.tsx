@@ -112,24 +112,25 @@ export const createMockStripe = () => ({
 /**
  * Mock Convex Database Context
  */
-export const createMockConvexDb = () => ({
-  get: vi.fn(),
-  query: vi.fn(() => ({
+export const createMockConvexDb = () => {
+  const createQueryChain = () => ({
     collect: vi.fn(() => Promise.resolve([])),
     first: vi.fn(() => Promise.resolve(null)),
     unique: vi.fn(() => Promise.resolve(null)),
-    filter: vi.fn(() => ({
-      collect: vi.fn(() => Promise.resolve([])),
-    })),
-    order: vi.fn(() => ({
-      collect: vi.fn(() => Promise.resolve([])),
-    })),
-  })),
-  insert: vi.fn(() => Promise.resolve('mock_id')),
-  patch: vi.fn(() => Promise.resolve()),
-  replace: vi.fn(() => Promise.resolve()),
-  delete: vi.fn(() => Promise.resolve()),
-});
+    filter: vi.fn(() => createQueryChain()),
+    order: vi.fn(() => createQueryChain()),
+    withIndex: vi.fn((index?: string, filterFn?: any) => createQueryChain()),
+  });
+
+  return {
+    get: vi.fn(() => Promise.resolve(null)),
+    query: vi.fn(() => createQueryChain()),
+    insert: vi.fn(() => Promise.resolve('mock_id' as any)),
+    patch: vi.fn(() => Promise.resolve()),
+    replace: vi.fn(() => Promise.resolve()),
+    delete: vi.fn(() => Promise.resolve()),
+  };
+};
 
 /**
  * Mock Convex Mutation/Query Context
