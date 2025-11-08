@@ -2,18 +2,19 @@ import React from 'react';
 import { render, RenderOptions } from '@testing-library/react';
 import { ConvexProvider, ConvexReactClient } from 'convex/react';
 import { ClerkProvider } from '@clerk/nextjs';
+import { vi } from 'vitest';
 
 /**
  * Mock Convex Client for Testing
  */
 export const createMockConvexClient = () => {
   const mockClient = {
-    query: jest.fn(),
-    mutation: jest.fn(),
-    action: jest.fn(),
-    setAuth: jest.fn(),
-    clearAuth: jest.fn(),
-    close: jest.fn(),
+    query: vi.fn(),
+    mutation: vi.fn(),
+    action: vi.fn(),
+    setAuth: vi.fn(),
+    clearAuth: vi.fn(),
+    close: vi.fn(),
   } as unknown as ConvexReactClient;
 
   return mockClient;
@@ -45,7 +46,7 @@ export const createMockClerkSession = () => ({
  * Mock useUser hook from Clerk
  */
 export const mockUseUser = (user = createMockClerkUser(), isLoaded = true, isSignedIn = true) => {
-  return jest.fn(() => ({
+  return vi.fn(() => ({
     user,
     isLoaded,
     isSignedIn,
@@ -56,14 +57,14 @@ export const mockUseUser = (user = createMockClerkUser(), isLoaded = true, isSig
  * Mock useQuery hook from Convex
  */
 export const mockUseQuery = (returnValue: any) => {
-  return jest.fn(() => returnValue);
+  return vi.fn(() => returnValue);
 };
 
 /**
  * Mock useMutation hook from Convex
  */
 export const mockUseMutation = () => {
-  return jest.fn(() => jest.fn());
+  return vi.fn(() => vi.fn());
 };
 
 /**
@@ -101,10 +102,10 @@ export const renderWithProviders = (
  * Mock Stripe
  */
 export const createMockStripe = () => ({
-  redirectToCheckout: jest.fn(() => Promise.resolve({ error: null })),
-  elements: jest.fn(() => ({
-    create: jest.fn(),
-    getElement: jest.fn(),
+  redirectToCheckout: vi.fn(() => Promise.resolve({ error: null })),
+  elements: vi.fn(() => ({
+    create: vi.fn(),
+    getElement: vi.fn(),
   })),
 });
 
@@ -112,22 +113,22 @@ export const createMockStripe = () => ({
  * Mock Convex Database Context
  */
 export const createMockConvexDb = () => ({
-  get: jest.fn(),
-  query: jest.fn(() => ({
-    collect: jest.fn(() => Promise.resolve([])),
-    first: jest.fn(() => Promise.resolve(null)),
-    unique: jest.fn(() => Promise.resolve(null)),
-    filter: jest.fn(() => ({
-      collect: jest.fn(() => Promise.resolve([])),
+  get: vi.fn(),
+  query: vi.fn(() => ({
+    collect: vi.fn(() => Promise.resolve([])),
+    first: vi.fn(() => Promise.resolve(null)),
+    unique: vi.fn(() => Promise.resolve(null)),
+    filter: vi.fn(() => ({
+      collect: vi.fn(() => Promise.resolve([])),
     })),
-    order: jest.fn(() => ({
-      collect: jest.fn(() => Promise.resolve([])),
+    order: vi.fn(() => ({
+      collect: vi.fn(() => Promise.resolve([])),
     })),
   })),
-  insert: jest.fn(() => Promise.resolve('mock_id')),
-  patch: jest.fn(() => Promise.resolve()),
-  replace: jest.fn(() => Promise.resolve()),
-  delete: jest.fn(() => Promise.resolve()),
+  insert: vi.fn(() => Promise.resolve('mock_id')),
+  patch: vi.fn(() => Promise.resolve()),
+  replace: vi.fn(() => Promise.resolve()),
+  delete: vi.fn(() => Promise.resolve()),
 });
 
 /**
@@ -136,19 +137,19 @@ export const createMockConvexDb = () => ({
 export const createMockConvexContext = () => ({
   db: createMockConvexDb(),
   auth: {
-    getUserIdentity: jest.fn(() => Promise.resolve({
+    getUserIdentity: vi.fn(() => Promise.resolve({
       subject: 'user_test123',
       email: 'test@example.com',
       name: 'Test User',
     })),
   },
   storage: {
-    generateUploadUrl: jest.fn(),
-    getUrl: jest.fn(),
+    generateUploadUrl: vi.fn(),
+    getUrl: vi.fn(),
   },
   scheduler: {
-    runAfter: jest.fn(),
-    runAt: jest.fn(),
+    runAfter: vi.fn(),
+    runAt: vi.fn(),
   },
 });
 
