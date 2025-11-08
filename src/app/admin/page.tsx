@@ -237,7 +237,7 @@ export default function AdminDashboard() {
   return (
     <AdminLayout 
       title="Welcome back, Admin" 
-      subtitle="Here's what's happening at Elite Gym today"
+      subtitle="Here's what's happening at Derrimut 24:7 Gym today"
     >
       {/* Export Button */}
       <div className="mb-6">

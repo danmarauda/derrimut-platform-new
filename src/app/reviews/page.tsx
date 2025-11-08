@@ -11,6 +11,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Textarea } from "@/components/ui/input";
 import { UserLayout } from "@/components/UserLayout";
 import { Star, Calendar, Clock, User, MessageCircle, Trophy } from "lucide-react";
+import { DERRIMUT_BRAND } from "@/constants/branding";
 
 interface ReviewFormData {
   rating: number;
@@ -162,7 +163,7 @@ function ReviewsContent() {
                     <CardContent className="p-6">
                       <div className="flex items-center gap-4">
                         <img
-                          src={booking.trainerImage || "/logo.png"}
+                          src={booking.trainerImage || DERRIMUT_BRAND.logo.primary}
                           alt={booking.trainerName}
                           className="w-12 h-12 rounded-full object-cover"
                         />
@@ -214,7 +215,7 @@ function ReviewsContent() {
                     <CardContent className="p-6">
                       <div className="flex items-start gap-4">
                         <img
-                          src={review.trainerImage || "/logo.png"}
+                          src={review.trainerImage || DERRIMUT_BRAND.logo.primary}
                           alt={review.trainerName}
                           className="w-10 h-10 rounded-full object-cover"
                         />
@@ -264,7 +265,7 @@ function ReviewsContent() {
                     <CardContent className="p-4">
                       <div className="flex items-center gap-3 mb-3">
                         <img
-                          src={booking.trainerImage || "/logo.png"}
+                          src={booking.trainerImage || DERRIMUT_BRAND.logo.primary}
                           alt={booking.trainerName}
                           className="w-10 h-10 rounded-full object-cover"
                         />
@@ -344,7 +345,7 @@ function ReviewsContent() {
               <CardContent className="p-6">
                 <div className="text-center mb-6">
                   <img
-                    src={selectedBooking.trainerImage || "/logo.png"}
+                    src={selectedBooking.trainerImage || DERRIMUT_BRAND.logo.primary}
                     alt={selectedBooking.trainerName}
                     className="w-16 h-16 rounded-full object-cover mx-auto mb-4"
                   />

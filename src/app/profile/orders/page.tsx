@@ -95,7 +95,7 @@ const OrdersPage = () => {
     ctx.fillStyle = 'hsl(210, 40%, 98%)';
     ctx.font = 'bold 32px Arial';
     ctx.textAlign = 'center';
-    ctx.fillText('ELITE GYM & FITNESS', canvas.width / 2, 50);
+    ctx.fillText('DERRIMUT 24:7 GYM', canvas.width / 2, 50);
     
     ctx.font = '20px Arial';
     ctx.fillStyle = 'hsl(221.2, 83.2%, 53.3%)';
@@ -210,7 +210,7 @@ const OrdersPage = () => {
     ctx.fillStyle = 'hsl(210, 40%, 98%)';
     ctx.font = 'bold 32px Arial';
     ctx.textAlign = 'center';
-    ctx.fillText('ELITE GYM & FITNESS', canvas.width / 2, 50);
+    ctx.fillText('DERRIMUT 24:7 GYM', canvas.width / 2, 50);
     
     ctx.font = '20px Arial';
     ctx.fillStyle = 'hsl(221.2, 83.2%, 53.3%)';

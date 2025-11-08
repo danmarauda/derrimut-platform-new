@@ -9,8 +9,8 @@ const PrivacyPage = () => {
               Privacy <span className="text-primary">Policy</span>
             </h1>
             <p className="text-xl text-muted-foreground leading-relaxed">
-              Your privacy matters to ELITE Gym & Fitness. This policy explains how we protect your data across our AI consultations, 
-              trainer bookings, and marketplace transactions in Sri Lanka.
+              Your privacy matters to Derrimut 24:7 Gym. This policy explains how we protect your data across our AI consultations, 
+              trainer bookings, and marketplace transactions in Australia.
             </p>
             <p className="text-sm text-muted-foreground mt-4">
               Last updated: October 14, 2025
@@ -28,7 +28,7 @@ const PrivacyPage = () => {
               <div className="space-y-4 text-muted-foreground">
                 <h3 className="text-xl font-semibold text-foreground">Personal Information</h3>
                 <p>
-                  When you join ELITE Gym & Fitness, we collect information such as:
+                  When you join Derrimut 24:7 Gym, we collect information such as:
                 </p>
                 <ul className="list-disc pl-6 space-y-2">
                   <li>Name and email address for account creation</li>
@@ -116,7 +116,7 @@ const PrivacyPage = () => {
                   <li><strong>Restrict Processing:</strong> Limit how we use your information</li>
                 </ul>
                 <p className="mt-4">
-                  To exercise these rights, please contact us at privacy@elitegym.com or through your account settings.
+                  To exercise these rights, please contact us at Support@derrimut247.com.au or through your account settings.
                 </p>
               </div>
             </section>
@@ -211,7 +211,7 @@ const PrivacyPage = () => {
                   If you have any questions about this Privacy Policy or our data practices, please contact us:
                 </p>
                 <div className="bg-card p-6 rounded-lg border">
-                  <p><strong>Email:</strong> privacy@elitegym.com</p>
+                  <p><strong>Email:</strong> Support@derrimut247.com.au</p>
                   <p><strong>Kandy Location:</strong> 10 Riverview Rd, Tennekumbura</p>
                   <p><strong>Phone:</strong> +94 11 234 5678</p>
                   <p><strong>Kandy VIP Location:</strong> 82 A26, Kundasale 20168</p>

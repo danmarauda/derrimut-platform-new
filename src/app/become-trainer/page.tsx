@@ -154,7 +154,7 @@ export default function BecomeTrainerPage() {
             </div>
             <h1 className="text-4xl font-bold text-foreground mb-4">Become a Trainer</h1>
             <p className="text-muted-foreground text-lg max-w-2xl mx-auto">
-              Join our elite team of fitness professionals and help members achieve their fitness goals. 
+              Join our team of fitness professionals and help members achieve their fitness goals. 
               Share your expertise and passion for fitness with our community.
             </p>
           </div>
@@ -231,7 +231,7 @@ export default function BecomeTrainerPage() {
 
               <div>
                 <label htmlFor="motivation" className="block text-sm font-medium text-foreground mb-2">
-                  Why do you want to be a trainer at Elite Gym? *
+                  Why do you want to be a trainer at Derrimut 24:7 Gym? *
                 </label>
                 <textarea
                   id="motivation"

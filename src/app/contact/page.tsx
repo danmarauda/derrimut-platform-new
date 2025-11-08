@@ -5,6 +5,8 @@ import { Card } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { useState } from "react";
+import { DERRIMUT_BRAND } from "@/constants/branding";
+import { gymLocations } from "@/data/gymLocations";
 
 const ContactPage = () => {
   const [formData, setFormData] = useState({
@@ -43,10 +45,10 @@ const ContactPage = () => {
         <div className="container mx-auto px-4 py-24">
           <div className="max-w-4xl mx-auto text-center">
             <h1 className="text-5xl md:text-7xl font-bold mb-6">
-              Contact <span className="text-primary">ELITE Gym & Fitness</span>
+              Contact <span className="text-primary">{DERRIMUT_BRAND.nameFull}</span>
             </h1>
             <p className="text-xl text-muted-foreground leading-relaxed">
-              Get in touch with Sri Lanka's most advanced fitness platform. We're here 24/7 to help you get jacked with AI!
+              Get in touch with Australia's most advanced fitness platform. We're here 24/7 to help you achieve your fitness goals!
             </p>
           </div>
         </div>
@@ -151,34 +153,29 @@ const ContactPage = () => {
             <div>
               <h2 className="text-3xl font-bold mb-6">Contact Information</h2>
               <p className="text-lg text-muted-foreground mb-8">
-                Visit our locations in Kandy or connect digitally. Our trainers are available 6AM-10PM daily, 
-                with 24/7 online platform access and AI chatbot support.
+                Visit our locations across Victoria and South Australia or connect digitally. Our trainers are available 24/7, 
+                with online platform access and AI chatbot support.
               </p>
             </div>
 
             <div className="space-y-6">
-              <Card className="p-6 hover:shadow-lg transition-shadow bg-card/50">
-                <div>
-                  <h3 className="font-semibold text-primary mb-2">ELITE Gym & Fitness - Kandy</h3>
-                  <p className="text-muted-foreground">+94 11 234 5678</p>
-                  <p className="text-sm text-muted-foreground">10 Riverview Rd, Tennekumbura</p>
-                  <p className="text-xs text-muted-foreground mt-2">Main location with full facilities</p>
-                </div>
-              </Card>
-
-              <Card className="p-6 hover:shadow-lg transition-shadow bg-card/50">
-                <div>
-                  <h3 className="font-semibold text-primary mb-2">ELITE Gym & Fitness - Kandy VIP</h3>
-                  <p className="text-muted-foreground">+94 81 234 5678</p>
-                  <p className="text-sm text-muted-foreground">82 A26, Kundasale 20168</p>
-                  <p className="text-xs text-muted-foreground mt-2">Premium location with VIP services</p>
-                </div>
-              </Card>
+              {gymLocations.slice(0, 3).map((location) => (
+                <Card key={location.id} className="p-6 hover:shadow-lg transition-shadow bg-card/50">
+                  <div>
+                    <h3 className="font-semibold text-primary mb-2">{location.name}</h3>
+                    <p className="text-muted-foreground">{location.phone}</p>
+                    <p className="text-sm text-muted-foreground">{location.address}</p>
+                    <p className="text-xs text-muted-foreground mt-2">
+                      {location.status === "operational" ? "Operational" : location.status === "closed" ? "Closed" : "At Risk"}
+                    </p>
+                  </div>
+                </Card>
+              ))}
 
               <Card className="p-6 hover:shadow-lg transition-shadow bg-card/50">
                 <div>
                   <h3 className="font-semibold text-primary mb-2">Email Support</h3>
-                  <p className="text-muted-foreground">support@elitegym.com</p>
+                  <p className="text-muted-foreground">{DERRIMUT_BRAND.contact.email}</p>
                   <p className="text-sm text-muted-foreground">Response within 24 hours during business hours</p>
                 </div>
               </Card>

@@ -81,7 +81,7 @@ export default function SuperAdminPage() {
             </div>
             <h1 className="text-3xl font-bold text-white mb-4">Super Admin Access</h1>
             <p className="text-gray-400">
-              Enter the super admin key to gain administrative privileges for Elite Gym
+              Enter the super admin key to gain administrative privileges for Derrimut 24:7 Gym
             </p>
           </div>
 

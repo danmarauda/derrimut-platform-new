@@ -1,3 +1,7 @@
+"use client";
+
+import { DERRIMUT_BRAND } from "@/constants/branding";
+
 const TermsPage = () => {
   return (
     <div className="min-h-screen bg-background text-foreground">
@@ -9,7 +13,7 @@ const TermsPage = () => {
               Terms of <span className="text-primary">Service</span>
             </h1>
             <p className="text-xl text-muted-foreground leading-relaxed">
-              Welcome to ELITE Gym & Fitness! Please read these terms for our Sri Lankan fitness platform 
+              Welcome to {DERRIMUT_BRAND.nameFull}! Please read these terms for our Australian fitness platform 
               featuring AI consultations, included trainer sessions, and marketplace services.
             </p>
             <p className="text-sm text-muted-foreground mt-4">
@@ -27,7 +31,7 @@ const TermsPage = () => {
               <h2 className="text-3xl font-bold mb-6 text-foreground">1. Acceptance of Terms</h2>
               <div className="space-y-4 text-muted-foreground">
                 <p>
-                  Welcome to Elite Gym & Fitness. These Terms of Service ("Terms") govern your use of our website, 
+                  Welcome to {DERRIMUT_BRAND.nameFull}. These Terms of Service ("Terms") govern your use of our website, 
                   mobile application, and services (collectively, the "Platform"). By accessing or using our Platform, 
                   you agree to be bound by these Terms and our Privacy Policy.
                 </p>
@@ -41,7 +45,7 @@ const TermsPage = () => {
             <section>
               <h2 className="text-3xl font-bold mb-6 text-foreground">2. Description of Service</h2>
               <div className="space-y-4 text-muted-foreground">
-                <p>ELITE Gym & Fitness provides:</p>
+                <p>{DERRIMUT_BRAND.nameFull} provides:</p>
                 <ul className="list-disc pl-6 space-y-2">
                   <li>Voice-activated AI fitness consultations available 24/7</li>
                   <li>ALL trainer sessions included with membership (no hourly fees)</li>
@@ -194,7 +198,7 @@ const TermsPage = () => {
               <div className="space-y-4 text-muted-foreground">
                 <p>
                   All content on our Platform, including text, graphics, logos, software, and AI algorithms, is owned 
-                  by Elite Gym & Fitness or our licensors and protected by intellectual property laws.
+                  by {DERRIMUT_BRAND.nameFull} or our licensors and protected by intellectual property laws.
                 </p>
                 <p>You may not:</p>
                 <ul className="list-disc pl-6 space-y-2">
@@ -231,7 +235,7 @@ const TermsPage = () => {
               <h2 className="text-3xl font-bold mb-6 text-foreground">11. Limitation of Liability</h2>
               <div className="space-y-4 text-muted-foreground">
                 <p>
-                  TO THE MAXIMUM EXTENT PERMITTED BY LAW, ELITE GYM & FITNESS SHALL NOT BE LIABLE FOR ANY INDIRECT, 
+                  TO THE MAXIMUM EXTENT PERMITTED BY LAW, {DERRIMUT_BRAND.nameFull.toUpperCase()} SHALL NOT BE LIABLE FOR ANY INDIRECT, 
                   INCIDENTAL, SPECIAL, CONSEQUENTIAL, OR PUNITIVE DAMAGES, INCLUDING BUT NOT LIMITED TO LOSS OF PROFITS, 
                   DATA, USE, OR OTHER INTANGIBLE LOSSES.
                 </p>
@@ -246,7 +250,7 @@ const TermsPage = () => {
               <h2 className="text-3xl font-bold mb-6 text-foreground">12. Indemnification</h2>
               <div className="space-y-4 text-muted-foreground">
                 <p>
-                  You agree to indemnify and hold harmless Elite Gym & Fitness from any claims, damages, losses, or 
+                  You agree to indemnify and hold harmless Derrimut 24:7 Gym from any claims, damages, losses, or 
                   expenses arising from your use of the Platform, violation of these Terms, or infringement of any 
                   third-party rights.
                 </p>
@@ -285,7 +289,7 @@ const TermsPage = () => {
                   For questions about these Terms of Service, please contact us:
                 </p>
                 <div className="bg-card p-6 rounded-lg border">
-                  <p><strong>Email:</strong> legal@elitegym.com</p>
+                  <p><strong>Email:</strong> Support@derrimut247.com.au</p>
                   <p><strong>Kandy Location:</strong> 10 Riverview Rd, Tennekumbura</p>
                   <p><strong>Phone:</strong> +94 11 234 5678</p>
                   <p><strong>Kandy VIP Location:</strong> 82 A26, Kundasale 20168</p>

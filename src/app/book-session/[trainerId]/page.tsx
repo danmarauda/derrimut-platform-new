@@ -10,6 +10,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Calendar, Clock, Star, User, MapPin, Award, CheckCircle, Users } from "lucide-react";
+import { DERRIMUT_BRAND } from "@/constants/branding";
 
 interface TimeSlot {
   date: string;
@@ -196,7 +197,7 @@ export default function BookSessionPage() {
               <div className="text-center mb-6">
                 <div className="relative inline-block">
                   <img
-                    src={trainerProfile.profileImage || "/logo.png"}
+                    src={trainerProfile.profileImage || DERRIMUT_BRAND.logo.primary}
                     alt={trainerProfile.name}
                     className="w-32 h-32 rounded-full mx-auto mb-4 object-cover border-4 border-primary/30"
                   />

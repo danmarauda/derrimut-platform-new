@@ -13,6 +13,7 @@ import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Calendar, Shield, Activity, Target, Clock, Download, CreditCard } from "lucide-react";
 import { useMembershipExpiryCheck, getMembershipStatusInfo, formatMembershipDate } from "@/lib/membership-utils";
+import { DERRIMUT_BRAND } from "@/constants/branding";
 
 const ProfilePage = () => {
   const { user, isLoaded } = useUser();
@@ -156,7 +157,7 @@ const ProfilePage = () => {
     };
     
     // Try to load the logo
-    logoImg.src = '/logo.png';
+    logoImg.src = DERRIMUT_BRAND.logo.primary;
 
     const generateCardContent = () => {
       // Add membership title

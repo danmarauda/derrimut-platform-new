@@ -38,8 +38,8 @@ const ChadBotComponent = () => {
     if (isOpen && messages.length === 0 && mounted) {
       // Initial greeting based on user status
       const greeting = user
-        ? `Yo ${user.firstName || "champ"}! 💪 Welcome back to Elite Gym! Ready to crush some goals today? What can your boy ChadBot help you with?`
-        : "Yo! 🔥 Welcome to Elite Gym & Fitness! I'm ChadBot, your fitness bro who knows EVERYTHING about this place. Ready to get JACKED? What's good?";
+        ? `Yo ${user.firstName || "champ"}! 💪 Welcome back to Derrimut 24:7 Gym! Ready to crush some goals today? What can your boy ChadBot help you with?`
+        : "Yo! 🔥 Welcome to Derrimut 24:7 Gym! I'm ChadBot, your fitness bro who knows EVERYTHING about this place. Ready to get JACKED? What's good?";
 
       setTimeout(() => {
         addBotMessage(greeting);
@@ -88,7 +88,7 @@ const ChadBotComponent = () => {
     ];
     for (const word of badWords) {
       if (input.includes(word)) {
-        return "Whoa, bro! 🚫 Let's keep it ELITE and positive in here. No bad vibes or language—ChadBot's all about respect and GAINS! 💪";
+        return "Whoa, bro! 🚫 Let's keep it positive in here. No bad vibes or language—ChadBot's all about respect and GAINS! 💪";
       }
     }
 
@@ -107,7 +107,7 @@ const ChadBotComponent = () => {
       input.includes("payment") ||
       input.includes("how much")
     ) {
-      return "Bro, our memberships are ABSOLUTELY FIRE! 🔥💰 Check these ELITE packages:\n\n💪 **BASIC** - Rs. 2,500/month\n✅ Full gym equipment access\n✅ All operating hours\n✅ Standard facilities\n\n💑 **COUPLE** - Rs. 4,500/month\n✅ Train together, stay together!\n✅ Couple workout programs\n✅ Premium facilities for 2\n\n👑 **PREMIUM** - Rs. 3,000/month (MOST POPULAR!)\n✅ Ultimate fitness experience\n✅ Personal training sessions\n✅ Spa & sauna access\n✅ 24/7 gym access\n\nAll include AI workout generation, trainer bookings & ELITE community access! Which one's calling your name?";
+      return "Bro, our memberships are ABSOLUTELY FIRE! 🔥💰 Check these Derrimut packages:\n\n💪 **CORE (12 Month Minimum)**\n✅ Access all Derrimut 24:7 Gyms Australia wide!\n✅ 24/7 access at Selected Locations\n✅ Fully stocked Supplement Superstore\n\n👑 **PREMIUM (12 Month Minimum)** - MOST POPULAR!\n✅ Everything in Core\n✅ Group fitness classes\n✅ Ultimate fitness experience\n\n💳 **CORE (Direct Debit)**\n✅ Fortnightly payments\n✅ No lock-in contract\n✅ 30-Day Notice\n\n💎 **PREMIUM (Direct Debit)**\n✅ Everything in Premium\n✅ Fortnightly payments\n✅ No lock-in contract\n\nAll include AI workout generation, trainer bookings & Derrimut community access! Which one's calling your name?";
     }
 
     // Greetings & Welcome
@@ -120,8 +120,8 @@ const ChadBotComponent = () => {
       input.includes("yo")
     ) {
       return user
-        ? `Yooo ${user.firstName || "beast"}! 🔥 Always pumped to see you here! What's the move today - gonna book a session with one of our ELITE trainers or generate a sick AI workout plan?`
-        : "Yooo what's good! 💪 Welcome to the ELITE family! Ready to transform your life? I can hook you up with everything you need to know!";
+        ? `Yooo ${user.firstName || "beast"}! 🔥 Always pumped to see you here! What's the move today - gonna book a session with one of our Derrimut trainers or generate a sick AI workout plan?`
+        : "Yooo what's good! 💪 Welcome to the Derrimut family! Ready to transform your life? I can hook you up with everything you need to know!";
     }
 
     // Trainers & Booking
@@ -192,7 +192,7 @@ const ChadBotComponent = () => {
       input.includes("clothes") ||
       input.includes("accessories")
     ) {
-      return "YO! Our marketplace is ABSOLUTELY LOADED! 🛒💪🔥 We only stock the PREMIUM stuff that we actually use:\n\n💊 **Supplements that WORK**\n✅ Protein powders (all flavors)\n✅ Creatine for explosive power\n✅ Pre-workouts that HIT DIFFERENT\n✅ Post-workout recovery blends\n✅ Vitamins & minerals\n\n🏋️‍♂️ **Equipment for HOME GAINS**\n✅ Dumbbells & barbells\n✅ Resistance bands\n✅ Yoga mats & accessories\n✅ Cardio equipment\n\n👕 **ELITE Apparel to FLEX**\n✅ Moisture-wicking workout gear\n✅ Compression wear\n✅ Elite Gym branded merch\n✅ Athleisure for everyday\n\n🎒 **Accessories for the GRIND**\n✅ Gym bags & backpacks\n✅ Water bottles & shakers\n✅ Lifting gloves & straps\n✅ Fitness trackers\n\n🥤 **Nutrition Products**\n✅ Meal replacement shakes\n✅ Healthy snacks\n✅ Electrolyte drinks\n\nEvery product is QUALITY TESTED by our team! Need recommendations for your specific goals?";
+      return "YO! Our marketplace is ABSOLUTELY LOADED! 🛒💪🔥 We only stock the PREMIUM stuff that we actually use:\n\n💊 **Supplements that WORK**\n✅ Protein powders (all flavors)\n✅ Creatine for explosive power\n✅ Pre-workouts that HIT DIFFERENT\n✅ Post-workout recovery blends\n✅ Vitamins & minerals\n\n🏋️‍♂️ **Equipment for HOME GAINS**\n✅ Dumbbells & barbells\n✅ Resistance bands\n✅ Yoga mats & accessories\n✅ Cardio equipment\n\n👕 **Derrimut Apparel to FLEX**\n✅ Moisture-wicking workout gear\n✅ Compression wear\n✅ Derrimut Gym branded merch\n✅ Athleisure for everyday\n\n🎒 **Accessories for the GRIND**\n✅ Gym bags & backpacks\n✅ Water bottles & shakers\n✅ Lifting gloves & straps\n✅ Fitness trackers\n\n🥤 **Nutrition Products**\n✅ Meal replacement shakes\n✅ Healthy snacks\n✅ Electrolyte drinks\n\nEvery product is QUALITY TESTED by our team! Need recommendations for your specific goals?";
     }
 
     // Getting Started & Help
@@ -209,9 +209,9 @@ const ChadBotComponent = () => {
       input.includes("where")
     ) {
       if (user) {
-        return "Let's GET IT, CHAMPION! 🔥💪 Here's your ELITE roadmap to DOMINATION:\n\n1️⃣ **Generate Your AI Plan** (2 minutes!)\n✅ Custom workout routine\n✅ Personalized nutrition plan\n✅ Goal-specific programming\n\n2️⃣ **Book Your First Trainer Session**\n✅ Choose from 30+ certified trainers\n✅ Pick your specialty (strength, cardio, etc.)\n✅ FREE with your membership!\n\n3️⃣ **Explore Our Recipe Database**\n✅ Meal prep like a PRO\n✅ Nutrition info for everything\n✅ From easy to chef level\n\n4️⃣ **Join the Community**\n✅ 1000+ members crushing goals\n✅ Share progress & get motivated\n✅ Support system that NEVER quits\n\nWhat sounds most EXCITING to you right now? I'm here to guide you every step!";
+        return "Let's GET IT, CHAMPION! 🔥💪 Here's your Derrimut roadmap to DOMINATION:\n\n1️⃣ **Generate Your AI Plan** (2 minutes!)\n✅ Custom workout routine\n✅ Personalized nutrition plan\n✅ Goal-specific programming\n\n2️⃣ **Book Your First Trainer Session**\n✅ Choose from certified trainers\n✅ Pick your specialty (strength, cardio, etc.)\n✅ Available at selected locations\n\n3️⃣ **Explore Our Recipe Database**\n✅ Meal prep like a PRO\n✅ Nutrition info for everything\n✅ From easy to chef level\n\n4️⃣ **Join the Community**\n✅ Members crushing goals\n✅ Share progress & get motivated\n✅ Support system that NEVER quits\n\nWhat sounds most EXCITING to you right now? I'm here to guide you every step!";
       } else {
-        return "Welcome to the ELITE lifestyle, future LEGEND! 💪🚀 Here's your game plan to join the ELITE:\n\n1️⃣ **Choose Your Membership**\n✅ Basic: Rs. 2,500/month\n✅ Couple: Rs. 4,500/month\n✅ Premium: Rs. 3,000/month (MOST POPULAR!)\n\n2️⃣ **Get Your AI-Generated Plans**\n✅ Instant workout routines\n✅ Personalized nutrition\n✅ Goal-crushing programs\n\n3️⃣ **Book Your First Trainer**\n✅ 30+ certified professionals\n✅ All sessions INCLUDED\n✅ Choose your specialty\n\n4️⃣ **Start DOMINATING**\n✅ Join 1000+ success stories\n✅ Transform your life\n✅ Become the BEST version of yourself\n\nReady to join the ELITE family and start your transformation journey?";
+        return "Welcome to the Derrimut lifestyle, future LEGEND! 💪🚀 Here's your game plan to join Derrimut:\n\n1️⃣ **Choose Your Membership**\n✅ Core (12 Month Minimum)\n✅ Premium (12 Month Minimum) - MOST POPULAR!\n✅ Core (Direct Debit)\n✅ Premium (Direct Debit)\n\n2️⃣ **Get Your AI-Generated Plans**\n✅ Instant workout routines\n✅ Personalized nutrition\n✅ Goal-crushing programs\n\n3️⃣ **Book Your First Trainer**\n✅ Certified professionals\n✅ Available at selected locations\n✅ Choose your specialty\n\n4️⃣ **Start DOMINATING**\n✅ Join success stories\n✅ Transform your life\n✅ Become the BEST version of yourself\n\nReady to join the Derrimut family and start your transformation journey?";
       }
     }
 
@@ -228,7 +228,7 @@ const ChadBotComponent = () => {
       input.includes("family") ||
       input.includes("together")
     ) {
-      return "Our ELITE community is ABSOLUTELY MASSIVE and INCREDIBLE! 🔥👥💪\n\n🌟 **1000+ ACTIVE MEMBERS**\n✅ All crushing their goals DAILY\n✅ Supportive & motivating environment\n✅ Success stories everywhere\n\n💬 **COMMUNITY FEATURES**\n✅ Progress sharing & celebrations\n✅ Workout buddy matching\n✅ Group challenges & competitions\n✅ Expert tips from trainers\n\n🤝 **SUPPORT SYSTEM**\n✅ 24/7 motivation from members\n✅ Accountability partners\n✅ Newcomer-friendly guidance\n✅ Advanced training discussions\n\n🏆 **ACHIEVEMENTS & MILESTONES**\n✅ Celebrate every victory\n✅ Monthly transformation highlights\n✅ Community awards & recognition\n\nIt's not just a gym - it's a LIFESTYLE and FAMILY! We lift each other up (literally and figuratively)! Ready to be part of something BIGGER than yourself?";
+      return "Our Derrimut community is ABSOLUTELY MASSIVE and INCREDIBLE! 🔥👥💪\n\n🌟 **ACTIVE MEMBERS**\n✅ All crushing their goals DAILY\n✅ Supportive & motivating environment\n✅ Success stories everywhere\n\n💬 **COMMUNITY FEATURES**\n✅ Progress sharing & celebrations\n✅ Workout buddy matching\n✅ Group challenges & competitions\n✅ Expert tips from trainers\n\n🤝 **SUPPORT SYSTEM**\n✅ 24/7 motivation from members\n✅ Accountability partners\n✅ Newcomer-friendly guidance\n✅ Advanced training discussions\n\n🏆 **ACHIEVEMENTS & MILESTONES**\n✅ Celebrate every victory\n✅ Monthly transformation highlights\n✅ Community awards & recognition\n\nIt's not just a gym - it's a LIFESTYLE and FAMILY! We lift each other up (literally and figuratively)! Ready to be part of something BIGGER than yourself?";
     }
 
     // Contact & Support
@@ -243,7 +243,7 @@ const ChadBotComponent = () => {
       input.includes("admin") ||
       input.includes("manager")
     ) {
-      return "Got questions or need ELITE support? I'm here 24/7, bro! 💬💪 But if you need human backup:\n\n🔥 **I'M YOUR FIRST STOP**\n✅ Ask me ANYTHING about Elite Gym\n✅ Memberships, trainers, programs\n✅ Instant answers, zero wait time\n\n👥 **HUMAN SUPPORT TEAM**\n✅ Hit up our Contact page\n✅ Response time faster than your PR deadlift! 🏋️‍♂️\n✅ Professional & knowledgeable staff\n\n⚡ **QUICK SOLUTIONS**\n✅ Account issues? We got you\n✅ Booking problems? Solved!\n✅ Payment questions? Easy!\n\nOur team responds LIGHTNING FAST because we care about your fitness journey! What specific help do you need right now?";
+      return "Got questions or need Derrimut support? I'm here 24/7, bro! 💬💪 But if you need human backup:\n\n🔥 **I'M YOUR FIRST STOP**\n✅ Ask me ANYTHING about Derrimut 24:7 Gym\n✅ Memberships, trainers, programs\n✅ Instant answers, zero wait time\n\n👥 **HUMAN SUPPORT TEAM**\n✅ Hit up our Contact page\n✅ Response time faster than your PR deadlift! 🏋️‍♂️\n✅ Professional & knowledgeable staff\n\n⚡ **QUICK SOLUTIONS**\n✅ Account issues? We got you\n✅ Booking problems? Solved!\n✅ Payment questions? Easy!\n\nOur team responds LIGHTNING FAST because we care about your fitness journey! What specific help do you need right now?";
     }
 
     // Hours & Availability
@@ -256,7 +256,7 @@ const ChadBotComponent = () => {
       input.includes("when") ||
       input.includes("access")
     ) {
-      return "We're ALWAYS here for you, CHAMPION! 🌍💪⏰\n\n🔥 **ONLINE PLATFORM: 24/7**\n✅ Book trainers ANYTIME\n✅ Generate AI plans INSTANTLY\n✅ Browse recipes at 3AM\n✅ Shop marketplace 24/7\n\n⭐ **PREMIUM MEMBERS: 24/7 GYM ACCESS**\n✅ Swipe card entry anytime\n✅ Night owl? We got you!\n✅ Early bird? Come through!\n\n🏋️‍♂️ **TRAINER AVAILABILITY**\n✅ 6AM - 10PM daily\n✅ Weekends included\n✅ Book sessions in advance\n✅ Flexible scheduling\n\n💻 **CHATBOT (ME!): ALWAYS ON**\n✅ Questions at midnight? Ask away!\n✅ Motivation at 5AM? I'm here!\n✅ Support whenever you need\n\nThe grind NEVER stops, and neither do we! When do you want to start your ELITE journey?";
+      return "We're ALWAYS here for you, CHAMPION! 🌍💪⏰\n\n🔥 **ONLINE PLATFORM: 24/7**\n✅ Book trainers ANYTIME\n✅ Generate AI plans INSTANTLY\n✅ Browse recipes at 3AM\n✅ Shop marketplace 24/7\n\n⭐ **SELECTED LOCATIONS: 24/7 GYM ACCESS**\n✅ Swipe card entry anytime\n✅ Night owl? We got you!\n✅ Early bird? Come through!\n\n🏋️‍♂️ **TRAINER AVAILABILITY**\n✅ Available at selected locations\n✅ Book sessions in advance\n✅ Flexible scheduling\n\n💻 **CHATBOT (ME!): ALWAYS ON**\n✅ Questions at midnight? Ask away!\n✅ Motivation at 5AM? I'm here!\n✅ Support whenever you need\n\nThe grind NEVER stops, and neither do we! When do you want to start your Derrimut journey?";
     }
 
     // Reviews & Testimonials
@@ -271,15 +271,15 @@ const ChadBotComponent = () => {
       input.includes("success") ||
       input.includes("result")
     ) {
-      return 'Bro, our members are ABSOLUTELY LOVING their ELITE experience! 🌟💪🔥\n\n⭐ **TRAINER RATINGS**\n✅ Average 4.8+ stars across ALL trainers\n✅ Real feedback from real transformations\n✅ Certified professionals who DELIVER\n\n🏆 **SUCCESS STORIES**\n✅ 300+ AI-generated plans creating results\n✅ Members hitting goals FASTER than expected\n✅ Life-changing transformations daily\n\n💬 **MEMBER TESTIMONIALS**\n✅ "Best investment I ever made!"\n✅ "Trainers are absolute legends!"\n✅ "AI workouts are game-changing!"\n✅ "Community support is UNREAL!"\n\n📊 **PROVEN RESULTS**\n✅ 1000+ satisfied members\n✅ Consistent 5-star experiences\n✅ Zero regrets, only GAINS\n\nCheck out our trainer profiles for detailed reviews! Every rating tells a story of TRANSFORMATION. Want to add your success story to the collection?';
+      return 'Bro, our members are ABSOLUTELY LOVING their Derrimut experience! 🌟💪🔥\n\n⭐ **TRAINER RATINGS**\n✅ Average 4.8+ stars across ALL trainers\n✅ Real feedback from real transformations\n✅ Certified professionals who DELIVER\n\n🏆 **SUCCESS STORIES**\n✅ AI-generated plans creating results\n✅ Members hitting goals FASTER than expected\n✅ Life-changing transformations daily\n\n💬 **MEMBER TESTIMONIALS**\n✅ "Best investment I ever made!"\n✅ "Trainers are absolute legends!"\n✅ "AI workouts are game-changing!"\n✅ "Community support is UNREAL!"\n\n📊 **PROVEN RESULTS**\n✅ Satisfied members\n✅ Consistent 5-star experiences\n✅ Zero regrets, only GAINS\n\nCheck out our trainer profiles for detailed reviews! Every rating tells a story of TRANSFORMATION. Want to add your success story to the collection?';
     }
 
     // Default responses for unmatched queries
     const defaultResponses = [
-      "Yo! I'm here to help you get ABSOLUTELY JACKED! 💪🔥 Ask me about our memberships (starting Rs. 2,500), ELITE trainers, AI workout generation, fire recipes, or our 1000+ member community!",
+      "Yo! I'm here to help you get ABSOLUTELY JACKED! 💪🔥 Ask me about our memberships, Derrimut trainers, AI workout generation, fire recipes, or our member community!",
       "What's good, future LEGEND! 🚀 Want to know about our INSANE trainers, sick AI programs, STACKED marketplace, or FIRE memberships? I got ALL the intel!",
-      "BRO! I know EVERYTHING about Elite Gym! Ask me about booking our 30+ trainers, generating AI plans, joining our MASSIVE community, or our facilities! Let's GET IT! 💪",
-      "YO! Ready to level up your FITNESS GAME? 🔥 I can tell you about our membership plans (Rs. 2,500-4,500), trainer sessions, AI workout generator, recipes, or ANYTHING Elite Gym related!",
+      "BRO! I know EVERYTHING about Derrimut 24:7 Gym! Ask me about booking our trainers, generating AI plans, joining our MASSIVE community, or our facilities! Let's GET IT! 💪",
+      "YO! Ready to level up your FITNESS GAME? 🔥 I can tell you about our membership plans, trainer sessions, AI workout generator, recipes, or ANYTHING Derrimut related!",
       "CHAMPION! I'm your fitness BRO with ALL the answers! 💪 Memberships, trainers, AI programs, nutrition, equipment, community - what do you want to DOMINATE today?",
     ];
 

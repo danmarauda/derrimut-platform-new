@@ -7,6 +7,7 @@ import { useUser } from "@clerk/nextjs";
 import { useRouter } from "next/navigation";
 import { useTheme } from "next-themes";
 import { useEffect, useRef, useState } from "react";
+import { DERRIMUT_BRAND } from "@/constants/branding";
 
 const GenerateProgramPage = () => {
   const [callActive, setCallActive] = useState(false);
@@ -214,7 +215,7 @@ const GenerateProgramPage = () => {
                 <div className="relative w-full h-full rounded-full bg-muted flex items-center justify-center border border-primary/50 overflow-hidden shadow-lg">
                   <div className="absolute inset-0 bg-gradient-to-b from-primary/10 to-secondary/10"></div>
                   <img
-                    src={theme === 'light' ? "/logo2.png" : "/logo.png"}
+                    src={theme === 'light' ? DERRIMUT_BRAND.logo.primary : DERRIMUT_BRAND.logo.white}
                     alt="AI Assistant"
                     className="w-full h-full object-cover"
                   />

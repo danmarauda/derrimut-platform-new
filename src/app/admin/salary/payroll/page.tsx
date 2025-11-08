@@ -285,7 +285,7 @@ export default function PayrollProcessingPage() {
       </head>
       <body>
         <div class="header">
-          <div class="company-name">ELITE Gym and Fitness</div>
+          <div class="company-name">Derrimut 24:7 Gym</div>
           <div class="pay-slip-title">Employee Pay Slip</div>
         </div>
 
@@ -362,7 +362,7 @@ export default function PayrollProcessingPage() {
 
         <div style="margin-top: 50px; text-align: center; color: #666; font-size: 12px;">
           <p>This is a computer-generated pay slip. No signature is required.</p>
-          <p>ELITE Gym and Fitness • Sri Lanka</p>
+          <p>Derrimut 24:7 Gym • Australia</p>
         </div>
       </body>
       </html>
@@ -840,7 +840,7 @@ export default function PayrollProcessingPage() {
             <div className="bg-white text-black p-8 rounded-lg border">
               {/* Header */}
               <div className="text-center border-b border-gray-300 pb-6 mb-6">
-                <h1 className="text-2xl font-bold text-gray-800">ELITE Gym and Fitness</h1>
+                <h1 className="text-2xl font-bold text-gray-800">Derrimut 24:7 Gym</h1>
                 <p className="text-gray-600 mt-2">Employee Pay Slip</p>
               </div>
 

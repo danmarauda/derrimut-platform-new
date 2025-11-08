@@ -22,10 +22,10 @@ export const DERRIMUT_BRAND = {
   
   // Logo Paths
   logo: {
-    primary: "/logos/derrimut-logo-seeklogo.png",
-    white: "/logos/derrimut-logo-white.png",
+    primary: "/logos/derrimut-logo-primary.png",
+    white: "/logos/derrimut-logo-primary.png", // TODO: Create white variant (invert colors)
     icon: "/logos/derrimut-icon.png",
-    favicon: "/favicon.ico",
+    favicon: "/favicon.png", // TODO: Convert to .ico format
   },
   
   // Business Details

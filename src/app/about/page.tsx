@@ -1,3 +1,7 @@
+"use client";
+
+import { DERRIMUT_BRAND } from "@/constants/branding";
+
 const AboutPage = () => {
   return (
     <div className="min-h-screen bg-background text-foreground">
@@ -6,7 +10,7 @@ const AboutPage = () => {
         <div className="container mx-auto px-4 py-24">
           <div className="max-w-4xl mx-auto text-center">
             <h1 className="text-5xl md:text-7xl font-bold mb-6">
-              About <span className="text-primary">ELITE Gym & Fitness</span>
+              About <span className="text-primary">{DERRIMUT_BRAND.nameFull}</span>
             </h1>
             <p className="text-xl text-muted-foreground leading-relaxed">
               A modern fitness AI platform designed to help people "get jacked with AI" - combining traditional gym services with cutting-edge technology in Sri Lanka.
@@ -95,7 +99,7 @@ const AboutPage = () => {
         <div className="text-center mb-12">
           <h2 className="text-4xl font-bold mb-4">Membership Plans & Pricing</h2>
           <p className="text-xl text-muted-foreground max-w-3xl mx-auto">
-            Affordable monthly memberships in Sri Lankan Rupees with ALL trainer sessions included - no hidden fees.
+            Affordable membership plans in Australian Dollars with ALL trainer sessions included - no hidden fees.
           </p>
         </div>
         

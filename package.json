@@ -16,7 +16,10 @@
     "stripe:setup-prod": "node scripts/setup-stripe-convex.js --prod",
     "stripe:test": "node scripts/test-stripe-convex.js",
     "stripe:test-prod": "node scripts/test-stripe-convex.js --prod",
-    "convex:set-env": "node scripts/set-convex-env.js"
+    "convex:set-env": "node scripts/set-convex-env.js",
+    "convex:set-env-all": "node scripts/set-convex-env-all.js",
+    "vercel:setup-env": "node scripts/setup-vercel-env.js",
+    "vercel:deploy": "vercel --prod"
   },
   "dependencies": {
     "@clerk/nextjs": "^6.28.1",

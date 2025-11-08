@@ -19,6 +19,7 @@ import {
   Sparkles,
 } from "lucide-react";
 import { useState, useEffect } from "react";
+import { DERRIMUT_BRAND } from "@/constants/branding";
 
 const MembershipPage = () => {
   const { user } = useUser();
@@ -433,18 +434,18 @@ const MembershipPage = () => {
           )}
         </div>
 
-        {/* Why Choose Elite Gym */}
+        {/* Why Choose Derrimut Gym */}
         <div className="text-center mt-20" suppressHydrationWarning>
           <div className="inline-flex items-center gap-2 bg-primary/10 px-4 py-2 rounded-full border border-primary/20 mb-8">
             <Trophy className="h-4 w-4 text-primary" />
             <span className="text-sm font-medium text-primary">
-              Why Elite Gym
+              Why {DERRIMUT_BRAND.nameShort}
             </span>
           </div>
           <h3 className="text-3xl md:text-4xl font-bold text-foreground mb-4">
             Why Choose{" "}
             <span className="text-primary bg-gradient-to-r from-primary to-primary/70 bg-clip-text text-transparent">
-              Elite Gym?
+              {DERRIMUT_BRAND.nameShort}?
             </span>
           </h3>
           <p className="text-muted-foreground mb-12 max-w-2xl mx-auto">

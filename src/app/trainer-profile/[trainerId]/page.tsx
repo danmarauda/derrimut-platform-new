@@ -119,7 +119,7 @@ export default function TrainerProfilePage() {
               <div className="flex-shrink-0">
                 <div className="relative">
                   <img
-                    src={trainerProfile.profileImage || "/logo.png"}
+                    src={trainerProfile.profileImage || DERRIMUT_BRAND.logo.primary}
                     alt={trainerProfile.name}
                     className="w-24 h-24 rounded-full object-cover mx-auto md:mx-0 border-2 border-primary/30"
                   />

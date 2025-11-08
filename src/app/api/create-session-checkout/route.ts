@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import Stripe from "stripe";
 import { auth } from "@clerk/nextjs/server";
+import { DERRIMUT_BRAND } from "@/constants/branding";
 
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, {
   apiVersion: "2025-07-30.basil",
@@ -41,7 +42,7 @@ export async function POST(req: NextRequest) {
             product_data: {
               name: `${sessionType.replace('_', ' ').toUpperCase()} Session with ${trainerName}`,
               description: `${sessionDate} at ${startTime} (${duration} minutes)${notes ? `\nNotes: ${notes}` : ''}`,
-              images: ["https://your-domain.com/logo.png"],
+              images: [process.env.NEXT_PUBLIC_SITE_URL + DERRIMUT_BRAND.logo.primary],
             },
             unit_amount: Math.round(amount * 100), // Convert to cents (AUD)
           },

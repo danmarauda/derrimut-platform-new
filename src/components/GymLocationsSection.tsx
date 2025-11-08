@@ -25,7 +25,7 @@ export default function GymLocationsSection() {
             Visit Our <span className="text-primary">Gym Locations</span>
           </h2>
           <p className="text-muted-foreground text-lg max-w-2xl mx-auto">
-            Find the nearest ELITE Gym & Fitness location and start your fitness
+            Find the nearest Derrimut 24:7 Gym location and start your fitness
             journey today
           </p>
         </div>

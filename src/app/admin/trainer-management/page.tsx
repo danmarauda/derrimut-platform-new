@@ -23,6 +23,7 @@ import {
 } from "lucide-react";
 import { AdminLayout } from "@/components/AdminLayout";
 import { useAuth } from "@clerk/nextjs";
+import { DERRIMUT_BRAND } from "@/constants/branding";
 
 export default function AdminTrainerManagementPage() {
   const { isSignedIn } = useAuth();
@@ -141,7 +142,7 @@ export default function AdminTrainerManagementPage() {
                 <Card key={application._id} className="bg-card/50 border border-border p-6 hover:border-primary/30 transition-all duration-300">
                   <div className="text-center mb-4">
                     <img
-                      src={application.profileImage || "/logo.png"}
+                      src={application.profileImage || DERRIMUT_BRAND.logo.primary}
                       alt={application.name}
                       className="w-16 h-16 rounded-full mx-auto mb-3 object-cover"
                     />
@@ -207,7 +208,7 @@ export default function AdminTrainerManagementPage() {
                 <Card key={trainer._id} className="bg-card/50 border border-border p-6 hover:border-primary/30 transition-all duration-300">
                   <div className="text-center mb-4">
                     <img
-                      src={trainer.profileImage || "/logo.png"}
+                      src={trainer.profileImage || DERRIMUT_BRAND.logo.primary}
                       alt={trainer.name}
                       className="w-16 h-16 rounded-full mx-auto mb-3 object-cover"
                     />
@@ -268,7 +269,7 @@ export default function AdminTrainerManagementPage() {
                 <Card key={trainer._id} className="bg-card/30 border border-border p-6 opacity-75">
                   <div className="text-center mb-4">
                     <img
-                      src={trainer.profileImage || "/logo.png"}
+                      src={trainer.profileImage || DERRIMUT_BRAND.logo.primary}
                       alt={trainer.name}
                       className="w-16 h-16 rounded-full mx-auto mb-3 object-cover grayscale"
                     />
@@ -329,7 +330,7 @@ export default function AdminTrainerManagementPage() {
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div>
                   <img
-                    src={selectedTrainer.profileImage || "/logo.png"}
+                    src={selectedTrainer.profileImage || DERRIMUT_BRAND.logo.primary}
                     alt={selectedTrainer.name}
                     className="w-32 h-32 rounded-full mx-auto mb-4 object-cover"
                   />

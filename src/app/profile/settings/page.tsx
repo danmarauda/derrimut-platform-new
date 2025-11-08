@@ -102,7 +102,7 @@ export default function SettingsPage() {
                     Theme Preference
                   </CardTitle>
                   <CardDescription className="text-muted-foreground">
-                    Choose how ELITE GYM appears to you. Your preference will be saved automatically.
+                    Choose how Derrimut 24:7 Gym appears to you. Your preference will be saved automatically.
                   </CardDescription>
                 </CardHeader>
                 <CardContent className="space-y-6">
