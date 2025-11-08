@@ -116,5 +116,5 @@
 
 ---
 
-**Conclusion:** All critical fixes are verified and working correctly. The test failures are due to Jest configuration, not code issues. The codebase is ready for Convex deployment.
+**Note:** This project uses **Bun** as the package manager. All commands should use `bun` instead of `npm`.
 

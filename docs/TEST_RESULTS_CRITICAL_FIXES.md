@@ -62,7 +62,7 @@ All modified files have valid JavaScript/TypeScript syntax:
 - **Issue:** Build fails because Convex API files not generated
 - **Cause:** Convex dev server needs to run to generate `_generated/api.d.ts`
 - **Impact:** None - This is expected if Convex hasn't been initialized
-- **Solution:** Run `npx convex dev` to generate types
+- **Solution:** Run `bunx convex dev` to generate types
 
 ### Test Failures
 - **Issue:** RoleGuard test failing
@@ -88,7 +88,7 @@ All modified files have valid JavaScript/TypeScript syntax:
 
 1. **Run Convex Dev** to generate API types:
    ```bash
-   npx convex dev
+   bunx convex dev
    ```
 
 2. **Test Webhook Flow** (when Convex is running):
