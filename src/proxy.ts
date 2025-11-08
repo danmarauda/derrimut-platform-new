@@ -8,8 +8,18 @@ const isProtectedRoute = createRouteMatcher([
   "/become-trainer"
 ]);
 
+/**
+ * Next.js 16 Proxy Handler
+ * Replaces middleware.ts with proxy.ts for better performance and Next.js 16 compatibility
+ * 
+ * Note: Clerk's clerkMiddleware still works with Next.js 16, but using proxy.ts
+ * follows the new convention and provides better type safety.
+ */
 export default clerkMiddleware(async (auth, req) => {
-  if (isProtectedRoute(req)) await auth.protect();
+  // Protect routes that require authentication
+  if (isProtectedRoute(req)) {
+    await auth.protect();
+  }
 });
 
 export const config = {
@@ -20,3 +30,4 @@ export const config = {
     "/(api|trpc)(.*)",
   ],
 };
+

@@ -4,19 +4,33 @@ import { api } from "../../../../convex/_generated/api";
 
 const convex = new ConvexHttpClient(process.env.NEXT_PUBLIC_CONVEX_URL!);
 
+/**
+ * Next.js 16 Best Practices:
+ * - Proper error handling
+ * - Route configuration exports
+ * - Environment-aware responses
+ */
 export async function GET(req: NextRequest) {
+  // Only allow in development
+  if (process.env.NODE_ENV === 'production') {
+    return NextResponse.json(
+      { error: 'Debug endpoint disabled in production' },
+      { status: 403 }
+    );
+  }
+
   try {
-    console.log("🔍 Checking database status...");
-    
     // Check users
     let users = [];
     try {
       users = await convex.query(api.users.getAllUsers, {});
-      console.log("👥 Total users:", users?.length || 0);
     } catch (userError) {
-      console.error("❌ Users query failed:", userError);
+      const errorMessage = userError instanceof Error ? userError.message : String(userError);
+      console.error("❌ Users query failed:", errorMessage);
+      
       return NextResponse.json({ 
-        error: "Users query failed: " + (userError instanceof Error ? userError.message : String(userError))
+        error: "Users query failed",
+        details: errorMessage
       }, { status: 500 });
     }
     
@@ -24,7 +38,6 @@ export async function GET(req: NextRequest) {
     let marketplaceItems = [];
     try {
       marketplaceItems = await convex.query(api.marketplace.getMarketplaceItems, {});
-      console.log("🏪 Total marketplace items:", marketplaceItems?.length || 0);
     } catch (marketError) {
       console.error("❌ Marketplace query failed:", marketError);
     }
@@ -38,12 +51,19 @@ export async function GET(req: NextRequest) {
         name: u.name 
       })) || [],
       convexUrl: process.env.NEXT_PUBLIC_CONVEX_URL
-    });
+    }, { status: 200 });
 
   } catch (error) {
-    console.error("❌ Database check failed:", error);
+    const errorMessage = error instanceof Error ? error.message : 'Unknown error';
+    console.error("❌ Database check failed:", errorMessage);
+    
     return NextResponse.json({ 
-      error: error instanceof Error ? error.message : String(error) 
+      error: "Database check failed",
+      details: errorMessage
     }, { status: 500 });
   }
 }
+
+// Next.js 16: Export route config
+export const runtime = 'nodejs';
+export const dynamic = 'force-dynamic';

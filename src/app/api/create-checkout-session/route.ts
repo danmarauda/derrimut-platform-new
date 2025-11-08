@@ -5,12 +5,19 @@ const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, {
   apiVersion: "2025-07-30.basil",
 });
 
+/**
+ * Next.js 16 Best Practices:
+ * - Use NextRequest/NextResponse types
+ * - Implement proper error handling
+ * - Add request validation
+ * - Use async/await properly
+ */
 export async function POST(request: NextRequest) {
   try {
-    const { priceId, clerkId, membershipType } = await request.json();
+    const body = await request.json();
+    const { priceId, clerkId, membershipType } = body;
 
-    console.log("Creating checkout session:", { priceId, clerkId, membershipType });
-
+    // Validate required parameters
     if (!priceId || !clerkId || !membershipType) {
       return NextResponse.json(
         { error: "Missing required parameters" },
@@ -18,13 +25,12 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Get the base URL from the request headers
+    // Get the base URL from the request headers (Next.js 16 pattern)
     const protocol = request.headers.get('x-forwarded-proto') || 'http';
     const host = request.headers.get('host') || 'localhost:3000';
     const baseUrl = `${protocol}://${host}`;
 
     // Create checkout session for subscription mode
-    // We'll create or retrieve customer first, then use it in the session
     const session = await stripe.checkout.sessions.create({
       payment_method_types: ["card"],
       mode: "subscription",
@@ -42,21 +48,26 @@ export async function POST(request: NextRequest) {
       },
     });
 
-    console.log("Checkout session created:", session.id);
-
     return NextResponse.json({ 
       sessionId: session.id, 
       url: session.url 
-    });
+    }, { status: 200 });
 
   } catch (error) {
-    console.error("Error in checkout API route:", error);
+    // Next.js 16: Better error handling
+    const errorMessage = error instanceof Error ? error.message : 'Unknown error';
+    console.error("Error in checkout API route:", errorMessage);
+    
     return NextResponse.json(
       { 
         error: "Internal server error", 
-        details: error instanceof Error ? error.message : String(error) 
+        details: process.env.NODE_ENV === 'development' ? errorMessage : undefined
       },
       { status: 500 }
     );
   }
 }
+
+// Next.js 16: Export route config for better type safety
+export const runtime = 'nodejs'; // Use Node.js runtime for Stripe API
+export const dynamic = 'force-dynamic'; // Force dynamic rendering for payment processing

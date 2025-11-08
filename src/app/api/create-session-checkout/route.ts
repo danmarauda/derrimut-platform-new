@@ -7,6 +7,12 @@ const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, {
   apiVersion: "2025-07-30.basil",
 });
 
+/**
+ * Next.js 16 Best Practices:
+ * - Use auth() from Clerk server SDK
+ * - Proper error handling
+ * - Route configuration exports
+ */
 export async function POST(req: NextRequest) {
   try {
     const { userId } = await auth();
@@ -14,6 +20,7 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
+    const body = await req.json();
     const { 
       trainerId, 
       trainerName, 
@@ -25,9 +32,17 @@ export async function POST(req: NextRequest) {
       notes,
       successUrl,
       cancelUrl 
-    } = await req.json();
+    } = body;
 
-    // Get the base URL from the request headers
+    // Validate required fields
+    if (!trainerId || !trainerName || !sessionType || !sessionDate || !startTime || !duration || !amount) {
+      return NextResponse.json(
+        { error: "Missing required fields" },
+        { status: 400 }
+      );
+    }
+
+    // Get the base URL from the request headers (Next.js 16 pattern)
     const protocol = req.headers.get('x-forwarded-proto') || 'http';
     const host = req.headers.get('host') || 'localhost:3000';
     const baseUrl = `${protocol}://${host}`;
@@ -68,13 +83,23 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ 
       sessionId: session.id,
       url: session.url 
-    });
+    }, { status: 200 });
 
   } catch (error) {
-    console.error("Error creating checkout session:", error);
+    // Next.js 16: Better error handling
+    const errorMessage = error instanceof Error ? error.message : 'Unknown error';
+    console.error("Error creating checkout session:", errorMessage);
+    
     return NextResponse.json(
-      { error: "Failed to create checkout session" },
+      { 
+        error: "Failed to create checkout session",
+        details: process.env.NODE_ENV === 'development' ? errorMessage : undefined
+      },
       { status: 500 }
     );
   }
 }
+
+// Next.js 16: Export route config
+export const runtime = 'nodejs';
+export const dynamic = 'force-dynamic';

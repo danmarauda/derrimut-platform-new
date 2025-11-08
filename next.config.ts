@@ -2,7 +2,8 @@ import type { NextConfig } from "next";
 import { withSentryConfig } from "@sentry/nextjs";
 
 const nextConfig: NextConfig = {
-    images: {
+  // Next.js 16: Enhanced image optimization
+  images: {
     unoptimized: false,
     remotePatterns: [
       {
@@ -14,8 +15,32 @@ const nextConfig: NextConfig = {
         hostname: '**',
       },
     ],
+    // Next.js 16: Enable modern image formats
+    formats: ['image/avif', 'image/webp'],
   },
-  // Instrumentation is enabled by default in Next.js 15
+
+  // Next.js 16: React 19 optimizations
+  reactStrictMode: true,
+  
+  // Next.js 16: Enhanced compiler options
+  compiler: {
+    // Remove console.log in production
+    removeConsole: process.env.NODE_ENV === 'production' ? {
+      exclude: ['error', 'warn'],
+    } : false,
+  },
+
+  // Next.js 16: Experimental features (stable in 16)
+  experimental: {
+    // Enable React 19 features
+    reactCompiler: false, // Set to true when React Compiler is stable
+  },
+
+  // Next.js 16: Optimized caching
+  onDemandRevalidation: {
+    // Enable on-demand revalidation
+    maxDuration: 60,
+  },
 
   // Security Headers - Task 4.3: Comprehensive Security Headers
   async headers() {

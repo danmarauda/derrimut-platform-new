@@ -5,11 +5,17 @@ const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, {
   apiVersion: "2025-07-30.basil",
 });
 
+/**
+ * Next.js 16 Best Practices:
+ * - Proper error handling with typed errors
+ * - Route configuration exports
+ * - Environment-aware error messages
+ */
 export async function POST(request: NextRequest) {
   try {
     const body = await request.json();
     
-    // Get the base URL from the request headers
+    // Get the base URL from the request headers (Next.js 16 pattern)
     const protocol = request.headers.get('x-forwarded-proto') || 'http';
     const host = request.headers.get('host') || 'localhost:3000';
     const baseUrl = `${protocol}://${host}`;
@@ -22,9 +28,7 @@ export async function POST(request: NextRequest) {
       cancelUrl = `${baseUrl}/marketplace/cart`
     } = body;
 
-    console.log("🛒 Creating marketplace checkout session for:", clerkId);
-    console.log("📦 Cart items:", cartItems?.length || 0);
-
+    // Validate required fields
     if (!clerkId) {
       return NextResponse.json(
         { error: "User ID is required" },
@@ -100,8 +104,8 @@ export async function POST(request: NextRequest) {
         price_data: {
           currency: "aud",
           product_data: {
-            name: "VAT (18%)",
-            description: "Value Added Tax",
+            name: "GST (10%)",
+            description: "Goods and Services Tax",
           },
           unit_amount: Math.round(tax * 100), // Convert to cents
         },
@@ -127,7 +131,7 @@ export async function POST(request: NextRequest) {
         shippingAddress: JSON.stringify(shippingAddress),
       },
       shipping_address_collection: {
-        allowed_countries: ["LK"], // Sri Lanka only
+        allowed_countries: ["AU"], // Australia only
       },
       billing_address_collection: "required",
       phone_number_collection: {
@@ -141,24 +145,28 @@ export async function POST(request: NextRequest) {
       },
     });
 
-    console.log("✅ Stripe session created:", session.id);
-
     return NextResponse.json({
       sessionId: session.id,
       url: session.url,
       totalAmount: subtotal + shippingCost + tax,
-    });
+    }, { status: 200 });
 
-  } catch (error: any) {
-    console.error("❌ Error creating marketplace checkout session:", error);
+  } catch (error) {
+    // Next.js 16: Better error handling
+    const errorMessage = error instanceof Error ? error.message : 'Unknown error';
+    console.error("Error creating marketplace checkout session:", errorMessage);
+    
     return NextResponse.json(
-      { error: error.message || "Internal server error" },
+      { 
+        error: "Internal server error",
+        details: process.env.NODE_ENV === 'development' ? errorMessage : undefined
+      },
       { status: 500 }
     );
   }
 }
 
-// Helper functions (same as in orders.ts)
+// Helper functions
 function calculateShipping(subtotal: number, city: string): number {
   // Free shipping for orders over AUD 200
   if (subtotal >= 200) {
@@ -177,6 +185,10 @@ function calculateShipping(subtotal: number, city: string): number {
 }
 
 function calculateTax(subtotal: number): number {
-  // Simplified tax calculation - 10% GST (Australia)
+  // Australian GST - 10%
   return Math.round(subtotal * 0.10);
 }
+
+// Next.js 16: Export route config
+export const runtime = 'nodejs';
+export const dynamic = 'force-dynamic';

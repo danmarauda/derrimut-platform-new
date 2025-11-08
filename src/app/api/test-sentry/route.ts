@@ -1,11 +1,13 @@
 /**
  * Sentry Test Endpoint
  *
- * This endpoint is for testing Sentry error tracking.
- * Remove or protect this endpoint in production.
+ * Next.js 16 Best Practices:
+ * - Proper route configuration
+ * - Environment-aware behavior
+ * - Type-safe error handling
  */
 
-import { NextResponse } from 'next/server';
+import { NextRequest, NextResponse } from 'next/server';
 import * as Sentry from '@sentry/nextjs';
 import { logger } from '@/lib/logger';
 
@@ -14,7 +16,7 @@ import { logger } from '@/lib/logger';
  *
  * Test Sentry error tracking by triggering various error types
  */
-export async function GET(request: Request) {
+export async function GET(request: NextRequest) {
   // Only allow in development
   if (process.env.NODE_ENV === 'production') {
     return NextResponse.json(
@@ -28,82 +30,95 @@ export async function GET(request: Request) {
 
   logger.info('Testing Sentry', { testType });
 
-  switch (testType) {
-    case 'error':
-      // Test basic error tracking
-      Sentry.captureException(new Error('Test error from API endpoint'), {
-        tags: {
-          test: true,
-          endpoint: 'test-sentry',
-        },
-        contexts: {
-          test: {
-            type: 'error',
-            timestamp: new Date().toISOString(),
+  try {
+    switch (testType) {
+      case 'error':
+        // Test basic error tracking
+        Sentry.captureException(new Error('Test error from API endpoint'), {
+          tags: {
+            test: true,
+            endpoint: 'test-sentry',
           },
-        },
-      });
-      break;
+          contexts: {
+            test: {
+              type: 'error',
+              timestamp: new Date().toISOString(),
+            },
+          },
+        });
+        break;
 
-    case 'message':
-      // Test message tracking
-      Sentry.captureMessage('Test message from API endpoint', {
-        level: 'info',
-        tags: {
+      case 'message':
+        // Test message tracking
+        Sentry.captureMessage('Test message from API endpoint', {
+          level: 'info',
+          tags: {
+            test: true,
+            endpoint: 'test-sentry',
+          },
+        });
+        break;
+
+      case 'throw':
+        // Test unhandled error (will be caught by Next.js error handler)
+        throw new Error('Test unhandled error');
+
+      case 'logger':
+        // Test logger integration
+        logger.error('Test error from logger', {
+          error: {
+            message: 'This is a test error',
+            name: 'TestError',
+          },
+          userId: 'test-user-123',
           test: true,
-          endpoint: 'test-sentry',
-        },
-      });
-      break;
+        });
+        break;
 
-    case 'throw':
-      // Test unhandled error (will be caught by Next.js error handler)
-      throw new Error('Test unhandled error');
+      case 'performance':
+        // Test performance tracking
+        const transaction = Sentry.startTransaction({
+          op: 'test',
+          name: 'Test Transaction',
+        });
 
-    case 'logger':
-      // Test logger integration
-      logger.error('Test error from logger', {
-        error: {
-          message: 'This is a test error',
-          name: 'TestError',
-        },
-        userId: 'test-user-123',
-        test: true,
-      });
-      break;
+        const span = transaction.startChild({
+          op: 'test-operation',
+          description: 'Testing Sentry performance tracking',
+        });
 
-    case 'performance':
-      // Test performance tracking
-      const transaction = Sentry.startTransaction({
-        op: 'test',
-        name: 'Test Transaction',
-      });
+        // Simulate some work
+        await new Promise((resolve) => setTimeout(resolve, 100));
 
-      const span = transaction.startChild({
-        op: 'test-operation',
-        description: 'Testing Sentry performance tracking',
-      });
+        span.finish();
+        transaction.finish();
+        break;
 
-      // Simulate some work
-      await new Promise((resolve) => setTimeout(resolve, 100));
+      default:
+        return NextResponse.json(
+          { error: 'Invalid test type' },
+          { status: 400 }
+        );
+    }
 
-      span.finish();
-      transaction.finish();
-      break;
-
-    default:
-      return NextResponse.json(
-        { error: 'Invalid test type' },
-        { status: 400 }
-      );
+    return NextResponse.json({
+      success: true,
+      message: `Sentry ${testType} test triggered`,
+      note: 'Check your Sentry dashboard for the event',
+      dashboard: 'https://sentry.io',
+    }, { status: 200 });
+  } catch (error) {
+    const errorMessage = error instanceof Error ? error.message : 'Unknown error';
+    logger.error('Sentry test failed', { error: errorMessage });
+    
+    return NextResponse.json(
+      { 
+        error: 'Test failed',
+        details: process.env.NODE_ENV === 'development' ? errorMessage : undefined
+      },
+      { status: 500 }
+    );
   }
-
-  return NextResponse.json({
-    success: true,
-    message: `Sentry ${testType} test triggered`,
-    note: 'Check your Sentry dashboard for the event',
-    dashboard: 'https://sentry.io',
-  });
 }
 
 /**
@@ -111,7 +126,7 @@ export async function GET(request: Request) {
  *
  * Test custom error context
  */
-export async function POST(request: Request) {
+export async function POST(request: NextRequest) {
   // Only allow in development
   if (process.env.NODE_ENV === 'production') {
     return NextResponse.json(
@@ -164,11 +179,20 @@ export async function POST(request: Request) {
       success: true,
       message: 'Error with custom context sent to Sentry',
       note: 'Check Sentry dashboard for the event with payment context',
-    });
+    }, { status: 200 });
   } catch (error) {
+    const errorMessage = error instanceof Error ? error.message : 'Unknown error';
+    
     return NextResponse.json(
-      { error: 'Failed to send test error' },
+      { 
+        error: 'Failed to send test error',
+        details: process.env.NODE_ENV === 'development' ? errorMessage : undefined
+      },
       { status: 500 }
     );
   }
 }
+
+// Next.js 16: Export route config
+export const runtime = 'nodejs';
+export const dynamic = 'force-dynamic';

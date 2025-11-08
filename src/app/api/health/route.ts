@@ -1,7 +1,10 @@
 /**
  * Health Check API Endpoint
  *
- * Provides application health status for monitoring and load balancers
+ * Next.js 16 Best Practices:
+ * - Proper route configuration
+ * - Caching headers
+ * - Error handling
  */
 
 import { NextRequest, NextResponse } from 'next/server';
@@ -247,3 +250,7 @@ export async function HEAD() {
     return new NextResponse(null, { status: 503 });
   }
 }
+
+// Next.js 16: Export route config
+export const runtime = 'nodejs';
+export const dynamic = 'force-dynamic';
