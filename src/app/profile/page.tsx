@@ -49,9 +49,10 @@ const ProfilePage = () => {
   );
   
   // Get user's own payroll records (for all users including admins)
+  // Only query if user exists in database (checked via userRole)
   const userPayrollRecords = useQuery(
     api.salary.getEmployeePayrollRecords,
-    user?.id ? { employeeClerkId: user.id } : "skip"
+    user?.id && userRole ? { employeeClerkId: user.id } : "skip"
   );
   
   const cancelMembership = useMutation(api.memberships.cancelMembership);

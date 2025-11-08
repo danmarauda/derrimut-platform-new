@@ -491,8 +491,8 @@ export const seedMembershipPlans = mutation({
         price: 14.95,
         currency: "AUD",
         type: "18-month-minimum" as const,
-        stripePriceId: "price_1SRF1M4ghJnevp5XHk8AwEB0", // TODO: Replace with actual Stripe price ID
-        stripeProductId: "prod_TO13HhWD4id9gk", // TODO: Replace with actual Stripe product ID
+        stripePriceId: "price_1SRF1M4ghJnevp5XHk8AwEB0", // Derrimut 18-month plan
+        stripeProductId: "prod_TO13HhWD4id9gk", // Derrimut 18-month product
         features: [
           "Access all Derrimut 24:7 gyms Australia wide",
           "24/7 access at selected locations",
@@ -511,8 +511,8 @@ export const seedMembershipPlans = mutation({
         price: 17.95,
         currency: "AUD",
         type: "12-month-minimum" as const,
-        stripePriceId: "price_1SRF1O4ghJnevp5XtcVKujOd", // TODO: Replace with actual Stripe price ID
-        stripeProductId: "prod_TO13WeOKja1J3f", // TODO: Replace with actual Stripe product ID
+        stripePriceId: "price_1SRF1O4ghJnevp5XtcVKujOd", // Derrimut 12-month plan
+        stripeProductId: "prod_TO13WeOKja1J3f", // Derrimut 12-month product
         features: [
           "Access all Derrimut 24:7 gyms Australia wide",
           "24/7 access at selected locations",
@@ -531,8 +531,8 @@ export const seedMembershipPlans = mutation({
         price: 19.95,
         currency: "AUD",
         type: "no-lock-in" as const,
-        stripePriceId: "price_1SRF1P4ghJnevp5X6W3ajo8O", // TODO: Replace with actual Stripe price ID
-        stripeProductId: "prod_TO13CDZ0wbRcI2", // TODO: Replace with actual Stripe product ID
+        stripePriceId: "price_1SRF1P4ghJnevp5X6W3ajo8O", // Derrimut no-lock-in plan
+        stripeProductId: "prod_TO13CDZ0wbRcI2", // Derrimut no-lock-in product
         features: [
           "Access all Derrimut 24:7 gyms Australia wide",
           "24/7 access at selected locations",
@@ -552,8 +552,8 @@ export const seedMembershipPlans = mutation({
         price: 749,
         currency: "AUD",
         type: "12-month-upfront" as const,
-        stripePriceId: "price_1SRF1Q4ghJnevp5XK4w1yXVX", // TODO: Replace with actual Stripe price ID
-        stripeProductId: "prod_TO132agrJCpBrJ", // TODO: Replace with actual Stripe product ID
+        stripePriceId: "price_1SRF1Q4ghJnevp5XK4w1yXVX", // Derrimut 12-month upfront plan
+        stripeProductId: "prod_TO132agrJCpBrJ", // Derrimut 12-month upfront product
         features: [
           "Access all Derrimut 24:7 gyms Australia wide",
           "24/7 access at selected locations",
@@ -613,7 +613,7 @@ export const createMembershipFromSession = mutation({
       if (session.metadata?.membershipType) {
         membershipType = session.metadata.membershipType as any;
       } else {
-        // Fallback to product ID mapping - TODO: Update with actual Derrimut product IDs
+        // Fallback to product ID mapping - Derrimut product IDs
         switch (productId) {
           case "prod_TO13HhWD4id9gk":
             membershipType = "18-month-minimum";

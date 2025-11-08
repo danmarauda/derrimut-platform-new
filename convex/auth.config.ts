@@ -1,7 +1,7 @@
 export default {
   providers: [
     {
-      domain: "https://key-gelding-12.clerk.accounts.dev",
+      domain: "https://busy-cow-62.clerk.accounts.dev",
       applicationID: "convex",
     },
   ],

@@ -222,7 +222,7 @@ const GenerateProgramPage = () => {
                 </div>
               </div>
 
-              <h2 className="text-lg sm:text-xl font-bold text-foreground text-center">Elite AI</h2>
+              <h2 className="text-lg sm:text-xl font-bold text-foreground text-center">Derrimut AI</h2>
               <p className="text-xs sm:text-sm text-muted-foreground mt-1 text-center">Personal Fitness & Diet Coach</p>
 
               {/* SPEAKING INDICATOR */}
@@ -287,7 +287,7 @@ const GenerateProgramPage = () => {
               {messages.map((msg, index) => (
                 <div key={index} className="message-item animate-fadeIn">
                   <div className="font-semibold text-xs text-muted-foreground mb-2">
-                    {msg.role === "assistant" ? "Elite AI" : "You"}:
+                    {msg.role === "assistant" ? "Derrimut AI" : "You"}:
                   </div>
                   <p className="text-foreground bg-muted/50 p-3 rounded-lg border border-border">{msg.content}</p>
                 </div>

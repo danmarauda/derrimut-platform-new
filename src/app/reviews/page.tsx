@@ -287,7 +287,7 @@ function ReviewsContent() {
                       </div>
                       
                       <p className="text-xs text-muted-foreground/70 capitalize mb-2">
-                        {booking.sessionType.replace('_', ' ')} • LKR {booking.totalAmount.toLocaleString()}
+                        {booking.sessionType.replace('_', ' ')} • AUD ${booking.totalAmount.toLocaleString()}
                       </p>
                       
                       {booking.notes && (

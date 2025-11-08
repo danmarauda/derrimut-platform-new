@@ -91,7 +91,7 @@ export const getAllUsers = query({
       .withIndex("by_clerk_id", (q) => q.eq("clerkId", identity.subject))
       .first();
     
-    if (currentUser?.role !== "admin") {
+    if (currentUser?.role !== "admin" && currentUser?.role !== "superadmin") {
       throw new Error("Unauthorized: Admin access required");
     }
 
@@ -110,7 +110,7 @@ export const getMemberCount = query({
       .first();
     
     // Allow trainers and admins to see member count
-    if (!currentUser?.role || !["trainer", "admin"].includes(currentUser.role)) {
+    if (!currentUser?.role || !["trainer", "admin", "superadmin"].includes(currentUser.role)) {
       throw new Error("Unauthorized: Trainer or admin access required");
     }
 
@@ -136,7 +136,7 @@ export const getCurrentUserRole = query({
 export const updateUserRole = mutation({
   args: {
     userId: v.id("users"),
-    role: v.union(v.literal("admin"), v.literal("trainer"), v.literal("user")),
+    role: v.union(v.literal("superadmin"), v.literal("admin"), v.literal("trainer"), v.literal("user")),
   },
   handler: async (ctx, args) => {
     const identity = await ctx.auth.getUserIdentity();
@@ -147,7 +147,12 @@ export const updateUserRole = mutation({
       .withIndex("by_clerk_id", (q) => q.eq("clerkId", identity.subject))
       .first();
     
-    if (currentUser?.role !== "admin") {
+    // Only superadmin can promote to superadmin, admins can promote to admin/trainer/user
+    if (args.role === "superadmin" && currentUser?.role !== "superadmin") {
+      throw new Error("Unauthorized: Superadmin access required");
+    }
+    
+    if (currentUser?.role !== "admin" && currentUser?.role !== "superadmin") {
       throw new Error("Unauthorized: Admin access required");
     }
 
@@ -167,7 +172,7 @@ export const createSuperAdmin = mutation({
   },
   handler: async (ctx, args) => {
     // Check super admin key (you can set this in your environment)
-    const SUPER_ADMIN_KEY = "ELITE_GYM_SUPER_ADMIN_2025";
+    const SUPER_ADMIN_KEY = process.env.SUPER_ADMIN_KEY || "DERRIMUT_SUPER_ADMIN_2025";
     
     if (args.superAdminKey !== SUPER_ADMIN_KEY) {
       throw new Error("Invalid super admin key");
@@ -179,26 +184,41 @@ export const createSuperAdmin = mutation({
       .first();
 
     if (existingUser) {
-      // Update existing user to admin
+      // Update existing user to superadmin
       await ctx.db.patch(existingUser._id, {
-        role: "admin",
+        role: "superadmin",
         createdAt: existingUser.createdAt || Date.now(),
         updatedAt: Date.now(),
       });
       return existingUser._id;
     }
 
-    // Create new admin user
+    // Create new superadmin user
     const userId = await ctx.db.insert("users", {
       clerkId: args.clerkId,
       email: args.email,
       name: args.name,
-      role: "admin",
+      role: "superadmin",
       createdAt: Date.now(),
       updatedAt: Date.now(),
     });
 
     return userId;
+  },
+});
+
+// Check if user is superadmin
+export const isSuperAdmin = query({
+  handler: async (ctx) => {
+    const identity = await ctx.auth.getUserIdentity();
+    if (!identity) return false;
+    
+    const user = await ctx.db
+      .query("users")
+      .withIndex("by_clerk_id", (q) => q.eq("clerkId", identity.subject))
+      .first();
+    
+    return user?.role === "superadmin";
   },
 });
 

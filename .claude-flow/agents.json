@@ -1,0 +1,404 @@
+{
+  "agents": [
+    {
+      "id": "agent-1",
+      "name": "Testing Specialist",
+      "role": "Set up testing infrastructure and write critical path tests",
+      "tasks": ["1.1", "1.2"],
+      "skills": ["Jest", "React Testing Library", "Test Writing"],
+      "deliverables": [
+        "jest.config.js",
+        "jest.setup.js",
+        "src/__tests__/utils.tsx",
+        "src/__tests__/auth.test.tsx",
+        "src/__tests__/payments.test.tsx",
+        "src/__tests__/api.test.ts",
+        "convex/__tests__/memberships.test.ts",
+        "src/components/__tests__/RoleGuard.test.tsx"
+      ],
+      "estimatedHours": "12-16",
+      "priority": "CRITICAL"
+    },
+    {
+      "id": "agent-2",
+      "name": "Error Handling & Monitoring",
+      "role": "Implement error boundaries, Sentry tracking, logging, and monitoring",
+      "tasks": ["1.3", "1.4", "3.2", "4.2"],
+      "skills": ["Error Handling", "Sentry", "Logging", "Monitoring"],
+      "deliverables": [
+        "src/components/ErrorBoundary.tsx",
+        "src/app/error.tsx",
+        "src/app/global-error.tsx",
+        "sentry.client.config.ts",
+        "sentry.server.config.ts",
+        "sentry.edge.config.ts",
+        "instrumentation.ts",
+        "src/lib/errors.ts",
+        "src/lib/error-handler.ts",
+        "src/lib/logger.ts",
+        "src/app/api/health/route.ts"
+      ],
+      "estimatedHours": "18-22",
+      "priority": "CRITICAL"
+    },
+    {
+      "id": "agent-3",
+      "name": "Type Safety & Code Quality",
+      "role": "Fix TypeScript errors, improve type safety, clean up code",
+      "tasks": ["1.5", "3.1", "3.3"],
+      "skills": ["TypeScript", "Code Quality", "Refactoring"],
+      "deliverables": [
+        "src/types/index.ts",
+        "Fixed TypeScript errors",
+        "Reduced any types",
+        "Clean codebase"
+      ],
+      "estimatedHours": "16-21",
+      "priority": "HIGH"
+    },
+    {
+      "id": "agent-4",
+      "name": "Security Specialist",
+      "role": "Implement security measures: validation, rate limiting, CSRF, webhooks",
+      "tasks": ["1.6", "2.1", "2.2", "2.3", "2.4", "4.3"],
+      "skills": ["Security", "Validation", "Rate Limiting", "CSRF"],
+      "deliverables": [
+        "src/lib/env.ts",
+        "src/lib/validations/membership.ts",
+        "src/lib/validations/booking.ts",
+        "src/lib/validations/marketplace.ts",
+        "src/lib/validations/user.ts",
+        "src/lib/validations/utils.ts",
+        "src/lib/rate-limit.ts",
+        "src/lib/csrf.ts",
+        "Consolidated webhook handler",
+        "Security headers in next.config.ts"
+      ],
+      "estimatedHours": "24-30",
+      "priority": "CRITICAL"
+    },
+    {
+      "id": "agent-5",
+      "name": "Performance Engineer",
+      "role": "Optimize performance and move media to blob storage",
+      "tasks": ["4.1", "5.5"],
+      "skills": ["Performance", "Optimization", "Blob Storage"],
+      "deliverables": [
+        "Code splitting implemented",
+        "Database queries optimized",
+        "API caching added",
+        "Images optimized",
+        "Blob storage setup"
+      ],
+      "estimatedHours": "8-11",
+      "priority": "MEDIUM"
+    },
+    {
+      "id": "agent-6",
+      "name": "Documentation & Deployment",
+      "role": "Update documentation and configure Vercel for production",
+      "tasks": ["5.1", "5.2", "5.3", "5.4"],
+      "skills": ["Documentation", "Vercel", "Deployment"],
+      "deliverables": [
+        "docs/API.md",
+        "docs/RUNBOOKS.md",
+        "docs/ARCHITECTURE.md",
+        "DEPLOYMENT_CHECKLIST.md",
+        "ROLLBACK_PLAN.md",
+        "BACKUP_STRATEGY.md",
+        "INCIDENT_RESPONSE_PLAN.md",
+        "VERCEL_CONFIGURATION.md",
+        "DNS_MIGRATION_PLAN.md",
+        "Updated README.md"
+      ],
+      "estimatedHours": "18-24",
+      "priority": "MEDIUM"
+    }
+  ],
+  "tasks": {
+    "1.1": {
+      "title": "Testing Infrastructure Setup",
+      "agent": "agent-1",
+      "phase": 1,
+      "priority": "CRITICAL",
+      "dependencies": [],
+      "estimatedHours": 4
+    },
+    "1.2": {
+      "title": "Write Critical Path Tests",
+      "agent": "agent-1",
+      "phase": 1,
+      "priority": "CRITICAL",
+      "dependencies": ["1.1"],
+      "estimatedHours": 8
+    },
+    "1.3": {
+      "title": "Error Boundaries Implementation",
+      "agent": "agent-2",
+      "phase": 1,
+      "priority": "CRITICAL",
+      "dependencies": [],
+      "estimatedHours": 3
+    },
+    "1.4": {
+      "title": "Error Tracking Setup (Sentry)",
+      "agent": "agent-2",
+      "phase": 1,
+      "priority": "CRITICAL",
+      "dependencies": ["1.3"],
+      "estimatedHours": 4
+    },
+    "1.5": {
+      "title": "Fix Build Configuration",
+      "agent": "agent-3",
+      "phase": 1,
+      "priority": "CRITICAL",
+      "dependencies": [],
+      "estimatedHours": 2
+    },
+    "1.6": {
+      "title": "Environment Variable Validation",
+      "agent": "agent-4",
+      "phase": 1,
+      "priority": "CRITICAL",
+      "dependencies": [],
+      "estimatedHours": 3
+    },
+    "2.1": {
+      "title": "Input Validation (Zod)",
+      "agent": "agent-4",
+      "phase": 2,
+      "priority": "HIGH",
+      "dependencies": ["1.6"],
+      "estimatedHours": 8
+    },
+    "2.2": {
+      "title": "Rate Limiting Implementation",
+      "agent": "agent-4",
+      "phase": 2,
+      "priority": "HIGH",
+      "dependencies": [],
+      "estimatedHours": 4
+    },
+    "2.3": {
+      "title": "CSRF Protection",
+      "agent": "agent-4",
+      "phase": 2,
+      "priority": "HIGH",
+      "dependencies": [],
+      "estimatedHours": 3
+    },
+    "2.4": {
+      "title": "Consolidate Webhook Handlers",
+      "agent": "agent-4",
+      "phase": 2,
+      "priority": "HIGH",
+      "dependencies": [],
+      "estimatedHours": 4
+    },
+    "3.1": {
+      "title": "Fix Critical `any` Types",
+      "agent": "agent-3",
+      "phase": 3,
+      "priority": "HIGH",
+      "dependencies": ["1.5"],
+      "estimatedHours": 10
+    },
+    "3.2": {
+      "title": "Standardize Error Handling",
+      "agent": "agent-2",
+      "phase": 3,
+      "priority": "HIGH",
+      "dependencies": ["1.4"],
+      "estimatedHours": 6
+    },
+    "3.3": {
+      "title": "Code Cleanup",
+      "agent": "agent-3",
+      "phase": 3,
+      "priority": "MEDIUM",
+      "dependencies": [],
+      "estimatedHours": 4
+    },
+    "4.1": {
+      "title": "Performance Optimization",
+      "agent": "agent-5",
+      "phase": 4,
+      "priority": "MEDIUM",
+      "dependencies": [],
+      "estimatedHours": 6
+    },
+    "4.2": {
+      "title": "Monitoring Setup",
+      "agent": "agent-2",
+      "phase": 4,
+      "priority": "MEDIUM",
+      "dependencies": ["1.4"],
+      "estimatedHours": 4
+    },
+    "4.3": {
+      "title": "Security Headers",
+      "agent": "agent-4",
+      "phase": 4,
+      "priority": "MEDIUM",
+      "dependencies": [],
+      "estimatedHours": 2
+    },
+    "5.1": {
+      "title": "Update Documentation",
+      "agent": "agent-6",
+      "phase": 5,
+      "priority": "MEDIUM",
+      "dependencies": ["1.1", "1.2", "1.3", "1.4", "1.5", "1.6", "2.1", "2.2", "2.3", "2.4", "3.1", "3.2", "3.3", "4.1", "4.2", "4.3"],
+      "estimatedHours": 6
+    },
+    "5.2": {
+      "title": "Deployment Preparation",
+      "agent": "agent-6",
+      "phase": 5,
+      "priority": "MEDIUM",
+      "dependencies": ["1.1", "1.2", "1.3", "1.4", "1.5", "1.6", "2.1", "2.2", "2.3", "2.4", "3.1", "3.2", "3.3", "4.1", "4.2", "4.3"],
+      "estimatedHours": 4
+    },
+    "5.3": {
+      "title": "Vercel Production Configuration",
+      "agent": "agent-6",
+      "phase": 5,
+      "priority": "MEDIUM",
+      "dependencies": ["1.1", "1.2", "1.3", "1.4", "1.5", "1.6", "2.1", "2.2", "2.3", "2.4", "3.1", "3.2", "3.3", "4.1", "4.2", "4.3"],
+      "estimatedHours": 6
+    },
+    "5.4": {
+      "title": "SSL & DNS Configuration",
+      "agent": "agent-6",
+      "phase": 5,
+      "priority": "MEDIUM",
+      "dependencies": ["5.3"],
+      "estimatedHours": 2
+    },
+    "5.5": {
+      "title": "Media & Storage Optimization",
+      "agent": "agent-5",
+      "phase": 5,
+      "priority": "MEDIUM",
+      "dependencies": [],
+      "estimatedHours": 2
+    }
+  },
+  "phases": [
+    {
+      "id": 1,
+      "name": "Critical Fixes",
+      "week": 1,
+      "tasks": ["1.1", "1.2", "1.3", "1.4", "1.5", "1.6"],
+      "priority": "CRITICAL"
+    },
+    {
+      "id": 2,
+      "name": "Security & Validation",
+      "week": 2,
+      "tasks": ["2.1", "2.2", "2.3", "2.4"],
+      "priority": "HIGH"
+    },
+    {
+      "id": 3,
+      "name": "Type Safety & Code Quality",
+      "week": 2,
+      "tasks": ["3.1", "3.2", "3.3"],
+      "priority": "HIGH"
+    },
+    {
+      "id": 4,
+      "name": "Performance & Monitoring",
+      "week": 2,
+      "tasks": ["4.1", "4.2", "4.3"],
+      "priority": "MEDIUM"
+    },
+    {
+      "id": 5,
+      "name": "Documentation & Deployment",
+      "week": 3,
+      "tasks": ["5.1", "5.2", "5.3", "5.4", "5.5"],
+      "priority": "MEDIUM"
+    }
+  ],
+  "dependencies": {
+    "1.2": ["1.1"],
+    "1.4": ["1.3"],
+    "2.1": ["1.6"],
+    "3.1": ["1.5"],
+    "3.2": ["1.4"],
+    "4.2": ["1.4"],
+    "5.1": ["1.1", "1.2", "1.3", "1.4", "1.5", "1.6", "2.1", "2.2", "2.3", "2.4", "3.1", "3.2", "3.3", "4.1", "4.2", "4.3"],
+    "5.2": ["1.1", "1.2", "1.3", "1.4", "1.5", "1.6", "2.1", "2.2", "2.3", "2.4", "3.1", "3.2", "3.3", "4.1", "4.2", "4.3"],
+    "5.3": ["1.1", "1.2", "1.3", "1.4", "1.5", "1.6", "2.1", "2.2", "2.3", "2.4", "3.1", "3.2", "3.3", "4.1", "4.2", "4.3"],
+    "5.4": ["5.3"]
+  },
+  "parallelizable": {
+    "week1": [
+      ["1.1", "1.3", "1.5", "1.6"],
+      ["1.2", "1.4"]
+    ],
+    "week2": [
+      ["2.1", "2.2", "2.3", "2.4", "3.1", "3.3", "4.1", "4.3"],
+      ["3.2", "4.2"]
+    ],
+    "week3": [
+      ["5.1", "5.2", "5.3", "5.5"],
+      ["5.4"]
+    ]
+  },
+  "successCriteria": {
+    "phase1": [
+      "Jest runs successfully",
+      "20+ tests written and passing",
+      "Error boundaries implemented",
+      "Sentry tracking errors",
+      "Build succeeds without ignores",
+      "Env validation working"
+    ],
+    "phase2": [
+      "All inputs validated",
+      "Rate limiting active",
+      "CSRF protection working",
+      "Single webhook handler"
+    ],
+    "phase3": [
+      "Critical any types fixed",
+      "Error handling standardized",
+      "Code cleaned up"
+    ],
+    "phase4": [
+      "Performance optimized",
+      "Monitoring active",
+      "Security headers set"
+    ],
+    "phase5": [
+      "Documentation updated",
+      "Vercel configured",
+      "Deployment ready"
+    ]
+  },
+  "keyFiles": {
+    "executionPlan": "HIVEMIND_EXECUTION_PLAN.md",
+    "taskBreakdown": "HIVEMIND_TASK_BREAKDOWN.md",
+    "productionChecklist": "PRODUCTION_LAUNCH_CHECKLIST.md",
+    "readinessAnalysis": "PRODUCTION_READINESS_ANALYSIS.md",
+    "quickStart": "HIVEMIND_QUICK_START.md",
+    "context": ".claude-flow/hivemind-context.md"
+  },
+  "environment": {
+    "convexDev": "enchanted-salamander-914",
+    "convexProd": "spotted-gerbil-236",
+    "vapiWorkflowId": "e13b1b19-3cd5-42ab-ba5d-7c46bf989a6e",
+    "vapiApiKey": "f90a42da-11c9-490e-a9ec-111c86ff45a7"
+  },
+  "codebaseStats": {
+    "typescriptFiles": 119,
+    "anyTypes": 246,
+    "filesWithAny": 71,
+    "testCoverage": 0,
+    "productionReadiness": 65
+  }
+}
+

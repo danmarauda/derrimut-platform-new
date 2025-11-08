@@ -12,6 +12,27 @@
 - Configured in Vercel environment variables
 - Used when deployed to `derrimut.aliaslabs.ai`
 
+## 🔒 Sentry Keys (Error Tracking)
+
+### Development & Production
+```env
+# Sentry Configuration (same for dev and prod)
+NEXT_PUBLIC_SENTRY_DSN=https://YOUR_SENTRY_DSN@sentry.io/PROJECT_ID
+
+# Optional: For uploading source maps (production only)
+SENTRY_AUTH_TOKEN=your_sentry_auth_token
+SENTRY_ORG=your_org_name
+SENTRY_PROJECT=your_project_name
+```
+
+**Why:** Sentry provides error tracking and performance monitoring. The DSN is safe to expose publicly.
+
+**Setup:**
+1. Create a Sentry project at https://sentry.io
+2. Copy the DSN from Project Settings → Client Keys
+3. Add to `.env.local` and Vercel environment variables
+4. (Optional) Generate auth token for source map uploads
+
 ## 🔑 Clerk Keys
 
 ### Development Keys (for localhost)

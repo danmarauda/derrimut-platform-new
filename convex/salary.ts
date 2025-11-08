@@ -281,36 +281,49 @@ export const getSalaryStats = query({
 
 // ===== HELPER FUNCTIONS =====
 
-// Calculate Sri Lankan tax (PAYE) - simplified version
-export function calculateSriLankanTax(monthlyIncome: number): number {
-  // Sri Lankan PAYE tax brackets (simplified - 2025 rates)
-  // This is a basic implementation - real tax calculation would be more complex
+// Calculate Australian tax (PAYG) - simplified version
+export function calculateAustralianTax(monthlyIncome: number): number {
+  // Australian PAYG tax brackets (2024-2025 rates)
+  // This is a basic implementation - real tax calculation would include Medicare levy and other factors
   
   const annualIncome = monthlyIncome * 12;
   let tax = 0;
   
-  if (annualIncome <= 1200000) { // Up to LKR 1.2M annually
+  // Australian tax brackets (2024-2025)
+  if (annualIncome <= 18200) { // Tax-free threshold
     tax = 0;
-  } else if (annualIncome <= 1700000) { // LKR 1.2M to 1.7M
-    tax = (annualIncome - 1200000) * 0.06; // 6%
-  } else if (annualIncome <= 2200000) { // LKR 1.7M to 2.2M
-    tax = 500000 * 0.06 + (annualIncome - 1700000) * 0.12; // 12%
-  } else if (annualIncome <= 2700000) { // LKR 2.2M to 2.7M
-    tax = 500000 * 0.06 + 500000 * 0.12 + (annualIncome - 2200000) * 0.18; // 18%
-  } else { // Above LKR 2.7M
-    tax = 500000 * 0.06 + 500000 * 0.12 + 500000 * 0.18 + (annualIncome - 2700000) * 0.24; // 24%
+  } else if (annualIncome <= 45000) { // 19% on income above $18,200
+    tax = (annualIncome - 18200) * 0.19;
+  } else if (annualIncome <= 120000) { // $5,092 + 32.5% on income above $45,000
+    tax = 5092 + (annualIncome - 45000) * 0.325;
+  } else if (annualIncome <= 180000) { // $29,467 + 37% on income above $120,000
+    tax = 29467 + (annualIncome - 120000) * 0.37;
+  } else { // Above $180,000 - $51,667 + 45% on income above $180,000
+    tax = 51667 + (annualIncome - 180000) * 0.45;
   }
   
   return Math.round(tax / 12); // Monthly tax
 }
 
-// Calculate EPF/ETF contributions
-export function calculateEmployeeContributions(baseSalary: number) {
+// Legacy function name for backward compatibility
+export function calculateSriLankanTax(monthlyIncome: number): number {
+  return calculateAustralianTax(monthlyIncome);
+}
+
+// Calculate Australian superannuation contributions
+export function calculateSuperannuationContributions(baseSalary: number) {
+  // Australian Superannuation Guarantee rate (2024-2025: 11.5%, increasing to 12% in 2025-2026)
+  const superRate = 0.115; // 11.5%
+  
   return {
-    epfEmployee: Math.round(baseSalary * 0.08), // 8% employee contribution
-    epfEmployer: Math.round(baseSalary * 0.12), // 12% employer contribution
-    etfEmployer: Math.round(baseSalary * 0.03), // 3% employer contribution (ETF)
+    superEmployee: Math.round(baseSalary * 0.05), // 5% employee contribution (voluntary)
+    superEmployer: Math.round(baseSalary * superRate), // 11.5% employer contribution (mandatory)
   };
+}
+
+// Legacy function name for backward compatibility
+export function calculateEmployeeContributions(baseSalary: number) {
+  return calculateSuperannuationContributions(baseSalary);
 }
 
 // Process payroll for a specific period
@@ -488,9 +501,17 @@ export const getEmployeePayrollRecords = query({
       .withIndex("by_clerk_id", (q) => q.eq("clerkId", identity.subject))
       .first();
 
-    // Allow employee to see their own records or admin to see any
-    if (!currentUser || (currentUser.role !== "admin" && currentUser.clerkId !== args.employeeClerkId)) {
+    // Allow employee to see their own records (even if not in database yet) or admin to see any
+    const isRequestingOwnRecords = identity.subject === args.employeeClerkId;
+    const isAdmin = currentUser?.role === "admin" || currentUser?.role === "superadmin";
+    
+    if (!isRequestingOwnRecords && !isAdmin) {
       throw new Error("Unauthorized: Can only view your own payroll records");
+    }
+
+    // If user doesn't exist in database and is requesting their own records, return empty array
+    if (!currentUser && isRequestingOwnRecords) {
+      return [];
     }
 
     const payrollRecords = await ctx.db

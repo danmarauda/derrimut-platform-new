@@ -23,13 +23,15 @@ const PaymentSlipsPage = () => {
     }
   }, [isLoaded, user, router]);
   
+  // Get user role to ensure user exists in database before querying payroll
+  const userRole = useQuery(api.users.getCurrentUserRole);
+
   // Get user's own payroll records
+  // Only query if user exists in database (checked via userRole)
   const userPayrollRecords = useQuery(
     api.salary.getEmployeePayrollRecords,
-    user?.id ? { employeeClerkId: user.id } : "skip"
+    user?.id && userRole ? { employeeClerkId: user.id } : "skip"
   );
-
-  const userRole = useQuery(api.users.getCurrentUserRole);
 
   // Prevent hydration mismatch
   useEffect(() => {

@@ -73,10 +73,14 @@ export default function TrainerDashboard() {
     trainerProfile ? { trainerId: trainerProfile._id, limit: 20 } : "skip"
   );
 
+  // Get user role to ensure user exists in database before querying payroll
+  const userRole = useQuery(api.users.getCurrentUserRole);
+
   // Get trainer payroll records
+  // Only query if user exists in database (checked via userRole)
   const trainerPayrollRecords = useQuery(
     api.salary.getEmployeePayrollRecords,
-    user?.id ? { employeeClerkId: user.id } : "skip"
+    user?.id && userRole ? { employeeClerkId: user.id } : "skip"
   );
 
   const updateBookingStatus = useMutation(api.bookings.updateBookingStatus);

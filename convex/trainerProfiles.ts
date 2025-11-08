@@ -266,9 +266,9 @@ export const updateTrainerRate = mutation({
       throw new Error("Trainer profile not found");
     }
 
-    // Validate rate (minimum 1000 LKR, maximum 50000 LKR)
-    if (args.hourlyRate < 1000 || args.hourlyRate > 50000) {
-      throw new Error("Hourly rate must be between LKR 1,000 and LKR 50,000");
+    // Validate rate (minimum AUD 20, maximum AUD 200 per hour)
+    if (args.hourlyRate < 20 || args.hourlyRate > 200) {
+      throw new Error("Hourly rate must be between AUD $20 and AUD $200");
     }
 
     await ctx.db.patch(trainer._id, {

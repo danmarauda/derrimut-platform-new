@@ -19,9 +19,13 @@ import {
   Menu,
   X,
   PanelLeftOpen,
-  PanelLeftClose
+  PanelLeftClose,
+  Building2,
+  Crown
 } from "lucide-react";
 import { useUser } from "@clerk/nextjs";
+import { useQuery } from "convex/react";
+import { api } from "../../convex/_generated/api";
 import { Button } from "@/components/ui/button";
 import { useState, useEffect } from "react";
 
@@ -44,6 +48,7 @@ export function AdminLayout({
 }: AdminLayoutProps) {
   const pathname = usePathname();
   const { user } = useUser();
+  const userRole = useQuery(api.users.getCurrentUserRole);
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [mounted, setMounted] = useState(false);
 
@@ -56,9 +61,11 @@ export function AdminLayout({
     setSidebarOpen(false);
   }, [pathname]);
 
-  const sidebarItems = [
+  // Base sidebar items for all admins
+  const baseSidebarItems = [
     { href: "/admin", icon: Home, label: "Dashboard", active: pathname === "/admin" },
     { href: "/admin/users", icon: Users, label: "Members", active: pathname === "/admin/users" },
+    { href: "/admin/organizations", icon: Building2, label: "Locations", active: pathname.startsWith("/admin/organizations") },
     { href: "/admin/trainer-applications", icon: UserCheck, label: "Trainers", active: pathname === "/admin/trainer-applications" },
     { href: "/admin/salary", icon: DollarSign, label: "Salary", active: pathname.startsWith("/admin/salary") },
     { href: "/admin/inventory", icon: Package, label: "Inventory", active: pathname.startsWith("/admin/inventory") },
@@ -68,9 +75,17 @@ export function AdminLayout({
     { href: "/admin/marketplace", icon: ShoppingBag, label: "Marketplace", active: pathname === "/admin/marketplace" },
   ];
 
+  // Add superadmin-specific items
+  const sidebarItems = userRole === "superadmin" 
+    ? [
+        { href: "/super-admin/dashboard", icon: Crown, label: "Super Admin", active: pathname === "/super-admin/dashboard" },
+        ...baseSidebarItems
+      ]
+    : baseSidebarItems;
+
   if (!mounted) {
     return (
-      <RoleGuard allowedRoles={["admin"]}>
+      <RoleGuard allowedRoles={["admin", "superadmin"]}>
         <div className="fixed inset-0 bg-background text-foreground z-50 flex flex-col">
           <div className="h-16 bg-card/95 border-b-2 border-border shadow-lg flex items-center px-6">
             <div className="animate-pulse flex items-center gap-3">
@@ -93,7 +108,7 @@ export function AdminLayout({
   }
 
   return (
-    <RoleGuard allowedRoles={["admin"]}>
+    <RoleGuard allowedRoles={["admin", "superadmin"]}>
       {/* Full Screen Admin Layout - Start below navbar */}
       <div className="fixed inset-0 top-16 bg-background text-foreground z-[60] flex flex-col">
         {/* Mobile Menu Button - Floating Left */}

@@ -1,0 +1,112 @@
+{
+  "project": {
+    "name": "Derrimut Platform",
+    "version": "0.1.0",
+    "type": "Next.js 15 Application",
+    "target": "Production Deployment on Vercel"
+  },
+  "codebase": {
+    "framework": "Next.js 15 (App Router)",
+    "react": "19.0.0",
+    "typescript": "^5",
+    "backend": "Convex",
+    "auth": "Clerk",
+    "payments": "Stripe",
+    "ai": {
+      "voice": "Vapi",
+      "generation": "Google Gemini"
+    },
+    "styling": "Tailwind CSS v4",
+    "components": "shadcn/ui"
+  },
+  "currentState": {
+    "productionReadiness": 65,
+    "testCoverage": 0,
+    "typeSafety": {
+      "anyTypes": 246,
+      "filesAffected": 71
+    },
+    "buildConfig": {
+      "ignoreBuildErrors": true,
+      "ignoreDuringBuilds": true,
+      "status": "NEEDS_FIX"
+    },
+    "errorHandling": {
+      "errorBoundaries": false,
+      "errorTracking": false,
+      "status": "NEEDS_IMPLEMENTATION"
+    },
+    "security": {
+      "rateLimiting": false,
+      "csrfProtection": false,
+      "inputValidation": "inconsistent",
+      "status": "NEEDS_IMPROVEMENT"
+    }
+  },
+  "integrations": {
+    "convex": {
+      "dev": "enchanted-salamander-914",
+      "prod": "spotted-gerbil-236",
+      "url": "https://enchanted-salamander-914.convex.cloud"
+    },
+    "vapi": {
+      "workflowId": "e13b1b19-3cd5-42ab-ba5d-7c46bf989a6e",
+      "voice": "Lily British (11labs)",
+      "voiceId": "pNInz6obpgDQGcFmaJgB",
+      "apiKey": "f90a42da-11c9-490e-a9ec-111c86ff45a7"
+    },
+    "stripe": {
+      "mode": "test",
+      "products": 4,
+      "webhookHandlers": 2,
+      "status": "NEEDS_CONSOLIDATION"
+    }
+  },
+  "tasks": {
+    "total": 20,
+    "phases": 5,
+    "critical": 6,
+    "high": 7,
+    "medium": 7
+  },
+  "executionPlan": {
+    "file": "HIVEMIND_EXECUTION_PLAN.md",
+    "status": "READY",
+    "agents": 6,
+    "estimatedHours": "86-110",
+    "timeline": "3 weeks (1-2 weeks parallel)"
+  },
+  "keyFiles": {
+    "executionPlan": "HIVEMIND_EXECUTION_PLAN.md",
+    "taskBreakdown": "HIVEMIND_TASK_BREAKDOWN.md",
+    "productionChecklist": "PRODUCTION_LAUNCH_CHECKLIST.md",
+    "readinessAnalysis": "PRODUCTION_READINESS_ANALYSIS.md",
+    "quickStart": "HIVEMIND_QUICK_START.md"
+  },
+  "priorities": {
+    "critical": [
+      "Testing infrastructure",
+      "Error boundaries",
+      "Error tracking (Sentry)",
+      "Build configuration fixes",
+      "Environment validation",
+      "Security headers"
+    ],
+    "high": [
+      "Input validation",
+      "Rate limiting",
+      "CSRF protection",
+      "Type safety",
+      "Webhook consolidation",
+      "Performance optimization",
+      "Monitoring setup"
+    ],
+    "medium": [
+      "Code cleanup",
+      "Documentation",
+      "Vercel configuration",
+      "Media optimization"
+    ]
+  }
+}
+

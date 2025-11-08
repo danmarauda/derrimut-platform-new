@@ -90,7 +90,7 @@ export default function SuperAdminPage() {
             <h2 className="text-lg font-semibold text-white mb-3">🔑 Super Admin Key</h2>
             <div className="bg-black/50 rounded-lg p-4 border border-yellow-500/30">
               <p className="text-yellow-400 font-mono text-sm break-all">
-                ELITE_GYM_SUPER_ADMIN_2025
+                DERRIMUT_SUPER_ADMIN_2025
               </p>
             </div>
             <p className="text-gray-400 text-sm mt-3">

@@ -2,8 +2,11 @@ import { httpRouter } from "convex/server";
 import { WebhookEvent } from "@clerk/nextjs/server";
 import { Webhook } from "svix";
 import { api } from "./_generated/api";
-import { httpAction } from "./_generated/server";
+import { httpAction, type ActionCtx } from "./_generated/server";
+import { Id } from "./_generated/dataModel";
 import { GoogleGenerativeAI } from "@google/generative-ai";
+import type { WorkoutPlan, DietPlan, WorkoutDay, WorkoutRoutine, DietMeal, FitnessPlanRequest } from "../src/types/fitness";
+import type { StripeSession, StripeSubscription, ShippingAddress, BookingSessionMetadata, MarketplaceSessionMetadata } from "../src/types/stripe";
 
 const http = httpRouter();
 
@@ -192,15 +195,15 @@ http.route({
 });
 
 // validate and fix workout plan to ensure it has proper numeric types
-function validateWorkoutPlan(plan: any) {
-  const validatedPlan = {
+function validateWorkoutPlan(plan: WorkoutPlan): WorkoutPlan {
+  const validatedPlan: WorkoutPlan = {
     schedule: plan.schedule,
-    exercises: plan.exercises.map((exercise: any) => ({
+    exercises: plan.exercises.map((exercise: WorkoutDay) => ({
       day: exercise.day,
-      routines: exercise.routines.map((routine: any) => ({
+      routines: exercise.routines.map((routine: WorkoutRoutine) => ({
         name: routine.name,
-        sets: typeof routine.sets === "number" ? routine.sets : parseInt(routine.sets) || 1,
-        reps: typeof routine.reps === "number" ? routine.reps : parseInt(routine.reps) || 10,
+        sets: typeof routine.sets === "number" ? routine.sets : parseInt(String(routine.sets)) || 1,
+        reps: typeof routine.reps === "number" ? routine.reps : parseInt(String(routine.reps)) || 10,
       })),
     })),
   };
@@ -208,11 +211,11 @@ function validateWorkoutPlan(plan: any) {
 }
 
 // validate diet plan to ensure it strictly follows schema
-function validateDietPlan(plan: any) {
+function validateDietPlan(plan: DietPlan): DietPlan {
   // only keep the fields we want
-  const validatedPlan = {
+  const validatedPlan: DietPlan = {
     dailyCalories: plan.dailyCalories,
-    meals: plan.meals.map((meal: any) => ({
+    meals: plan.meals.map((meal: DietMeal) => ({
       name: meal.name,
       foods: meal.foods,
     })),
@@ -225,7 +228,7 @@ http.route({
   method: "POST",
   handler: httpAction(async (ctx, request) => {
     try {
-      const payload = await request.json();
+      const payload = await request.json() as FitnessPlanRequest;
 
       const {
         user_id,
@@ -433,23 +436,41 @@ http.route({
         console.log("✅ Webhook verified successfully");
       }
       console.log("📩 Event type:", event.type);
-    } catch (err: any) {
-      console.log(`❌ Webhook signature verification failed.`, err.message);
+    } catch (err: unknown) {
+      const errorMessage = err instanceof Error ? err.message : String(err);
+      console.log(`❌ Webhook signature verification failed.`, errorMessage);
       // In development, if signature fails but we have a test event, try to parse it anyway
       if (body.includes('"type":"checkout.session.completed"') || body.includes('"type":"customer.subscription')) {
         try {
           event = JSON.parse(body);
           console.log("⚠️ Using fallback parsing for development");
         } catch (parseErr) {
-          return new Response(`Webhook Error: ${err.message}`, { status: 400 });
+          return new Response(`Webhook Error: ${errorMessage}`, { status: 400 });
         }
       } else {
-        return new Response(`Webhook Error: ${err.message}`, { status: 400 });
+        return new Response(`Webhook Error: ${errorMessage}`, { status: 400 });
       }
     }
 
     try {
       console.log("🔄 Processing event:", event.type);
+      
+      // Idempotency check: Check if this event has already been processed
+      const eventId = event.id || `stripe_${Date.now()}_${Math.random()}`;
+      const existingEvent = await ctx.runQuery(api.webhooks.getWebhookEvent, { eventId });
+      
+      if (existingEvent?.processed) {
+        console.log("⚠️ Event already processed:", eventId);
+        return new Response("Event already processed", { status: 200 });
+      }
+      
+      // Mark event as processing
+      await ctx.runMutation(api.webhooks.createWebhookEvent, {
+        eventId,
+        eventType: event.type,
+        processed: false,
+      });
+      
       switch (event.type) {
         case "customer.subscription.created":
           console.log("💳 Processing subscription creation event");
@@ -477,7 +498,7 @@ http.route({
               break;
             }
           }
-          
+
           if (!createdClerkId) {
             console.log("❌ No clerkId found in checkout session metadata for customer:", createdCustomerId);
             console.log("📋 Available sessions:", createdCheckoutSessions.data.map((s: any) => ({ id: s.id, metadata: s.metadata })));
@@ -579,9 +600,15 @@ http.route({
           console.log("📊 Subscription status:", updatedSubscription.status);
           console.log("📅 Period start:", updatedSubscription.current_period_start);
           console.log("📅 Period end:", updatedSubscription.current_period_end);
-          
+
           // Only include period dates if they exist and are valid
-          const updateData: any = {
+          const updateData: {
+            stripeSubscriptionId: string;
+            status: "active" | "cancelled";
+            cancelAtPeriodEnd: boolean;
+            currentPeriodStart?: number;
+            currentPeriodEnd?: number;
+          } = {
             stripeSubscriptionId: updatedSubscription.id,
             status: updatedSubscription.status === "active" ? "active" : "cancelled",
             cancelAtPeriodEnd: updatedSubscription.cancel_at_period_end || false,
@@ -663,17 +690,38 @@ http.route({
         default:
           console.log(`Unhandled event type ${event.type}`);
       }
+      
+      // Mark event as successfully processed
+      await ctx.runMutation(api.webhooks.markWebhookEventProcessed, {
+        eventId,
+        processed: true,
+      });
 
       return new Response("Success", { status: 200 });
     } catch (error) {
       console.error("Error processing webhook:", error);
+      
+      // Mark event as failed
+      const eventId = event.id || `stripe_${Date.now()}_${Math.random()}`;
+      try {
+        await ctx.runMutation(api.webhooks.markWebhookEventFailed, {
+          eventId,
+          error: error instanceof Error ? error.message : String(error),
+        });
+      } catch (markError) {
+        console.error("Error marking webhook as failed:", markError);
+      }
+      
       return new Response("Error processing webhook", { status: 500 });
     }
   }),
 });
 
 // Helper function to handle marketplace orders
-async function handleMarketplaceOrder(ctx: any, session: any) {
+async function handleMarketplaceOrder(
+  ctx: ActionCtx,
+  session: StripeSession
+) {
   try {
     console.log("🔄 Starting marketplace order processing...");
     console.log("📋 Session payment status:", session.payment_status);
@@ -684,37 +732,52 @@ async function handleMarketplaceOrder(ctx: any, session: any) {
       return;
     }
 
-    const { clerkId, shippingAddress } = session.metadata;
+    const metadata = session.metadata as MarketplaceSessionMetadata | null;
 
-    if (!clerkId) {
+    if (!metadata?.clerkId) {
       console.error("❌ No clerkId in marketplace session metadata");
       console.error("📋 Available metadata keys:", Object.keys(session.metadata || {}));
       return;
     }
 
-    if (!shippingAddress) {
+    if (!metadata.shippingAddress) {
       console.error("❌ No shipping address in marketplace session metadata");
       console.error("📋 Available metadata keys:", Object.keys(session.metadata || {}));
       return;
     }
 
-    let parsedShippingAddress;
+    let parsedShippingAddress: any;
     try {
-      parsedShippingAddress = JSON.parse(shippingAddress);
+      parsedShippingAddress = JSON.parse(metadata.shippingAddress);
       console.log("✅ Shipping address parsed:", parsedShippingAddress);
     } catch (error) {
       console.error("❌ Error parsing shipping address:", error);
-      console.error("❌ Raw shipping address:", shippingAddress);
+      console.error("❌ Raw shipping address:", metadata.shippingAddress);
       return;
     }
+
+    const { clerkId } = metadata;
 
     console.log("🔄 Creating order for user:", clerkId);
     
     try {
+      // Map ShippingAddress to Convex schema format
+      // Handle both old format (street, state, postcode) and new format (name, phone, addressLine1, etc.)
+      const shippingAddressForConvex = {
+        name: parsedShippingAddress.name || parsedShippingAddress.street?.split(',')[0] || "Customer",
+        phone: parsedShippingAddress.phone || "",
+        addressLine1: parsedShippingAddress.addressLine1 || parsedShippingAddress.street || "",
+        addressLine2: parsedShippingAddress.addressLine2 || undefined,
+        city: parsedShippingAddress.city || "",
+        postalCode: parsedShippingAddress.postalCode || parsedShippingAddress.postcode || "",
+        country: parsedShippingAddress.country || "",
+        email: parsedShippingAddress.email || undefined,
+      };
+
       // Create order from cart
       const orderResult = await ctx.runMutation(api.orders.createOrderFromCart, {
         clerkId,
-        shippingAddress: parsedShippingAddress,
+        shippingAddress: shippingAddressForConvex,
         stripeSessionId: session.id,
       });
 
@@ -726,7 +789,7 @@ async function handleMarketplaceOrder(ctx: any, session: any) {
       const paymentUpdate = await ctx.runMutation(api.orders.updatePaymentStatus, {
         stripeSessionId: session.id,
         paymentStatus: "paid",
-        stripePaymentIntentId: session.payment_intent,
+        stripePaymentIntentId: typeof session.payment_intent === 'string' ? session.payment_intent : undefined,
       });
 
       console.log("✅ Payment status updated successfully:", paymentUpdate);
@@ -743,12 +806,22 @@ async function handleMarketplaceOrder(ctx: any, session: any) {
   }
 }
 
-// Helper function to handle booking payments  
-async function handleBookingPayment(ctx: any, session: any) {
+// Helper function to handle booking payments
+async function handleBookingPayment(
+  ctx: ActionCtx,
+  session: StripeSession
+) {
   try {
     console.log("🔄 Starting booking session processing...");
     console.log("📋 Session metadata:", JSON.stringify(session.metadata, null, 2));
-    
+
+    const metadata = session.metadata as BookingSessionMetadata | null;
+
+    if (!metadata) {
+      console.error("❌ No metadata found in session");
+      return;
+    }
+
     const {
       userId,
       trainerId,
@@ -757,7 +830,7 @@ async function handleBookingPayment(ctx: any, session: any) {
       startTime,
       duration,
       notes,
-    } = session.metadata;
+    } = metadata;
 
     // Validate required fields
     if (!userId || !trainerId || !sessionType || !sessionDate || !startTime || !duration) {
@@ -792,12 +865,31 @@ async function handleBookingPayment(ctx: any, session: any) {
     console.log("💰 Total amount:", totalAmount, "AUD");
     console.log("🏃‍♂️ Creating paid booking with data:");
 
+    // Validate and cast sessionType
+    const validSessionTypes = [
+      "personal_training",
+      "zumba",
+      "yoga",
+      "crossfit",
+      "cardio",
+      "strength",
+      "nutrition_consultation",
+      "group_class",
+    ] as const;
+    
+    type SessionType = typeof validSessionTypes[number];
+    
+    if (!validSessionTypes.includes(sessionType as SessionType)) {
+      console.error("❌ Invalid session type:", sessionType);
+      return;
+    }
+
     // Create the booking with paid status
     const bookingId = await ctx.runMutation(api.bookings.createPaidBooking, {
       userId: user._id,
-      trainerId: trainerId,
+      trainerId: trainerId as Id<"trainerProfiles">,
       userClerkId: userId,
-      sessionType: sessionType,
+      sessionType: sessionType as SessionType,
       sessionDate,
       startTime,
       duration: parseInt(duration),

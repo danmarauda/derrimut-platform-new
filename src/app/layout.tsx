@@ -7,6 +7,11 @@ import { ThemeProvider } from "@/providers/ThemeProvider";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import ChatbaseWidget from "@/components/ChatbaseWidget";
+import { ErrorBoundary } from "@/components/ErrorBoundary";
+
+// Task 1.6: Validate environment variables on app startup
+// The env validation happens automatically on module import
+import "@/lib/env";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -101,22 +106,24 @@ export default function RootLayout({
           suppressHydrationWarning={true}
         >
           <ThemeProvider>
-            <Navbar />
+            <ErrorBoundary>
+              <Navbar />
 
-            {/* DYNAMIC BACKGROUND WITH THEME SUPPORT */}
-            <div className="fixed inset-0 -z-10" suppressHydrationWarning>
-              {/* Base gradient background */}
-              <div className="absolute inset-0 bg-gradient-to-br from-background via-muted/20 to-primary/5" suppressHydrationWarning></div>
-              {/* Subtle grid pattern */}
-              <div className="absolute inset-0 bg-[linear-gradient(rgba(var(--foreground-rgb,0,0,0),0.02)_1px,transparent_1px),linear-gradient(90deg,rgba(var(--foreground-rgb,0,0,0),0.02)_1px,transparent_1px)] bg-[size:50px_50px]" suppressHydrationWarning></div>
-              {/* Radial gradient overlay for depth */}
-              <div className="absolute inset-0 bg-[radial-gradient(circle_at_25%_25%,rgba(var(--primary-rgb,220,38,38),0.05)_0%,transparent_50%)]" suppressHydrationWarning></div>
-              <div className="absolute inset-0 bg-[radial-gradient(circle_at_75%_75%,rgba(var(--secondary-rgb,234,88,12),0.05)_0%,transparent_50%)]" suppressHydrationWarning></div>
-            </div>
+              {/* DYNAMIC BACKGROUND WITH THEME SUPPORT */}
+              <div className="fixed inset-0 -z-10" suppressHydrationWarning>
+                {/* Base gradient background */}
+                <div className="absolute inset-0 bg-gradient-to-br from-background via-muted/20 to-primary/5" suppressHydrationWarning></div>
+                {/* Subtle grid pattern */}
+                <div className="absolute inset-0 bg-[linear-gradient(rgba(var(--foreground-rgb,0,0,0),0.02)_1px,transparent_1px),linear-gradient(90deg,rgba(var(--foreground-rgb,0,0,0),0.02)_1px,transparent_1px)] bg-[size:50px_50px]" suppressHydrationWarning></div>
+                {/* Radial gradient overlay for depth */}
+                <div className="absolute inset-0 bg-[radial-gradient(circle_at_25%_25%,rgba(var(--primary-rgb,220,38,38),0.05)_0%,transparent_50%)]" suppressHydrationWarning></div>
+                <div className="absolute inset-0 bg-[radial-gradient(circle_at_75%_75%,rgba(var(--secondary-rgb,234,88,12),0.05)_0%,transparent_50%)]" suppressHydrationWarning></div>
+              </div>
 
-            <main className="flex-1 relative z-10">{children}</main>
-            <Footer />
-            <ChatbaseWidget />
+              <main className="flex-1 relative z-10">{children}</main>
+              <Footer />
+              <ChatbaseWidget />
+            </ErrorBoundary>
           </ThemeProvider>
           <BrowserExtensionHandler />
         </body>

@@ -7,7 +7,7 @@ export default defineSchema({
     email: v.string(),
     image: v.optional(v.string()),
     clerkId: v.string(),
-    role: v.optional(v.union(v.literal("admin"), v.literal("trainer"), v.literal("user"))),
+    role: v.optional(v.union(v.literal("superadmin"), v.literal("admin"), v.literal("trainer"), v.literal("user"))),
     accountType: v.optional(v.union(v.literal("personal"), v.literal("organization"))), // personal = member, organization = location admin
     organizationId: v.optional(v.id("organizations")), // If part of an organization
     organizationRole: v.optional(v.union(v.literal("org_admin"), v.literal("org_member"))), // Role within organization
@@ -903,4 +903,17 @@ export default defineSchema({
     .index("by_created_date", ["createdAt"])
     .index("by_maintenance_date", ["nextMaintenanceDate"])
     .index("by_purchase_date", ["purchaseDate"]),
+
+  // Webhook event tracking for idempotency
+  webhookEvents: defineTable({
+    eventId: v.string(), // Stripe event ID (evt_xxx) or Clerk event ID
+    eventType: v.string(), // Event type (e.g., "customer.subscription.created")
+    processed: v.boolean(), // Whether event has been processed
+    processedAt: v.optional(v.number()), // Timestamp when processed
+    error: v.optional(v.string()), // Error message if processing failed
+    createdAt: v.number(),
+  })
+    .index("by_event_id", ["eventId"])
+    .index("by_processed", ["processed"])
+    .index("by_event_type", ["eventType"]),
 });

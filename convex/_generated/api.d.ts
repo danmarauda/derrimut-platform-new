@@ -24,6 +24,7 @@ import type * as marketplace from "../marketplace.js";
 import type * as memberships from "../memberships.js";
 import type * as migrations from "../migrations.js";
 import type * as newsletter from "../newsletter.js";
+import type * as optimizedQueries from "../optimizedQueries.js";
 import type * as orders from "../orders.js";
 import type * as organizations from "../organizations.js";
 import type * as plans from "../plans.js";
@@ -56,6 +57,7 @@ declare const fullApi: ApiFromModules<{
   memberships: typeof memberships;
   migrations: typeof migrations;
   newsletter: typeof newsletter;
+  optimizedQueries: typeof optimizedQueries;
   orders: typeof orders;
   organizations: typeof organizations;
   plans: typeof plans;

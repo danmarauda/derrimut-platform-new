@@ -1,0 +1,514 @@
+{
+  "project": "Derrimut Platform Production Readiness",
+  "version": "1.0.0",
+  "created": "2025-01-09",
+  "timeline": "3 weeks",
+  "agents": [
+    {
+      "id": "agent-1",
+      "name": "Testing Specialist",
+      "focus": "Testing Infrastructure & Test Writing",
+      "tasks": ["1.1", "1.2"],
+      "estimatedHours": "12-16"
+    },
+    {
+      "id": "agent-2",
+      "name": "Error Handling & Monitoring",
+      "focus": "Error Boundaries, Sentry, Logging, Monitoring",
+      "tasks": ["1.3", "1.4", "3.2", "4.2"],
+      "estimatedHours": "18-22"
+    },
+    {
+      "id": "agent-3",
+      "name": "Type Safety & Code Quality",
+      "focus": "TypeScript Fixes, Code Cleanup",
+      "tasks": ["1.5", "3.1", "3.3"],
+      "estimatedHours": "16-21"
+    },
+    {
+      "id": "agent-4",
+      "name": "Security Specialist",
+      "focus": "Validation, Rate Limiting, CSRF, Webhooks, Headers",
+      "tasks": ["1.6", "2.1", "2.2", "2.3", "2.4", "4.3"],
+      "estimatedHours": "24-30"
+    },
+    {
+      "id": "agent-5",
+      "name": "Performance Engineer",
+      "focus": "Performance Optimization",
+      "tasks": ["4.1"],
+      "estimatedHours": "6-8"
+    },
+    {
+      "id": "agent-6",
+      "name": "Documentation & Deployment",
+      "focus": "Documentation, Deployment Prep",
+      "tasks": ["5.1", "5.2"],
+      "estimatedHours": "10-13"
+    }
+  ],
+  "phases": [
+    {
+      "id": "phase-1",
+      "name": "Critical Fixes",
+      "priority": "CRITICAL",
+      "week": 1,
+      "tasks": ["1.1", "1.2", "1.3", "1.4", "1.5", "1.6"]
+    },
+    {
+      "id": "phase-2",
+      "name": "Security & Validation",
+      "priority": "HIGH",
+      "week": 2,
+      "tasks": ["2.1", "2.2", "2.3", "2.4"]
+    },
+    {
+      "id": "phase-3",
+      "name": "Type Safety & Code Quality",
+      "priority": "HIGH",
+      "week": 2,
+      "tasks": ["3.1", "3.2", "3.3"]
+    },
+    {
+      "id": "phase-4",
+      "name": "Performance & Monitoring",
+      "priority": "MEDIUM",
+      "week": 2,
+      "tasks": ["4.1", "4.2", "4.3"]
+    },
+    {
+      "id": "phase-5",
+      "name": "Documentation & Deployment",
+      "priority": "MEDIUM",
+      "week": 3,
+      "tasks": ["5.1", "5.2"]
+    }
+  ],
+  "tasks": [
+    {
+      "id": "1.1",
+      "title": "Testing Infrastructure Setup",
+      "agent": "agent-1",
+      "phase": "phase-1",
+      "priority": "CRITICAL",
+      "dependencies": [],
+      "estimatedHours": 4,
+      "commands": [
+        "npm install --save-dev @testing-library/react @testing-library/jest-dom @testing-library/user-event jest jest-environment-jsdom @types/jest ts-jest"
+      ],
+      "filesToCreate": [
+        "jest.config.js",
+        "jest.setup.js",
+        "src/__tests__/utils.tsx"
+      ],
+      "filesToModify": [
+        "package.json"
+      ],
+      "acceptanceCriteria": [
+        "Jest runs successfully",
+        "Test setup file created",
+        "Package.json scripts added",
+        "Test utilities created",
+        "Can run npm test without errors"
+      ]
+    },
+    {
+      "id": "1.2",
+      "title": "Write Critical Path Tests",
+      "agent": "agent-1",
+      "phase": "phase-1",
+      "priority": "CRITICAL",
+      "dependencies": ["1.1"],
+      "estimatedHours": 8,
+      "filesToCreate": [
+        "src/__tests__/auth.test.tsx",
+        "src/__tests__/payments.test.tsx",
+        "src/__tests__/api.test.ts",
+        "convex/__tests__/memberships.test.ts",
+        "src/components/__tests__/RoleGuard.test.tsx"
+      ],
+      "acceptanceCriteria": [
+        "20+ tests written",
+        "Critical paths covered",
+        "Test coverage > 30%",
+        "All tests pass"
+      ]
+    },
+    {
+      "id": "1.3",
+      "title": "Error Boundaries Implementation",
+      "agent": "agent-2",
+      "phase": "phase-1",
+      "priority": "CRITICAL",
+      "dependencies": [],
+      "estimatedHours": 3,
+      "commands": [
+        "npm install react-error-boundary"
+      ],
+      "filesToCreate": [
+        "src/components/ErrorBoundary.tsx",
+        "src/app/error.tsx",
+        "src/app/global-error.tsx"
+      ],
+      "filesToModify": [
+        "src/app/layout.tsx"
+      ],
+      "acceptanceCriteria": [
+        "ErrorBoundary component created",
+        "App wrapped with ErrorBoundary",
+        "Error pages created",
+        "Errors caught and displayed gracefully"
+      ]
+    },
+    {
+      "id": "1.4",
+      "title": "Error Tracking Setup (Sentry)",
+      "agent": "agent-2",
+      "phase": "phase-1",
+      "priority": "CRITICAL",
+      "dependencies": ["1.3"],
+      "estimatedHours": 4,
+      "commands": [
+        "npm install @sentry/nextjs",
+        "npx @sentry/wizard@latest -i nextjs"
+      ],
+      "filesToCreate": [
+        "sentry.client.config.ts",
+        "sentry.server.config.ts",
+        "sentry.edge.config.ts",
+        "instrumentation.ts"
+      ],
+      "filesToModify": [
+        "next.config.ts",
+        "src/components/ErrorBoundary.tsx",
+        "ENVIRONMENT_KEYS_GUIDE.md"
+      ],
+      "acceptanceCriteria": [
+        "Sentry installed and configured",
+        "Errors logged to Sentry",
+        "Environment variables documented",
+        "Test error tracking works"
+      ]
+    },
+    {
+      "id": "1.5",
+      "title": "Fix Build Configuration",
+      "agent": "agent-3",
+      "phase": "phase-1",
+      "priority": "CRITICAL",
+      "dependencies": [],
+      "estimatedHours": 2,
+      "filesToModify": [
+        "next.config.ts"
+      ],
+      "acceptanceCriteria": [
+        "Build errors no longer ignored",
+        "TypeScript compiles without errors",
+        "ESLint passes without errors",
+        "Build succeeds"
+      ]
+    },
+    {
+      "id": "1.6",
+      "title": "Environment Variable Validation",
+      "agent": "agent-4",
+      "phase": "phase-1",
+      "priority": "CRITICAL",
+      "dependencies": [],
+      "estimatedHours": 3,
+      "commands": [
+        "npm install zod"
+      ],
+      "filesToCreate": [
+        "src/lib/env.ts"
+      ],
+      "filesToModify": [
+        "src/app/layout.tsx",
+        "ENVIRONMENT_KEYS_GUIDE.md"
+      ],
+      "acceptanceCriteria": [
+        "Zod installed",
+        "Env validation schema created",
+        "App validates env vars on startup",
+        "Clear error messages if vars missing"
+      ]
+    },
+    {
+      "id": "2.1",
+      "title": "Input Validation (Zod)",
+      "agent": "agent-4",
+      "phase": "phase-2",
+      "priority": "HIGH",
+      "dependencies": ["1.6"],
+      "estimatedHours": 8,
+      "filesToCreate": [
+        "src/lib/validations/membership.ts",
+        "src/lib/validations/booking.ts",
+        "src/lib/validations/marketplace.ts",
+        "src/lib/validations/user.ts",
+        "src/lib/validations/utils.ts"
+      ],
+      "filesToModify": [
+        "src/app/api/create-checkout-session/route.ts",
+        "src/app/api/create-marketplace-checkout/route.ts",
+        "src/app/api/create-session-checkout/route.ts",
+        "convex/http.ts"
+      ],
+      "acceptanceCriteria": [
+        "Validation schemas created",
+        "All API routes validate inputs",
+        "Clear error messages for invalid inputs",
+        "Tests for validation"
+      ]
+    },
+    {
+      "id": "2.2",
+      "title": "Rate Limiting Implementation",
+      "agent": "agent-4",
+      "phase": "phase-2",
+      "priority": "HIGH",
+      "dependencies": [],
+      "estimatedHours": 4,
+      "commands": [
+        "npm install express-rate-limit"
+      ],
+      "filesToCreate": [
+        "src/lib/rate-limit.ts"
+      ],
+      "filesToModify": [
+        "src/app/api/**/*.ts"
+      ],
+      "acceptanceCriteria": [
+        "Rate limiting installed",
+        "Middleware created",
+        "Applied to all API routes",
+        "Headers include rate limit info"
+      ]
+    },
+    {
+      "id": "2.3",
+      "title": "CSRF Protection",
+      "agent": "agent-4",
+      "phase": "phase-2",
+      "priority": "HIGH",
+      "dependencies": [],
+      "estimatedHours": 3,
+      "commands": [
+        "npm install csrf"
+      ],
+      "filesToCreate": [
+        "src/lib/csrf.ts"
+      ],
+      "filesToModify": [
+        "Form components",
+        "API routes"
+      ],
+      "acceptanceCriteria": [
+        "CSRF protection installed",
+        "Middleware created",
+        "Forms include CSRF tokens",
+        "API routes verify tokens"
+      ]
+    },
+    {
+      "id": "2.4",
+      "title": "Consolidate Webhook Handlers",
+      "agent": "agent-4",
+      "phase": "phase-2",
+      "priority": "HIGH",
+      "dependencies": [],
+      "estimatedHours": 4,
+      "filesToModify": [
+        "convex/http.ts",
+        "src/app/api/stripe-webhook/route.ts",
+        "STRIPE_CONVEX_RULES.md"
+      ],
+      "acceptanceCriteria": [
+        "Single webhook handler",
+        "Idempotency implemented",
+        "Stripe webhook URL updated",
+        "Documentation updated"
+      ]
+    },
+    {
+      "id": "3.1",
+      "title": "Fix Critical `any` Types",
+      "agent": "agent-3",
+      "phase": "phase-3",
+      "priority": "HIGH",
+      "dependencies": ["1.5"],
+      "estimatedHours": 10,
+      "filesToCreate": [
+        "src/types/index.ts"
+      ],
+      "filesToModify": [
+        "convex/http.ts",
+        "convex/memberships.ts",
+        "src/app/admin/salary/structures/page.tsx",
+        "src/app/admin/recipes/page.tsx"
+      ],
+      "acceptanceCriteria": [
+        "Critical any types fixed",
+        "Type errors reduced by 50%+",
+        "Shared types created",
+        "TypeScript compiles without errors"
+      ]
+    },
+    {
+      "id": "3.2",
+      "title": "Standardize Error Handling",
+      "agent": "agent-2",
+      "phase": "phase-3",
+      "priority": "HIGH",
+      "dependencies": ["1.4"],
+      "estimatedHours": 6,
+      "filesToCreate": [
+        "src/lib/errors.ts",
+        "src/lib/error-handler.ts"
+      ],
+      "filesToModify": [
+        "src/app/api/**/*.ts",
+        "convex/**/*.ts"
+      ],
+      "acceptanceCriteria": [
+        "Error types created",
+        "Error handler utility created",
+        "All API routes use standardized handling",
+        "Consistent error responses"
+      ]
+    },
+    {
+      "id": "3.3",
+      "title": "Code Cleanup",
+      "agent": "agent-3",
+      "phase": "phase-3",
+      "priority": "MEDIUM",
+      "dependencies": [],
+      "estimatedHours": 4,
+      "acceptanceCriteria": [
+        "All TODOs addressed",
+        "Dead code removed",
+        "Code duplication reduced",
+        "Large files refactored"
+      ]
+    },
+    {
+      "id": "4.1",
+      "title": "Performance Optimization",
+      "agent": "agent-5",
+      "phase": "phase-4",
+      "priority": "MEDIUM",
+      "dependencies": [],
+      "estimatedHours": 6,
+      "acceptanceCriteria": [
+        "Code splitting implemented",
+        "Database queries optimized",
+        "API caching added",
+        "Images optimized"
+      ]
+    },
+    {
+      "id": "4.2",
+      "title": "Monitoring Setup",
+      "agent": "agent-2",
+      "phase": "phase-4",
+      "priority": "MEDIUM",
+      "dependencies": ["1.4"],
+      "estimatedHours": 4,
+      "commands": [
+        "npm install winston"
+      ],
+      "filesToCreate": [
+        "src/lib/logger.ts",
+        "src/app/api/health/route.ts"
+      ],
+      "acceptanceCriteria": [
+        "APM configured",
+        "Structured logging implemented",
+        "Health check endpoint created",
+        "Performance metrics tracked"
+      ]
+    },
+    {
+      "id": "4.3",
+      "title": "Security Headers",
+      "agent": "agent-4",
+      "phase": "phase-4",
+      "priority": "MEDIUM",
+      "dependencies": [],
+      "estimatedHours": 2,
+      "filesToModify": [
+        "next.config.ts"
+      ],
+      "acceptanceCriteria": [
+        "Security headers configured",
+        "Headers present in responses",
+        "CSP policies tested"
+      ]
+    },
+    {
+      "id": "5.1",
+      "title": "Update Documentation",
+      "agent": "agent-6",
+      "phase": "phase-5",
+      "priority": "MEDIUM",
+      "dependencies": ["1.1", "1.2", "1.3", "1.4", "1.5", "1.6", "2.1", "2.2", "2.3", "2.4", "3.1", "3.2", "3.3", "4.1", "4.2", "4.3"],
+      "estimatedHours": 6,
+      "filesToCreate": [
+        "docs/API.md",
+        "docs/RUNBOOKS.md",
+        "docs/ARCHITECTURE.md"
+      ],
+      "filesToModify": [
+        "README.md"
+      ],
+      "acceptanceCriteria": [
+        "README updated",
+        "API documentation created",
+        "Runbooks created",
+        "Architecture documented"
+      ]
+    },
+    {
+      "id": "5.2",
+      "title": "Deployment Preparation",
+      "agent": "agent-6",
+      "phase": "phase-5",
+      "priority": "MEDIUM",
+      "dependencies": ["1.1", "1.2", "1.3", "1.4", "1.5", "1.6", "2.1", "2.2", "2.3", "2.4", "3.1", "3.2", "3.3", "4.1", "4.2", "4.3"],
+      "estimatedHours": 4,
+      "filesToCreate": [
+        "DEPLOYMENT_CHECKLIST.md",
+        "ROLLBACK_PLAN.md",
+        "BACKUP_STRATEGY.md"
+      ],
+      "acceptanceCriteria": [
+        "Deployment checklist created",
+        "Rollback plan documented",
+        "Backup strategy documented",
+        "Environment variables verified"
+      ]
+    }
+  ],
+  "successCriteria": {
+    "critical": [
+      "All tests pass",
+      "No build errors",
+      "Error tracking working",
+      "Security fixes implemented"
+    ],
+    "high": [
+      "Monitoring active",
+      "Performance optimized",
+      "Type safety improved"
+    ],
+    "medium": [
+      "Documentation complete",
+      "Deployment ready"
+    ]
+  },
+  "totalEstimatedHours": "86-110",
+  "parallelExecutionPossible": true,
+  "estimatedTimeline": "3 weeks (can be reduced to 1-2 weeks with parallel execution)"
+}
+

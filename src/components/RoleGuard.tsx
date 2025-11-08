@@ -5,7 +5,7 @@ import { useQuery } from "convex/react";
 import { api } from "../../convex/_generated/api";
 
 interface RoleGuardProps {
-  allowedRoles: ("admin" | "trainer" | "user")[];
+  allowedRoles: ("superadmin" | "admin" | "trainer" | "user")[];
   children: React.ReactNode;
   fallback?: React.ReactNode;
 }
@@ -25,7 +25,7 @@ export function RoleGuard({ allowedRoles, children, fallback }: RoleGuardProps) 
     );
   }
 
-  if (!allowedRoles.includes(userRole as "admin" | "trainer" | "user")) {
+  if (!allowedRoles.includes(userRole as "superadmin" | "admin" | "trainer" | "user")) {
     return fallback || (
       <div className="flex items-center justify-center min-h-[400px]">
         <div className="text-center max-w-md mx-auto p-8">
