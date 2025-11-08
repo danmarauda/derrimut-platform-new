@@ -47,6 +47,7 @@ const nextConfig: NextConfig = {
               "font-src 'self' data: https://fonts.gstatic.com",
               "connect-src 'self' https://*.convex.cloud https://clerk.com https://*.clerk.accounts.dev https://api.stripe.com https://api.vapi.ai https://generativelanguage.googleapis.com https://*.sentry.io wss://*.convex.cloud",
               "frame-src 'self' https://js.stripe.com https://hooks.stripe.com https://clerk.com https://*.clerk.accounts.dev",
+              "worker-src 'self' blob:",
               "object-src 'none'",
               "base-uri 'self'",
               "form-action 'self'",
