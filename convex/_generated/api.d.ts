@@ -25,6 +25,7 @@ import type * as memberships from "../memberships.js";
 import type * as migrations from "../migrations.js";
 import type * as newsletter from "../newsletter.js";
 import type * as orders from "../orders.js";
+import type * as organizations from "../organizations.js";
 import type * as plans from "../plans.js";
 import type * as recipes from "../recipes.js";
 import type * as reviews from "../reviews.js";
@@ -56,6 +57,7 @@ declare const fullApi: ApiFromModules<{
   migrations: typeof migrations;
   newsletter: typeof newsletter;
   orders: typeof orders;
+  organizations: typeof organizations;
   plans: typeof plans;
   recipes: typeof recipes;
   reviews: typeof reviews;

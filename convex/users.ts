@@ -29,6 +29,7 @@ export const syncUser = mutation({
     return await ctx.db.insert("users", {
       ...args,
       role: "user", // Default role for new users
+      accountType: "personal", // Default to personal account
       createdAt: Date.now(),
       updatedAt: Date.now(),
     });

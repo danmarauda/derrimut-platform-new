@@ -47,6 +47,7 @@ http.route({
 
     const eventType = evt.type;
 
+    // Handle user events
     if (eventType === "user.created") {
       const { id, first_name, last_name, image_url, email_addresses } = evt.data;
 
@@ -83,6 +84,106 @@ http.route({
       } catch (error) {
         console.log("Error updating user:", error);
         return new Response("Error updating user", { status: 500 });
+      }
+    }
+
+    // Handle organization events
+    if (eventType === "organization.created") {
+      const { id, name, slug, created_by } = evt.data;
+      
+      // Validate required fields
+      if (!created_by) {
+        console.log("Error: organization.created event missing created_by field");
+        return new Response("Missing created_by field", { status: 400 });
+      }
+      
+      try {
+        // Get admin user
+        const adminClerkId = created_by;
+        
+        // Create organization in Convex
+        // Note: Full organization details should be set via admin interface
+        // This creates a basic record that can be updated later
+        await ctx.runMutation(api.organizations.createOrUpdateOrganization, {
+          clerkOrganizationId: id,
+          name: name || "New Location",
+          slug: slug || id.toLowerCase().replace(/_/g, "-"),
+          adminClerkId: adminClerkId,
+          address: {
+            street: "",
+            city: "",
+            state: "",
+            postcode: "",
+            country: "Australia",
+          },
+          type: "location",
+          is24Hours: true,
+          features: [],
+        });
+      } catch (error) {
+        console.log("Error creating organization:", error);
+        return new Response("Error creating organization", { status: 500 });
+      }
+    }
+
+    if (eventType === "organization.updated") {
+      const { id, name, slug } = evt.data;
+      
+      try {
+        const organization = await ctx.runQuery(api.organizations.getOrganizationByClerkId, {
+          clerkOrganizationId: id,
+        });
+        
+        if (organization) {
+          await ctx.runMutation(api.organizations.updateOrganization, {
+            organizationId: organization._id,
+            name: name,
+          });
+        }
+      } catch (error) {
+        console.log("Error updating organization:", error);
+        return new Response("Error updating organization", { status: 500 });
+      }
+    }
+
+    if (eventType === "organizationMembership.created") {
+      const { organization, public_user_data } = evt.data;
+      
+      try {
+        const org = await ctx.runQuery(api.organizations.getOrganizationByClerkId, {
+          clerkOrganizationId: organization.id,
+        });
+        
+        if (org && public_user_data?.user_id) {
+          await ctx.runMutation(api.organizations.addMemberToOrganization, {
+            organizationId: org._id,
+            userClerkId: public_user_data.user_id,
+            role: "org_member",
+          });
+        }
+      } catch (error) {
+        console.log("Error adding member to organization:", error);
+        // Don't fail the webhook, just log the error
+      }
+    }
+
+    if (eventType === "organizationMembership.deleted") {
+      const { organization, public_user_data } = evt.data;
+      
+      try {
+        const org = await ctx.runQuery(api.organizations.getOrganizationByClerkId, {
+          clerkOrganizationId: organization.id,
+        });
+        
+        if (org && public_user_data?.user_id) {
+          await ctx.runMutation(api.organizations.removeMemberFromOrganization, {
+            organizationId: org._id,
+            userClerkId: public_user_data.user_id,
+          });
+        }
+      } catch (error) {
+        console.log("Error removing member from organization:", error);
+        // Don't fail the webhook, just log the error
       }
     }
 

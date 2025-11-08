@@ -8,9 +8,72 @@ export default defineSchema({
     image: v.optional(v.string()),
     clerkId: v.string(),
     role: v.optional(v.union(v.literal("admin"), v.literal("trainer"), v.literal("user"))),
+    accountType: v.optional(v.union(v.literal("personal"), v.literal("organization"))), // personal = member, organization = location admin
+    organizationId: v.optional(v.id("organizations")), // If part of an organization
+    organizationRole: v.optional(v.union(v.literal("org_admin"), v.literal("org_member"))), // Role within organization
     createdAt: v.optional(v.number()),
     updatedAt: v.optional(v.number()),
-  }).index("by_clerk_id", ["clerkId"]),
+  })
+    .index("by_clerk_id", ["clerkId"])
+    .index("by_organization", ["organizationId"])
+    .index("by_account_type", ["accountType"]),
+
+  organizations: defineTable({
+    clerkOrganizationId: v.string(), // Clerk organization ID
+    name: v.string(), // Location/franchise name (e.g., "Derrimut 24:7 Gym - Derrimut")
+    slug: v.string(), // URL-friendly identifier (e.g., "derrimut-derrimut")
+    type: v.union(v.literal("location"), v.literal("franchise")), // Location or franchise
+    status: v.union(v.literal("active"), v.literal("inactive"), v.literal("pending")),
+    
+    // Location Details
+    address: v.object({
+      street: v.string(),
+      city: v.string(),
+      state: v.string(), // VIC, SA, etc.
+      postcode: v.string(),
+      country: v.string(), // "Australia"
+    }),
+    coordinates: v.optional(v.object({
+      lat: v.number(),
+      lng: v.number(),
+    })),
+    phone: v.optional(v.string()),
+    email: v.optional(v.string()),
+    
+    // Business Details
+    openingHours: v.optional(v.object({
+      monday: v.optional(v.string()), // "00:00-23:59" for 24/7
+      tuesday: v.optional(v.string()),
+      wednesday: v.optional(v.string()),
+      thursday: v.optional(v.string()),
+      friday: v.optional(v.string()),
+      saturday: v.optional(v.string()),
+      sunday: v.optional(v.string()),
+    })),
+    is24Hours: v.boolean(), // True for 24/7 access
+    
+    // Features Available at This Location
+    features: v.array(v.string()), // ["group_fitness", "personal_trainer", "supplement_store", "sauna", "basketball_court"]
+    
+    // Admin/Management
+    adminId: v.id("users"), // Primary admin for this location
+    adminClerkId: v.string(),
+    
+    // Membership & Stats
+    totalMembers: v.number(), // Count of members at this location
+    totalStaff: v.number(), // Count of staff at this location
+    
+    // Metadata
+    createdAt: v.number(),
+    updatedAt: v.number(),
+    createdBy: v.id("users"),
+  })
+    .index("by_clerk_org_id", ["clerkOrganizationId"])
+    .index("by_slug", ["slug"])
+    .index("by_status", ["status"])
+    .index("by_type", ["type"])
+    .index("by_admin", ["adminId"])
+    .index("by_state", ["address.state"]),
 
   trainerApplications: defineTable({
     userId: v.id("users"),
