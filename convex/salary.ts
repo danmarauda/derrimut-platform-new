@@ -386,10 +386,13 @@ export const processPayroll = mutation({
       
       // Other deductions from structure
       const otherDeductions = Object.entries(structure.deductions || {})
-        .filter(([key]) => !['tax', 'epf', 'etf'].includes(key))
+        .filter(([key]) => !['tax', 'epf', 'etf', 'super'].includes(key))
         .reduce((sum, [_, amount]: [string, any]) => sum + (typeof amount === 'number' ? amount : 0), 0);
 
-      const totalDeductions = taxAmount + contributions.epfEmployee + otherDeductions;
+      // Map Australian superannuation to schema fields (for backward compatibility)
+      // superEmployee -> epfEmployee, superEmployer -> epfEmployer
+      // ETF doesn't exist in Australia, so set to 0
+      const totalDeductions = taxAmount + contributions.superEmployee + otherDeductions;
       const netSalary = Math.max(0, grossSalary - totalDeductions);
 
       // Create payroll record
@@ -416,9 +419,10 @@ export const processPayroll = mutation({
         },
         deductions: {
           incomeTax: taxAmount,
-          epfEmployee: contributions.epfEmployee,
-          epfEmployer: contributions.epfEmployer,
-          etfEmployer: contributions.etfEmployer,
+          // Map Australian superannuation to schema fields (for backward compatibility)
+          epfEmployee: contributions.superEmployee, // Australian super employee contribution
+          epfEmployer: contributions.superEmployer, // Australian super employer contribution
+          etfEmployer: 0, // ETF doesn't exist in Australia (was 3% in Sri Lanka)
           insurance: otherDeductions,
           loanDeductions: 0,
           advanceDeductions: 0,
@@ -426,7 +430,8 @@ export const processPayroll = mutation({
           totalDeductions,
         },
         netSalary,
-        totalEmployerCost: grossSalary + contributions.epfEmployer + contributions.etfEmployer,
+        // Total employer cost includes superannuation (no ETF in Australia)
+        totalEmployerCost: grossSalary + contributions.superEmployer,
         status: "pending_approval",
         createdBy: currentUser._id,
         createdAt: Date.now(),
@@ -594,8 +599,9 @@ export const getPayrollStats = query({
     const totalGrossPay = payrollRecords.reduce((sum, record) => sum + record.earnings.totalEarnings, 0);
     const totalNetPay = payrollRecords.reduce((sum, record) => sum + record.netSalary, 0);
     const totalTaxDeductions = payrollRecords.reduce((sum, record) => sum + record.deductions.incomeTax, 0);
-    const totalEPF = payrollRecords.reduce((sum, record) => sum + record.deductions.epfEmployee, 0);
-    const totalETF = payrollRecords.reduce((sum, record) => sum + record.deductions.etfEmployer, 0);
+    // EPF/ETF fields now contain Australian superannuation (for backward compatibility)
+    const totalEPF = payrollRecords.reduce((sum, record) => sum + (record.deductions.epfEmployee || 0), 0);
+    const totalETF = payrollRecords.reduce((sum, record) => sum + (record.deductions.etfEmployer || 0), 0);
 
     const draft = payrollRecords.filter(record => record.status === "draft").length;
     const pending = payrollRecords.filter(record => record.status === "pending_approval").length;
@@ -978,8 +984,9 @@ export const getExpenseBreakdown = query({
     if (payrollRecords.length > 0) {
       totalBaseSalaries = payrollRecords.reduce((sum, record) => sum + record.earnings.baseSalary, 0);
       totalAllowances = payrollRecords.reduce((sum, record) => sum + record.earnings.allowances, 0);
-      totalEPFEmployer = payrollRecords.reduce((sum, record) => sum + record.deductions.epfEmployer, 0);
-      totalETF = payrollRecords.reduce((sum, record) => sum + record.deductions.etfEmployer, 0);
+      // EPF/ETF fields now contain Australian superannuation (for backward compatibility)
+      totalEPFEmployer = payrollRecords.reduce((sum, record) => sum + (record.deductions.epfEmployer || 0), 0);
+      totalETF = payrollRecords.reduce((sum, record) => sum + (record.deductions.etfEmployer || 0), 0);
       totalOtherBenefits = payrollRecords.reduce((sum, record) => 
         sum + record.earnings.performanceBonus + record.earnings.membershipCommissions + record.earnings.sessionEarnings, 0);
     } else {
@@ -996,11 +1003,11 @@ export const getExpenseBreakdown = query({
           }
         });
 
-        // EPF Employer (12% of basic salary)
-        totalEPFEmployer += structure.baseSalary * 0.12;
+        // Australian Superannuation Employer (11.5% of basic salary)
+        totalEPFEmployer += structure.baseSalary * 0.115;
         
-        // ETF (3% of basic salary)
-        totalETF += structure.baseSalary * 0.03;
+        // ETF not applicable in Australia (was 3% in Sri Lanka)
+        totalETF += 0;
         
         // Performance bonus (if applicable)
         if (structure.performanceBonus) {
