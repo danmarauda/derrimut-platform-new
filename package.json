@@ -26,7 +26,13 @@
     "vercel:deploy": "vercel --prod",
     "vercel:deploy-full": "node scripts/deploy-vercel-full.js",
     "clerk:dns-config": "node scripts/clerk-dns-config.js",
-    "clerk:dns-add": "node scripts/add-clerk-dns-vercel.js"
+    "clerk:dns-add": "node scripts/add-clerk-dns-vercel.js",
+    "vapi:setup": "node scripts/setup-vapi.js",
+    "vapi:setup-auto": "node scripts/setup-vapi-auto.js",
+    "vapi:mcp": "node scripts/setup-vapi-mcp.js",
+    "vapi:update-voice": "node scripts/update-vapi-voice.js",
+    "vapi:list-workflows": "vapi workflow list",
+    "vapi:list-assistants": "vapi assistant list"
   },
   "dependencies": {
     "@clerk/nextjs": "^6.28.1",

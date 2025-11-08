@@ -1,0 +1,85 @@
+{
+  "apiKey": "2cd34963-f7ed-4794-9fbb-76549b614bd0",
+  "publicApiKey": "f90a42da-11c9-490e-a9ec-111c86ff45a7",
+  "workflow": {
+    "name": "Derrimut Fitness Program Generator",
+    "description": "Voice consultation workflow for generating personalized fitness and diet plans",
+    "endpoint": {
+      "url": "https://YOUR_CONVEX_DEPLOYMENT_URL/vapi/generate-program",
+      "method": "POST",
+      "headers": {
+        "Content-Type": "application/json"
+      }
+    },
+    "variables": {
+      "full_name": {
+        "type": "string",
+        "description": "User's full name",
+        "required": true
+      },
+      "user_id": {
+        "type": "string",
+        "description": "Clerk user ID",
+        "required": true
+      }
+    },
+    "functionCalling": {
+      "enabled": true,
+      "functions": [
+        {
+          "name": "collect_fitness_data",
+          "description": "Collect user fitness information during voice consultation",
+          "parameters": {
+            "type": "object",
+            "properties": {
+              "age": {
+                "type": "number",
+                "description": "User's age"
+              },
+              "height": {
+                "type": "string",
+                "description": "User's height (e.g., '5ft 10in' or '178cm')"
+              },
+              "weight": {
+                "type": "string",
+                "description": "User's weight (e.g., '75kg' or '165lbs')"
+              },
+              "injuries": {
+                "type": "string",
+                "description": "Any injuries or physical limitations"
+              },
+              "workout_days": {
+                "type": "number",
+                "description": "Number of days per week available for workouts"
+              },
+              "fitness_goal": {
+                "type": "string",
+                "description": "Primary fitness goal (e.g., 'weight loss', 'muscle gain', 'endurance', 'general fitness')"
+              },
+              "fitness_level": {
+                "type": "string",
+                "description": "Current fitness level (e.g., 'beginner', 'intermediate', 'advanced')"
+              },
+              "dietary_restrictions": {
+                "type": "string",
+                "description": "Dietary restrictions or preferences"
+              }
+            },
+            "required": ["age", "height", "weight", "workout_days", "fitness_goal", "fitness_level"]
+          }
+        }
+      ]
+    },
+    "voice": {
+      "provider": "cartesia",
+      "voiceId": "71a7ad14-091c-4e8e-a314-022ece01c121",
+      "model": "sonic-2"
+    },
+    "firstMessage": "Hi! I'm your Derrimut AI fitness coach. I'm here to help create a personalized workout and nutrition plan just for you. Let's start by getting to know you better. What's your primary fitness goal?",
+    "endCallFunction": {
+      "enabled": true,
+      "functionName": "collect_fitness_data"
+    }
+  }
+}
+
