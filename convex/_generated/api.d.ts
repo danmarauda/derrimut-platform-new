@@ -36,6 +36,7 @@ import type * as seedBlogTest from "../seedBlogTest.js";
 import type * as trainerProfiles from "../trainerProfiles.js";
 import type * as trainers from "../trainers.js";
 import type * as users from "../users.js";
+import type * as webhooks from "../webhooks.js";
 
 /**
  * A utility for referencing Convex functions in your app's API.
@@ -69,6 +70,7 @@ declare const fullApi: ApiFromModules<{
   trainerProfiles: typeof trainerProfiles;
   trainers: typeof trainers;
   users: typeof users;
+  webhooks: typeof webhooks;
 }>;
 export declare const api: FilterApi<
   typeof fullApi,

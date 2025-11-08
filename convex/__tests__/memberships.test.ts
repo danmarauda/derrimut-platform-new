@@ -3,7 +3,7 @@
  * Critical membership management logic tests
  */
 
-import { describe, it, expect, beforeEach, jest } from '@jest/globals';
+import { describe, it, expect, beforeEach, vi } from 'vitest';
 import {
   getMembershipPlans,
   getUserMembership,
@@ -88,9 +88,9 @@ describe('Convex Memberships', () => {
 
     it('should only return active plans', async () => {
       const mockQuery = {
-        withIndex: jest.fn().mockReturnThis(),
-        order: jest.fn().mockReturnThis(),
-        collect: jest.fn().mockResolvedValue([] as unknown as never),
+        withIndex: vi.fn().mockReturnThis(),
+        order: vi.fn().mockReturnThis(),
+        collect: vi.fn().mockResolvedValue([] as unknown as never),
       };
 
       mockCtx.db.query.mockReturnValue(mockQuery);
@@ -137,9 +137,9 @@ describe('Convex Memberships', () => {
 
     it('should filter by clerkId correctly', async () => {
       const mockQuery = {
-        withIndex: jest.fn().mockReturnThis(),
-        filter: jest.fn().mockReturnThis(),
-        first: jest.fn().mockResolvedValue(null as unknown as never),
+        withIndex: vi.fn().mockReturnThis(),
+        filter: vi.fn().mockReturnThis(),
+        first: vi.fn().mockResolvedValue(null as unknown as never),
       };
 
       mockCtx.db.query.mockReturnValue(mockQuery);
@@ -184,8 +184,8 @@ describe('Convex Memberships', () => {
 
     it('should query by subscription index', async () => {
       const mockQuery = {
-        withIndex: jest.fn().mockReturnThis(),
-        first: jest.fn().mockResolvedValue(null as unknown as never),
+        withIndex: vi.fn().mockReturnThis(),
+        first: vi.fn().mockResolvedValue(null as unknown as never),
       };
 
       mockCtx.db.query.mockReturnValue(mockQuery);

@@ -1,28 +1,29 @@
 import React from 'react';
 import { render, screen } from '@testing-library/react';
 import '@testing-library/jest-dom';
+import { describe, it, expect, beforeEach, vi } from 'vitest';
 import { RoleGuard } from '../RoleGuard';
 import { useUser } from '@clerk/nextjs';
 import { useQuery } from 'convex/react';
 
 // Mock Clerk
-jest.mock('@clerk/nextjs', () => ({
-  useUser: jest.fn(),
+vi.mock('@clerk/nextjs', () => ({
+  useUser: vi.fn(),
 }));
 
 // Mock Convex
-jest.mock('convex/react', () => ({
-  useQuery: jest.fn(),
+vi.mock('convex/react', () => ({
+  useQuery: vi.fn(),
 }));
 
-const mockUseUser = useUser as jest.MockedFunction<typeof useUser>;
-const mockUseQuery = useQuery as jest.MockedFunction<typeof useQuery>;
+const mockUseUser = useUser as ReturnType<typeof vi.fn>;
+const mockUseQuery = useQuery as ReturnType<typeof vi.fn>;
 
 describe('RoleGuard', () => {
   const TestComponent = () => <div>Protected Content</div>;
 
   beforeEach(() => {
-    jest.clearAllMocks();
+    vi.clearAllMocks();
   });
 
   describe('Loading States', () => {

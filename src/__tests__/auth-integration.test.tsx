@@ -6,28 +6,29 @@
 import React from 'react';
 import { render, screen, waitFor } from '@testing-library/react';
 import '@testing-library/jest-dom';
+import { describe, it, expect, beforeEach, vi } from 'vitest';
 import { useUser } from '@clerk/nextjs';
 import { useQuery } from 'convex/react';
 import { RoleGuard } from '@/components/RoleGuard';
 
 // Mock Clerk
-jest.mock('@clerk/nextjs', () => ({
-  useUser: jest.fn(),
+vi.mock('@clerk/nextjs', () => ({
+  useUser: vi.fn(),
 }));
 
 // Mock Convex
-jest.mock('convex/react', () => ({
-  useQuery: jest.fn(),
+vi.mock('convex/react', () => ({
+  useQuery: vi.fn(),
 }));
 
-const mockUseUser = useUser as jest.MockedFunction<typeof useUser>;
-const mockUseQuery = useQuery as jest.MockedFunction<typeof useQuery>;
+const mockUseUser = useUser as ReturnType<typeof vi.fn>;
+const mockUseQuery = useQuery as ReturnType<typeof vi.fn>;
 
 describe('Authentication Integration Tests', () => {
   const ProtectedContent = () => <div>Protected Content</div>;
 
   beforeEach(() => {
-    jest.clearAllMocks();
+    vi.clearAllMocks();
   });
 
   describe('User Authentication Flow', () => {
@@ -450,7 +451,7 @@ describe('Authentication Integration Tests', () => {
 
   describe('Performance', () => {
     it('should not re-render unnecessarily when role is stable', () => {
-      const renderSpy = jest.fn();
+      const renderSpy = vi.fn();
 
       const TestComponent = () => {
         renderSpy();

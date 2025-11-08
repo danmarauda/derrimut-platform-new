@@ -3,23 +3,26 @@
  * Tests marketplace order checkout flow
  */
 
+import { describe, it, expect, beforeEach, vi } from 'vitest';
 import { POST } from '../create-marketplace-checkout/route';
 import { NextRequest } from 'next/server';
 import Stripe from 'stripe';
 
 // Mock Stripe
-jest.mock('stripe', () => {
-  return jest.fn().mockImplementation(() => ({
-    checkout: {
-      sessions: {
-        create: jest.fn(),
+vi.mock('stripe', () => {
+  return {
+    default: vi.fn().mockImplementation(() => ({
+      checkout: {
+        sessions: {
+          create: vi.fn(),
+        },
       },
-    },
-  }));
+    })),
+  };
 });
 
 describe('POST /api/create-marketplace-checkout', () => {
-  let mockStripeCreate: jest.Mock;
+  let mockStripeCreate: ReturnType<typeof vi.fn>;
   let mockRequest: Partial<NextRequest>;
 
   const mockCartItems = [
@@ -59,14 +62,14 @@ describe('POST /api/create-marketplace-checkout', () => {
   };
 
   beforeEach(() => {
-    jest.clearAllMocks();
+    vi.clearAllMocks();
 
     const StripeConstructor = Stripe as any;
     const stripeInstance = new StripeConstructor();
     mockStripeCreate = stripeInstance.checkout.sessions.create;
 
     mockRequest = {
-      json: jest.fn(),
+      json: vi.fn(),
       headers: new Headers({
         host: 'localhost:3000',
       }),
@@ -75,7 +78,7 @@ describe('POST /api/create-marketplace-checkout', () => {
 
   describe('Validation', () => {
     it('should return 400 when clerkId is missing', async () => {
-      (mockRequest.json as jest.Mock).mockResolvedValue({
+      (mockRequest.json as ReturnType<typeof vi.fn>).mockResolvedValue({
         cartItems: mockCartItems,
         shippingAddress: mockShippingAddress,
       });
@@ -88,7 +91,7 @@ describe('POST /api/create-marketplace-checkout', () => {
     });
 
     it('should return 400 when cart is empty', async () => {
-      (mockRequest.json as jest.Mock).mockResolvedValue({
+      (mockRequest.json as ReturnType<typeof vi.fn>).mockResolvedValue({
         clerkId: 'user_123',
         cartItems: [],
         shippingAddress: mockShippingAddress,
@@ -102,7 +105,7 @@ describe('POST /api/create-marketplace-checkout', () => {
     });
 
     it('should return 400 when cart items is null', async () => {
-      (mockRequest.json as jest.Mock).mockResolvedValue({
+      (mockRequest.json as ReturnType<typeof vi.fn>).mockResolvedValue({
         clerkId: 'user_123',
         cartItems: null,
         shippingAddress: mockShippingAddress,
@@ -116,7 +119,7 @@ describe('POST /api/create-marketplace-checkout', () => {
     });
 
     it('should return 400 when shipping address is missing', async () => {
-      (mockRequest.json as jest.Mock).mockResolvedValue({
+      (mockRequest.json as ReturnType<typeof vi.fn>).mockResolvedValue({
         clerkId: 'user_123',
         cartItems: mockCartItems,
       });
@@ -138,7 +141,7 @@ describe('POST /api/create-marketplace-checkout', () => {
 
       mockStripeCreate.mockResolvedValue(mockSession);
 
-      (mockRequest.json as jest.Mock).mockResolvedValue({
+      (mockRequest.json as ReturnType<typeof vi.fn>).mockResolvedValue({
         clerkId: 'user_123',
         cartItems: mockCartItems,
         shippingAddress: mockShippingAddress,
@@ -161,7 +164,7 @@ describe('POST /api/create-marketplace-checkout', () => {
 
       mockStripeCreate.mockResolvedValue(mockSession);
 
-      (mockRequest.json as jest.Mock).mockResolvedValue({
+      (mockRequest.json as ReturnType<typeof vi.fn>).mockResolvedValue({
         clerkId: 'user_123',
         cartItems: mockCartItems,
         shippingAddress: mockShippingAddress,
@@ -186,7 +189,7 @@ describe('POST /api/create-marketplace-checkout', () => {
 
       mockStripeCreate.mockResolvedValue(mockSession);
 
-      (mockRequest.json as jest.Mock).mockResolvedValue({
+      (mockRequest.json as ReturnType<typeof vi.fn>).mockResolvedValue({
         clerkId: 'user_123',
         cartItems: mockCartItems,
         shippingAddress: mockShippingAddress,
@@ -227,7 +230,7 @@ describe('POST /api/create-marketplace-checkout', () => {
 
       mockStripeCreate.mockResolvedValue(mockSession);
 
-      (mockRequest.json as jest.Mock).mockResolvedValue({
+      (mockRequest.json as ReturnType<typeof vi.fn>).mockResolvedValue({
         clerkId: 'user_123',
         cartItems: largeOrder,
         shippingAddress: mockShippingAddress,
@@ -253,7 +256,7 @@ describe('POST /api/create-marketplace-checkout', () => {
 
       mockStripeCreate.mockResolvedValue(mockSession);
 
-      (mockRequest.json as jest.Mock).mockResolvedValue({
+      (mockRequest.json as ReturnType<typeof vi.fn>).mockResolvedValue({
         clerkId: 'user_123',
         cartItems: mockCartItems,
         shippingAddress: {
@@ -281,7 +284,7 @@ describe('POST /api/create-marketplace-checkout', () => {
 
       mockStripeCreate.mockResolvedValue(mockSession);
 
-      (mockRequest.json as jest.Mock).mockResolvedValue({
+      (mockRequest.json as ReturnType<typeof vi.fn>).mockResolvedValue({
         clerkId: 'user_123',
         cartItems: mockCartItems,
         shippingAddress: {
@@ -311,7 +314,7 @@ describe('POST /api/create-marketplace-checkout', () => {
 
       mockStripeCreate.mockResolvedValue(mockSession);
 
-      (mockRequest.json as jest.Mock).mockResolvedValue({
+      (mockRequest.json as ReturnType<typeof vi.fn>).mockResolvedValue({
         clerkId: 'user_123',
         cartItems: mockCartItems,
         shippingAddress: mockShippingAddress,
@@ -338,7 +341,7 @@ describe('POST /api/create-marketplace-checkout', () => {
 
       mockStripeCreate.mockResolvedValue(mockSession);
 
-      (mockRequest.json as jest.Mock).mockResolvedValue({
+      (mockRequest.json as ReturnType<typeof vi.fn>).mockResolvedValue({
         clerkId: 'user_123',
         cartItems: mockCartItems,
         shippingAddress: mockShippingAddress,
@@ -362,7 +365,7 @@ describe('POST /api/create-marketplace-checkout', () => {
 
       mockStripeCreate.mockResolvedValue(mockSession);
 
-      (mockRequest.json as jest.Mock).mockResolvedValue({
+      (mockRequest.json as ReturnType<typeof vi.fn>).mockResolvedValue({
         clerkId: 'user_123',
         cartItems: mockCartItems,
         shippingAddress: mockShippingAddress,
@@ -383,7 +386,7 @@ describe('POST /api/create-marketplace-checkout', () => {
     it('should handle Stripe API errors', async () => {
       mockStripeCreate.mockRejectedValue(new Error('Stripe API error'));
 
-      (mockRequest.json as jest.Mock).mockResolvedValue({
+      (mockRequest.json as ReturnType<typeof vi.fn>).mockResolvedValue({
         clerkId: 'user_123',
         cartItems: mockCartItems,
         shippingAddress: mockShippingAddress,
@@ -410,7 +413,7 @@ describe('POST /api/create-marketplace-checkout', () => {
         },
       ];
 
-      (mockRequest.json as jest.Mock).mockResolvedValue({
+      (mockRequest.json as ReturnType<typeof vi.fn>).mockResolvedValue({
         clerkId: 'user_123',
         cartItems: invalidCart,
         shippingAddress: mockShippingAddress,
@@ -431,7 +434,7 @@ describe('POST /api/create-marketplace-checkout', () => {
 
       mockStripeCreate.mockResolvedValue(mockSession);
 
-      (mockRequest.json as jest.Mock).mockResolvedValue({
+      (mockRequest.json as ReturnType<typeof vi.fn>).mockResolvedValue({
         clerkId: 'user_123',
         cartItems: mockCartItems,
         shippingAddress: mockShippingAddress,
@@ -466,7 +469,7 @@ describe('POST /api/create-marketplace-checkout', () => {
         },
       ];
 
-      (mockRequest.json as jest.Mock).mockResolvedValue({
+      (mockRequest.json as ReturnType<typeof vi.fn>).mockResolvedValue({
         clerkId: 'user_123',
         cartItems: testCart,
         shippingAddress: mockShippingAddress,
@@ -491,7 +494,7 @@ describe('POST /api/create-marketplace-checkout', () => {
 
       mockStripeCreate.mockResolvedValue(mockSession);
 
-      (mockRequest.json as jest.Mock).mockResolvedValue({
+      (mockRequest.json as ReturnType<typeof vi.fn>).mockResolvedValue({
         clerkId: 'user_123',
         cartItems: mockCartItems,
         shippingAddress: mockShippingAddress,

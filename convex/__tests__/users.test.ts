@@ -3,7 +3,7 @@
  * User management and role-based access control tests
  */
 
-import { describe, it, expect, beforeEach, jest } from '@jest/globals';
+import { describe, it, expect, beforeEach, vi } from 'vitest';
 import {
   syncUser,
   updateUser,

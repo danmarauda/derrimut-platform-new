@@ -3,27 +3,30 @@
  * Critical payment flow tests for membership subscriptions
  */
 
+import { describe, it, expect, beforeEach, vi } from 'vitest';
 import { POST } from '../create-checkout-session/route';
 import { NextRequest } from 'next/server';
 import Stripe from 'stripe';
 
 // Mock Stripe
-jest.mock('stripe', () => {
-  return jest.fn().mockImplementation(() => ({
-    checkout: {
-      sessions: {
-        create: jest.fn(),
+vi.mock('stripe', () => {
+  return {
+    default: vi.fn().mockImplementation(() => ({
+      checkout: {
+        sessions: {
+          create: vi.fn(),
+        },
       },
-    },
-  }));
+    })),
+  };
 });
 
 describe('POST /api/create-checkout-session', () => {
-  let mockStripeCreate: jest.Mock;
+  let mockStripeCreate: ReturnType<typeof vi.fn>;
   let mockRequest: Partial<NextRequest>;
 
   beforeEach(() => {
-    jest.clearAllMocks();
+    vi.clearAllMocks();
 
     // Get the mocked Stripe instance
     const StripeConstructor = Stripe as any;
@@ -32,7 +35,7 @@ describe('POST /api/create-checkout-session', () => {
 
     // Setup mock request
     mockRequest = {
-      json: jest.fn(),
+      json: vi.fn(),
       headers: new Headers({
         host: 'localhost:3000',
       }),
@@ -41,7 +44,7 @@ describe('POST /api/create-checkout-session', () => {
 
   describe('Validation', () => {
     it('should return 400 when priceId is missing', async () => {
-      (mockRequest.json as jest.Mock).mockResolvedValue({
+      (mockRequest.json as ReturnType<typeof vi.fn>).mockResolvedValue({
         clerkId: 'user_123',
         membershipType: 'standard',
       });
@@ -54,7 +57,7 @@ describe('POST /api/create-checkout-session', () => {
     });
 
     it('should return 400 when clerkId is missing', async () => {
-      (mockRequest.json as jest.Mock).mockResolvedValue({
+      (mockRequest.json as ReturnType<typeof vi.fn>).mockResolvedValue({
         priceId: 'price_123',
         membershipType: 'standard',
       });
@@ -67,7 +70,7 @@ describe('POST /api/create-checkout-session', () => {
     });
 
     it('should return 400 when membershipType is missing', async () => {
-      (mockRequest.json as jest.Mock).mockResolvedValue({
+      (mockRequest.json as ReturnType<typeof vi.fn>).mockResolvedValue({
         priceId: 'price_123',
         clerkId: 'user_123',
       });
@@ -89,7 +92,7 @@ describe('POST /api/create-checkout-session', () => {
 
       mockStripeCreate.mockResolvedValue(mockSession);
 
-      (mockRequest.json as jest.Mock).mockResolvedValue({
+      (mockRequest.json as ReturnType<typeof vi.fn>).mockResolvedValue({
         priceId: 'price_123',
         clerkId: 'user_123',
         membershipType: 'standard',
@@ -111,7 +114,7 @@ describe('POST /api/create-checkout-session', () => {
 
       mockStripeCreate.mockResolvedValue(mockSession);
 
-      (mockRequest.json as jest.Mock).mockResolvedValue({
+      (mockRequest.json as ReturnType<typeof vi.fn>).mockResolvedValue({
         priceId: 'price_standard_monthly',
         clerkId: 'user_456',
         membershipType: 'no-lock-in',
@@ -145,7 +148,7 @@ describe('POST /api/create-checkout-session', () => {
 
       mockStripeCreate.mockResolvedValue(mockSession);
 
-      (mockRequest.json as jest.Mock).mockResolvedValue({
+      (mockRequest.json as ReturnType<typeof vi.fn>).mockResolvedValue({
         priceId: 'price_123',
         clerkId: 'user_123',
         membershipType: 'standard',
@@ -174,7 +177,7 @@ describe('POST /api/create-checkout-session', () => {
         'x-forwarded-proto': 'https',
       });
 
-      (mockRequest.json as jest.Mock).mockResolvedValue({
+      (mockRequest.json as ReturnType<typeof vi.fn>).mockResolvedValue({
         priceId: 'price_123',
         clerkId: 'user_123',
         membershipType: 'standard',
@@ -195,7 +198,7 @@ describe('POST /api/create-checkout-session', () => {
     it('should handle Stripe API errors gracefully', async () => {
       mockStripeCreate.mockRejectedValue(new Error('Invalid price ID'));
 
-      (mockRequest.json as jest.Mock).mockResolvedValue({
+      (mockRequest.json as ReturnType<typeof vi.fn>).mockResolvedValue({
         priceId: 'price_invalid',
         clerkId: 'user_123',
         membershipType: 'standard',
@@ -212,7 +215,7 @@ describe('POST /api/create-checkout-session', () => {
     it('should handle network errors', async () => {
       mockStripeCreate.mockRejectedValue(new Error('Network timeout'));
 
-      (mockRequest.json as jest.Mock).mockResolvedValue({
+      (mockRequest.json as ReturnType<typeof vi.fn>).mockResolvedValue({
         priceId: 'price_123',
         clerkId: 'user_123',
         membershipType: 'standard',
@@ -254,7 +257,7 @@ describe('POST /api/create-checkout-session', () => {
 
         mockStripeCreate.mockResolvedValue(mockSession);
 
-        (mockRequest.json as jest.Mock).mockResolvedValue({
+        (mockRequest.json as ReturnType<typeof vi.fn>).mockResolvedValue({
           priceId: `price_${type}`,
           clerkId: 'user_123',
           membershipType: type,
@@ -273,7 +276,7 @@ describe('POST /api/create-checkout-session', () => {
     it('should not expose sensitive data in error messages', async () => {
       mockStripeCreate.mockRejectedValue(new Error('Stripe secret key invalid: sk_live_123abc'));
 
-      (mockRequest.json as jest.Mock).mockResolvedValue({
+      (mockRequest.json as ReturnType<typeof vi.fn>).mockResolvedValue({
         priceId: 'price_123',
         clerkId: 'user_123',
         membershipType: 'standard',
@@ -293,7 +296,7 @@ describe('POST /api/create-checkout-session', () => {
 
       mockStripeCreate.mockResolvedValue(mockSession);
 
-      (mockRequest.json as jest.Mock).mockResolvedValue({
+      (mockRequest.json as ReturnType<typeof vi.fn>).mockResolvedValue({
         priceId: 'price_123',
         clerkId: 'user_clerk_789',
         membershipType: 'premium',
