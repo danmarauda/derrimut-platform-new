@@ -57,9 +57,10 @@ export const upsertMembership = mutation({
     userId: v.id("users"),
     clerkId: v.string(),
     membershipType: v.union(
-      v.literal("basic"),
-      v.literal("premium"),
-      v.literal("couple")
+      v.literal("18-month-minimum"),
+      v.literal("12-month-minimum"),
+      v.literal("no-lock-in"),
+      v.literal("12-month-upfront")
     ),
     stripeCustomerId: v.string(),
     stripeSubscriptionId: v.string(),
@@ -165,9 +166,10 @@ export const createMembership = mutation({
     userId: v.id("users"),
     clerkId: v.string(),
     membershipType: v.union(
-      v.literal("basic"),
-      v.literal("premium"),
-      v.literal("couple")
+      v.literal("18-month-minimum"),
+      v.literal("12-month-minimum"),
+      v.literal("no-lock-in"),
+      v.literal("12-month-upfront")
     ),
     stripeCustomerId: v.string(),
     stripeSubscriptionId: v.string(),
@@ -345,7 +347,11 @@ export const cancelStripeSubscription = action({
   args: { stripeSubscriptionId: v.string() },
   handler: async (ctx, args): Promise<{ success: boolean; subscription?: any; error?: string; dbUpdate?: any }> => {
     try {
-      const stripe = require("stripe")(process.env.STRIPE_SECRET_KEY);
+      const stripeSecretKey = process.env.STRIPE_SECRET_KEY;
+      if (!stripeSecretKey) {
+        throw new Error("Missing STRIPE_SECRET_KEY environment variable. Set it in Convex dashboard.");
+      }
+      const stripe = require("stripe")(stripeSecretKey);
       
       // Cancel the subscription at period end
       const updatedSubscription = await stripe.subscriptions.update(args.stripeSubscriptionId, {
@@ -480,19 +486,19 @@ export const seedMembershipPlans = mutation({
 
     const plans = [
       {
-        name: "Basic Gym Membership",
-        description: "Essential gym access with standard equipment and facilities",
-        price: 2500,
-        currency: "LKR",
-        type: "basic" as const,
-        stripePriceId: "price_1Rw3ulK3W6wHBRwhyMFmIEbv", // You'll need to get this from Stripe
-        stripeProductId: "prod_SrnVL6NvWMhBm6",
+        name: "18 Month Minimum",
+        description: "Best value with 18-month commitment",
+        price: 14.95,
+        currency: "AUD",
+        type: "18-month-minimum" as const,
+        stripePriceId: "price_1SRF1M4ghJnevp5XHk8AwEB0", // TODO: Replace with actual Stripe price ID
+        stripeProductId: "prod_TO13HhWD4id9gk", // TODO: Replace with actual Stripe product ID
         features: [
-          "Full gym equipment access",
-          "Standard locker facilities",
-          "Access during all operating hours",
-          "Basic workout guidance",
-          "Free parking"
+          "Access all Derrimut 24:7 gyms Australia wide",
+          "24/7 access at selected locations",
+          "Group fitness classes",
+          "Personal trainers available",
+          "Fully stocked supplement superstore"
         ],
         isActive: true,
         sortOrder: 1,
@@ -500,20 +506,19 @@ export const seedMembershipPlans = mutation({
         updatedAt: Date.now(),
       },
       {
-        name: "Couple Gym Membership",
-        description: "Special membership package designed for couples to train together",
-        price: 4500,
-        currency: "LKR",
-        type: "couple" as const,
-        stripePriceId: "price_1Rw3wQK3W6wHBRwhgd1lHQ3A", // You'll need to get this from Stripe
-        stripeProductId: "prod_SrnXKx7Lu5TgR8",
+        name: "12 Month Minimum",
+        description: "12-month commitment plan",
+        price: 17.95,
+        currency: "AUD",
+        type: "12-month-minimum" as const,
+        stripePriceId: "price_1SRF1O4ghJnevp5XtcVKujOd", // TODO: Replace with actual Stripe price ID
+        stripeProductId: "prod_TO13WeOKja1J3f", // TODO: Replace with actual Stripe product ID
         features: [
-          "Full gym access for 2 people",
-          "Couple workout programs",
-          "Premium locker facilities",
-          "Personal training discounts",
-          "Nutrition consultation included",
-          "Free guest passes (2/month)"
+          "Access all Derrimut 24:7 gyms Australia wide",
+          "24/7 access at selected locations",
+          "Group fitness classes",
+          "Personal trainers available",
+          "Fully stocked supplement superstore"
         ],
         isActive: true,
         sortOrder: 2,
@@ -521,25 +526,43 @@ export const seedMembershipPlans = mutation({
         updatedAt: Date.now(),
       },
       {
-        name: "Premium Gym Membership",
-        description: "Ultimate fitness experience with premium amenities and personal training",
-        price: 3000,
-        currency: "LKR",
-        type: "premium" as const,
-        stripePriceId: "price_1Rw3vfK3W6wHBRwhKyVHXBXv", // You'll need to get this from Stripe
-        stripeProductId: "prod_SrnWVw0wWRAnLY",
+        name: "No Lock-in Contract",
+        description: "Ultimate flexibility with 30-day cancellation notice",
+        price: 19.95,
+        currency: "AUD",
+        type: "no-lock-in" as const,
+        stripePriceId: "price_1SRF1P4ghJnevp5X6W3ajo8O", // TODO: Replace with actual Stripe price ID
+        stripeProductId: "prod_TO13CDZ0wbRcI2", // TODO: Replace with actual Stripe product ID
         features: [
-          "Full gym and premium equipment access",
-          "Personal training sessions (2/month)",
-          "Nutrition consultation and meal planning",
-          "Premium locker with towel service",
-          "Access to spa and sauna facilities",
-          "Priority booking for classes",
-          "Free guest passes (4/month)",
-          "24/7 gym access"
+          "Access all Derrimut 24:7 gyms Australia wide",
+          "24/7 access at selected locations",
+          "Group fitness classes",
+          "Personal trainers available",
+          "Cancel anytime with 30-day notice",
+          "Fully stocked supplement superstore"
         ],
         isActive: true,
         sortOrder: 3,
+        createdAt: Date.now(),
+        updatedAt: Date.now(),
+      },
+      {
+        name: "12 Month Upfront",
+        description: "Best value - save on fortnightly fees",
+        price: 749,
+        currency: "AUD",
+        type: "12-month-upfront" as const,
+        stripePriceId: "price_1SRF1Q4ghJnevp5XK4w1yXVX", // TODO: Replace with actual Stripe price ID
+        stripeProductId: "prod_TO132agrJCpBrJ", // TODO: Replace with actual Stripe product ID
+        features: [
+          "Access all Derrimut 24:7 gyms Australia wide",
+          "24/7 access at selected locations",
+          "Group fitness classes",
+          "Personal trainers available",
+          "Save compared to fortnightly payments"
+        ],
+        isActive: true,
+        sortOrder: 4,
         createdAt: Date.now(),
         updatedAt: Date.now(),
       }
@@ -560,7 +583,11 @@ export const createMembershipFromSession = mutation({
     clerkId: v.string(),
   },
   handler: async (ctx, args) => {
-    const stripe = require("stripe")(process.env.STRIPE_SECRET_KEY);
+    const stripeSecretKey = process.env.STRIPE_SECRET_KEY;
+    if (!stripeSecretKey) {
+      throw new Error("Missing STRIPE_SECRET_KEY environment variable. Set it in Convex dashboard.");
+    }
+    const stripe = require("stripe")(stripeSecretKey);
     
     try {
       // Retrieve the session from Stripe
@@ -581,24 +608,27 @@ export const createMembershipFromSession = mutation({
       const productId = subscription.items.data[0].price.product.id;
 
       // Determine membership type from metadata or product ID
-      let membershipType: "basic" | "premium" | "couple" = "basic";
+      let membershipType: "18-month-minimum" | "12-month-minimum" | "no-lock-in" | "12-month-upfront" = "18-month-minimum";
       
       if (session.metadata?.membershipType) {
         membershipType = session.metadata.membershipType as any;
       } else {
-        // Fallback to product ID mapping
+        // Fallback to product ID mapping - TODO: Update with actual Derrimut product IDs
         switch (productId) {
-          case "prod_SrnVL6NvWMhBm6":
-            membershipType = "basic";
+          case "prod_TO13HhWD4id9gk":
+            membershipType = "18-month-minimum";
             break;
-          case "prod_SrnXKx7Lu5TgR8":
-            membershipType = "couple";
+          case "prod_TO13WeOKja1J3f":
+            membershipType = "12-month-minimum";
             break;
-          case "prod_SrnZGVhLm7A6oW":
-            membershipType = "premium";
+          case "prod_TO13CDZ0wbRcI2":
+            membershipType = "no-lock-in";
+            break;
+          case "prod_TO132agrJCpBrJ":
+            membershipType = "12-month-upfront";
             break;
           default:
-            membershipType = "basic";
+            membershipType = "18-month-minimum";
         }
       }
 
@@ -694,7 +724,11 @@ export const checkExpiredMemberships = mutation({
 export const fixMembershipPeriods = mutation({
   args: { membershipId: v.id("memberships") },
   handler: async (ctx, args) => {
-    const stripe = require("stripe")(process.env.STRIPE_SECRET_KEY);
+    const stripeSecretKey = process.env.STRIPE_SECRET_KEY;
+    if (!stripeSecretKey) {
+      throw new Error("Missing STRIPE_SECRET_KEY environment variable. Set it in Convex dashboard.");
+    }
+    const stripe = require("stripe")(stripeSecretKey);
     
     try {
       const membership = await ctx.db.get(args.membershipId);
@@ -771,7 +805,11 @@ export const getUserMembershipWithExpiryCheck = query({
 export const fixAllMembershipPeriods = mutation({
   args: {},
   handler: async (ctx) => {
-    const stripe = require("stripe")(process.env.STRIPE_SECRET_KEY);
+    const stripeSecretKey = process.env.STRIPE_SECRET_KEY;
+    if (!stripeSecretKey) {
+      throw new Error("Missing STRIPE_SECRET_KEY environment variable. Set it in Convex dashboard.");
+    }
+    const stripe = require("stripe")(stripeSecretKey);
     
     try {
       // Find memberships with invalid periods (NaN or 0)

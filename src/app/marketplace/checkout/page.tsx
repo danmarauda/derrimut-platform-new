@@ -141,7 +141,7 @@ const CheckoutPage = () => {
   };
 
   const calculateShipping = (subtotal: number) => {
-    if (subtotal >= 10000) return 0; // Free shipping over LKR 10,000
+    if (subtotal >= 200) return 0; // Free shipping over AUD 200
     
     const colomboAreas = ["colombo", "dehiwala", "mount lavinia", "nugegoda", "maharagama", "kotte"];
     if (colomboAreas.some(area => shippingAddress.city.toLowerCase().includes(area))) {
@@ -157,7 +157,7 @@ const CheckoutPage = () => {
   };
 
   const calculateTax = (subtotal: number) => {
-    return Math.round(subtotal * 0.18); // 18% VAT
+    return Math.round(subtotal * 0.10); // 10% GST (Australia)
   };
 
   const handleCheckout = async () => {
@@ -221,7 +221,7 @@ const CheckoutPage = () => {
   const formatPrice = (price: number) => {
     return new Intl.NumberFormat("en-LK", {
       style: "currency",
-      currency: "LKR",
+      currency: "AUD",
     }).format(price);
   };
 

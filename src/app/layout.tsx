@@ -18,9 +18,11 @@ const geistMono = Geist_Mono({
   subsets: ["latin"],
 });
 
+import { DERRIMUT_BRAND } from "@/constants/branding";
+
 export const metadata: Metadata = {
-  title: "Elite Gym & Fitness",
-  description: "A modern fitness AI platform to get jacked for free.",
+  title: DERRIMUT_BRAND.name,
+  description: `${DERRIMUT_BRAND.tagline} - ${DERRIMUT_BRAND.nameFull} - AI-powered fitness platform with 24/7 access across Australia.`,
 };
 
 // Client component to handle browser extension detection

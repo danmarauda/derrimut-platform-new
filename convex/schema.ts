@@ -127,10 +127,10 @@ export default defineSchema({
     userId: v.id("users"),
     clerkId: v.string(),
     membershipType: v.union(
-      v.literal("basic"),
-      v.literal("premium"),
-      v.literal("couple"),
-      v.literal("beginner") // Temporary for migration
+      v.literal("18-month-minimum"),
+      v.literal("12-month-minimum"),
+      v.literal("no-lock-in"),
+      v.literal("12-month-upfront")
     ),
     status: v.union(
       v.literal("active"),
@@ -156,13 +156,13 @@ export default defineSchema({
   membershipPlans: defineTable({
     name: v.string(),
     description: v.string(),
-    price: v.number(), // in LKR
+    price: v.number(), // in AUD
     currency: v.string(),
     type: v.union(
-      v.literal("basic"),
-      v.literal("premium"),
-      v.literal("couple"),
-      v.literal("beginner") // Temporary for migration
+      v.literal("18-month-minimum"),
+      v.literal("12-month-minimum"),
+      v.literal("no-lock-in"),
+      v.literal("12-month-upfront")
     ),
     stripePriceId: v.string(),
     stripeProductId: v.string(),
@@ -289,7 +289,7 @@ export default defineSchema({
     userClerkId: v.string(),
     productId: v.id("marketplaceItems"),
     quantity: v.number(),
-    priceAtTime: v.number(), // Price when added to cart in LKR
+    priceAtTime: v.number(), // Price when added to cart in AUD
     createdAt: v.number(),
     updatedAt: v.number(),
   })
@@ -306,15 +306,15 @@ export default defineSchema({
         productId: v.id("marketplaceItems"),
         productName: v.string(),
         quantity: v.number(),
-        pricePerItem: v.number(), // Price in LKR at time of order
+        pricePerItem: v.number(), // Price in AUD at time of order
         totalPrice: v.number(), // quantity * pricePerItem
       })
     ),
-    subtotal: v.number(), // Sum of all item totals in LKR
-    shippingCost: v.number(), // Shipping cost in LKR
-    tax: v.number(), // Tax amount in LKR
-    totalAmount: v.number(), // Final total in LKR
-    currency: v.string(), // "LKR"
+    subtotal: v.number(), // Sum of all item totals in AUD
+    shippingCost: v.number(), // Shipping cost in AUD
+    tax: v.number(), // Tax amount in AUD
+    totalAmount: v.number(), // Final total in AUD
+    currency: v.string(), // "AUD"
     status: v.union(
       v.literal("pending"),
       v.literal("confirmed"),
@@ -458,7 +458,7 @@ export default defineSchema({
     
     // Basic salary information
     baseSalary: v.number(),
-    currency: v.literal("LKR"),
+    currency: v.literal("AUD"),
     paymentFrequency: v.union(
       v.literal("monthly"), 
       v.literal("bi-weekly"), 

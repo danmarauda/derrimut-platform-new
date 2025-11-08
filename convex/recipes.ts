@@ -187,14 +187,12 @@ export const getPersonalizedRecipes = query({
 
       // Membership level considerations
       if (userMembership) {
-        if (userMembership.membershipType === "premium") {
-          // Premium members get complex recipes
-          if (recipe.difficulty === "medium" || recipe.difficulty === "hard")
-            score += 8;
-        } else {
-          // Basic members prefer easy recipes
-          if (recipe.difficulty === "easy") score += 8;
-        }
+        // For Derrimut, all memberships get access to all recipes
+        // Premium features are now available to all memberships
+        if (recipe.difficulty === "medium" || recipe.difficulty === "hard")
+          score += 8;
+        // All members also get easy recipes
+        if (recipe.difficulty === "easy") score += 8;
       }
 
       // Meal type filtering

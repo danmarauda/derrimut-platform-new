@@ -18,7 +18,7 @@ const MarketplacePage = () => {
   const [addingToCart, setAddingToCart] = useState<string | null>(null);
   
   // New filter states
-  const [priceRange, setPriceRange] = useState<[number, number]>([0, 50000]); // LKR range
+  const [priceRange, setPriceRange] = useState<[number, number]>([0, 1000]); // AUD range
   const [stockFilter, setStockFilter] = useState<"all" | "inStock" | "outOfStock">("all");
   const [sortBy, setSortBy] = useState<"name" | "price" | "newest">("newest");
   
@@ -183,7 +183,7 @@ const MarketplacePage = () => {
   const formatPrice = (price: number) => {
     return new Intl.NumberFormat("en-LK", {
       style: "currency",
-      currency: "LKR",
+      currency: "AUD",
     }).format(price);
   };
 
@@ -243,7 +243,7 @@ const MarketplacePage = () => {
               <div className="bg-card/50 border border-border rounded-lg p-6">
                 <h3 className="text-lg font-semibold text-foreground mb-4 flex items-center gap-2">
                   <DollarSign className="h-5 w-5 text-primary" />
-                  Price Range (LKR)
+                  Price Range (AUD)
                 </h3>
                 <div className="space-y-4">
                   {/* Range Slider */}
@@ -324,7 +324,7 @@ const MarketplacePage = () => {
                   
                   {/* Display Current Range */}
                   <div className="text-sm text-center text-muted-foreground bg-muted/30 rounded px-3 py-2">
-                    LKR {priceRange[0].toLocaleString()} - LKR {priceRange[1].toLocaleString()}
+                    AUD {priceRange[0].toLocaleString()} - AUD {priceRange[1].toLocaleString()}
                   </div>
                 </div>
               </div>

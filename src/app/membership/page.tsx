@@ -127,7 +127,7 @@ const MembershipPage = () => {
   const formatPrice = (price: number) => {
     return new Intl.NumberFormat("en-LK", {
       style: "currency",
-      currency: "LKR",
+      currency: "AUD",
       minimumFractionDigits: 0,
     }).format(price);
   };

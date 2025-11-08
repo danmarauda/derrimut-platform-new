@@ -1,12 +1,22 @@
 {
-  "name": "elite-gym-fitness",
+  "name": "derrimut-gym-platform",
   "version": "0.1.0",
   "private": true,
   "scripts": {
     "dev": "next dev --turbopack",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint"
+    "lint": "next lint",
+    "stripe:create-products": "node scripts/create-stripe-products-cli.js",
+    "stripe:update-ids": "node scripts/update-product-ids.js",
+    "stripe:configure-webhooks": "node scripts/configure-webhooks.js",
+    "stripe:test-webhooks": "node scripts/test-webhooks.js",
+    "stripe:setup": "node scripts/setup-stripe.js",
+    "stripe:setup-full": "node scripts/setup-stripe-convex.js",
+    "stripe:setup-prod": "node scripts/setup-stripe-convex.js --prod",
+    "stripe:test": "node scripts/test-stripe-convex.js",
+    "stripe:test-prod": "node scripts/test-stripe-convex.js --prod",
+    "convex:set-env": "node scripts/set-convex-env.js"
   },
   "dependencies": {
     "@clerk/nextjs": "^6.28.1",
@@ -39,9 +49,13 @@
     "@types/node": "^20",
     "@types/react": "^19",
     "@types/react-dom": "^19",
+    "dotenv": "^17.2.3",
     "eslint": "^9",
     "eslint-config-next": "15.2.4",
     "tailwindcss": "^4",
     "typescript": "^5"
-  }
+  },
+  "trustedDependencies": [
+    "@clerk/shared"
+  ]
 }

@@ -232,8 +232,7 @@ Built with **Next.js 15**, **Convex** real-time database, **Stripe** payment pro
 ## 📥 Installation
 
 ### Prerequisites
-- **Node.js** 18.x or higher
-- **npm** or **yarn** or **pnpm**
+- **Bun** 1.0+ (recommended) or **Node.js** 18.x or higher
 - **Git**
 - **Convex Account** ([Sign up](https://convex.dev))
 - **Stripe Account** ([Sign up](https://stripe.com))
@@ -251,6 +250,10 @@ cd ELITE-Gym-and-Fitness
 
 2. **Install dependencies**
 ```bash
+# Using Bun (recommended - faster)
+bun install
+
+# Or using npm
 npm install
 # or
 yarn install
@@ -291,6 +294,10 @@ NEXT_PUBLIC_CHATBASE_ID=your_chatbase_id
 
 4. **Set up Convex**
 ```bash
+# Using Bun
+bunx convex dev
+
+# Or using npm
 npx convex dev
 ```
 
@@ -311,11 +318,19 @@ This will:
 
 6. **Set up Stripe webhooks** (for local development)
 ```bash
+# Using Bun
+bunx stripe listen --forward-to localhost:3000/api/webhooks/stripe
+
+# Or using npm
 stripe listen --forward-to localhost:3000/api/webhooks/stripe
 ```
 
 7. **Run the development server**
 ```bash
+# Using Bun (recommended)
+bun dev
+
+# Or using npm
 npm run dev
 # or
 yarn dev

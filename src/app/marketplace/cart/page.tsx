@@ -76,17 +76,17 @@ const CartPage = () => {
   const formatPrice = (price: number) => {
     return new Intl.NumberFormat("en-LK", {
       style: "currency",
-      currency: "LKR",
+      currency: "AUD",
     }).format(price);
   };
 
   const calculateShipping = (subtotal: number) => {
-    if (subtotal >= 10000) return 0; // Free shipping over LKR 10,000
+    if (subtotal >= 200) return 0; // Free shipping over AUD 200
     return 500; // Standard shipping
   };
 
   const calculateTax = (subtotal: number) => {
-    return Math.round(subtotal * 0.18); // 18% VAT
+    return Math.round(subtotal * 0.10); // 10% GST (Australia)
   };
 
   if (!user) {

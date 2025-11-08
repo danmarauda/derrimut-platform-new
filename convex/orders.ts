@@ -93,7 +93,7 @@ export const createOrderFromCart = mutation({
       shippingCost,
       tax,
       totalAmount,
-      currency: "LKR",
+      currency: "AUD",
       status: "pending",
       paymentStatus: "pending",
       stripeSessionId: args.stripeSessionId,
@@ -277,31 +277,26 @@ export const getAllOrders = query({
 
 // Calculate shipping cost based on subtotal and location
 function calculateShipping(subtotal: number, city: string): number {
-  // Free shipping for orders over LKR 10,000
-  if (subtotal >= 10000) {
+  // Free shipping for orders over AUD 200
+  if (subtotal >= 200) {
     return 0;
   }
 
-  // Colombo area - LKR 500
-  const colomboAreas = ["colombo", "dehiwala", "mount lavinia", "nugegoda", "maharagama", "kotte"];
-  if (colomboAreas.some(area => city.toLowerCase().includes(area))) {
-    return 500;
-  }
-
-  // Other major cities - LKR 750
-  const majorCities = ["kandy", "galle", "jaffna", "negombo", "kurunegala", "ratnapura"];
+  // Australian shipping rates
+  // Major cities - AUD 10
+  const majorCities = ["sydney", "melbourne", "brisbane", "perth", "adelaide", "canberra", "darwin", "hobart"];
   if (majorCities.some(cityName => city.toLowerCase().includes(cityName))) {
-    return 750;
+    return 10;
   }
 
-  // Remote areas - LKR 1000
-  return 1000;
+  // Regional areas - AUD 15
+  return 15;
 }
 
-// Calculate tax (VAT in Sri Lanka is typically 18% on applicable items)
+// Calculate tax (GST in Australia is 10% on applicable items)
 function calculateTax(subtotal: number): number {
-  // Simplified tax calculation - 18% VAT
-  return Math.round(subtotal * 0.18);
+  // Simplified tax calculation - 10% GST
+  return Math.round(subtotal * 0.10);
 }
 
 // Generate unique order number

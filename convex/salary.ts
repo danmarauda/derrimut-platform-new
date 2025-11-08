@@ -122,7 +122,7 @@ export const createSalaryStructure = mutation({
       employeeName: employee.name,
       employeeRole: employee.role || "user",
       baseSalary: args.baseSalary,
-      currency: "LKR",
+      currency: "AUD",
       paymentFrequency: args.paymentFrequency,
       effectiveDate: now,
       status: "active",

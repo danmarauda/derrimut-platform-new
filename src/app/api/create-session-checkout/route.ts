@@ -37,7 +37,7 @@ export async function POST(req: NextRequest) {
       line_items: [
         {
           price_data: {
-            currency: "lkr",
+            currency: "aud",
             product_data: {
               name: `${sessionType.replace('_', ' ').toUpperCase()} Session with ${trainerName}`,
               description: `${sessionDate} at ${startTime} (${duration} minutes)${notes ? `\nNotes: ${notes}` : ''}`,

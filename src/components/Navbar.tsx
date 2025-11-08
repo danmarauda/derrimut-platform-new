@@ -9,6 +9,7 @@ import { api } from "../../convex/_generated/api";
 import { useState, useEffect } from "react";
 import { ShoppingCart, Menu, X } from "lucide-react";
 import { ThemeAwareLogo } from "./ThemeAwareLogo";
+import { DERRIMUT_BRAND } from "@/constants/branding";
 
 const Navbar = () => {
   const { isSignedIn, user } = useUser();
@@ -41,10 +42,10 @@ const Navbar = () => {
             </div>
             <div className="flex flex-col">
               <span className="text-xl font-bold text-foreground">
-                ELITE GYM
+                {DERRIMUT_BRAND.nameShort.toUpperCase()}
               </span>
               <span className="text-xs text-muted-foreground font-mono tracking-wider">
-                FITNESS & WELLNESS
+                24/7 FITNESS
               </span>
             </div>
           </Link>{" "}
@@ -73,10 +74,10 @@ const Navbar = () => {
           </div>
           <div className="flex flex-col" suppressHydrationWarning>
             <span className="text-lg font-bold text-foreground leading-tight">
-              ELITE GYM
+              {DERRIMUT_BRAND.nameShort.toUpperCase()}
             </span>
             <span className="text-xs text-muted-foreground uppercase tracking-wider">
-              FITNESS & WELLNESS
+              24/7 FITNESS
             </span>
           </div>
         </Link>

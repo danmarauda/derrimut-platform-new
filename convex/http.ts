@@ -291,13 +291,22 @@ http.route({
     console.log("📝 Request method:", request.method);
     console.log("🔗 Request URL:", request.url);
     
-    const stripe = require("stripe")(process.env.STRIPE_SECRET_KEY);
+    const stripeSecretKey = process.env.STRIPE_SECRET_KEY;
     const webhookSecret = process.env.STRIPE_WEBHOOK_SECRET;
+
+    if (!stripeSecretKey) {
+      console.error("❌ Missing STRIPE_SECRET_KEY environment variable");
+      console.error("💡 Set it in Convex dashboard: Settings > Environment Variables");
+      throw new Error("Missing STRIPE_SECRET_KEY environment variable. Set it in Convex dashboard.");
+    }
 
     if (!webhookSecret) {
       console.error("❌ Missing STRIPE_WEBHOOK_SECRET environment variable");
-      throw new Error("Missing STRIPE_WEBHOOK_SECRET environment variable");
+      console.error("💡 Set it in Convex dashboard: Settings > Environment Variables");
+      throw new Error("Missing STRIPE_WEBHOOK_SECRET environment variable. Set it in Convex dashboard.");
     }
+    
+    const stripe = require("stripe")(stripeSecretKey);
 
     const body = await request.text();
     const sig = request.headers.get("stripe-signature");
@@ -389,29 +398,32 @@ http.route({
           // Determine membership type from price ID or product ID
           const createdPriceId = createdSubscription.items.data[0].price.id;
           const createdProductId = createdSubscription.items.data[0].price.product;
-          let createdMembershipType: "basic" | "premium" | "couple" = "basic";
+          let createdMembershipType: "18-month-minimum" | "12-month-minimum" | "no-lock-in" | "12-month-upfront" = "18-month-minimum";
           
           // First try to get from session metadata if available
           if (createdSessionMembershipType) {
-            const validTypes = ["basic", "premium", "couple"];
+            const validTypes = ["18-month-minimum", "12-month-minimum", "no-lock-in", "12-month-upfront"];
             if (validTypes.includes(createdSessionMembershipType)) {
-              createdMembershipType = createdSessionMembershipType as "basic" | "premium" | "couple";
+              createdMembershipType = createdSessionMembershipType as "18-month-minimum" | "12-month-minimum" | "no-lock-in" | "12-month-upfront";
             }
           } else {
-            // Fallback to mapping product IDs to membership types
+            // Fallback to mapping product IDs to membership types - Updated with actual Derrimut product IDs
             switch (createdProductId) {
-              case "prod_SrnVL6NvWMhBm6":
-                createdMembershipType = "basic";
+              case "prod_TO13HhWD4id9gk":
+                createdMembershipType = "18-month-minimum";
                 break;
-              case "prod_SrnXKx7Lu5TgR8":
-                createdMembershipType = "couple";
+              case "prod_TO13WeOKja1J3f":
+                createdMembershipType = "12-month-minimum";
                 break;
-              case "prod_SrnZGVhLm7A6oW":
-                createdMembershipType = "premium";
+              case "prod_TO13CDZ0wbRcI2":
+                createdMembershipType = "no-lock-in";
+                break;
+              case "prod_TO132agrJCpBrJ":
+                createdMembershipType = "12-month-upfront";
                 break;
               default:
                 console.log("Unknown product ID:", createdProductId);
-                createdMembershipType = "basic";
+                createdMembershipType = "18-month-minimum";
                 break;
             }
           }
@@ -674,9 +686,9 @@ async function handleBookingPayment(ctx: any, session: any) {
     console.log("✅ User found:", user._id, "Name:", user.name);
 
     // Get the total amount from Stripe session
-    const totalAmount = session.amount_total ? session.amount_total / 100 : 0; // Convert from paisa to LKR
+    const totalAmount = session.amount_total ? session.amount_total / 100 : 0; // Convert from cents to AUD
 
-    console.log("💰 Total amount:", totalAmount, "LKR");
+    console.log("💰 Total amount:", totalAmount, "AUD");
     console.log("🏃‍♂️ Creating paid booking with data:");
 
     // Create the booking with paid status

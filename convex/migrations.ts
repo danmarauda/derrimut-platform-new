@@ -17,11 +17,11 @@ export const migrateBeginnerMemberships = mutation({
     for (const membership of beginnerMemberships) {
       try {
         await ctx.db.patch(membership._id, {
-          membershipType: "basic",
+          membershipType: "18-month-minimum", // Migrate beginner to 18-month-minimum as default
           updatedAt: Date.now(),
         });
         migratedCount++;
-        console.log(`✅ Migrated membership ${membership._id} from beginner to basic`);
+        console.log(`✅ Migrated membership ${membership._id} from beginner to 18-month-minimum`);
       } catch (error) {
         console.error(`❌ Failed to migrate membership ${membership._id}:`, error);
       }

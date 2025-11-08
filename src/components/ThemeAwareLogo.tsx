@@ -3,6 +3,7 @@
 import { useTheme } from "next-themes"
 import Image from "next/image"
 import { useEffect, useState } from "react"
+import { DERRIMUT_BRAND } from "@/constants/branding"
 
 interface ThemeAwareLogoProps {
   width: number
@@ -15,7 +16,7 @@ export function ThemeAwareLogo({
   width, 
   height, 
   className = "", 
-  alt = "Elite Gym Logo" 
+  alt = DERRIMUT_BRAND.nameShort 
 }: ThemeAwareLogoProps) {
   const { theme, resolvedTheme } = useTheme()
   const [mounted, setMounted] = useState(false)
@@ -28,7 +29,7 @@ export function ThemeAwareLogo({
   if (!mounted) {
     return (
       <Image 
-        src="/logo.png" 
+        src={DERRIMUT_BRAND.logo.primary} 
         alt={alt}
         width={width} 
         height={height} 
@@ -37,8 +38,8 @@ export function ThemeAwareLogo({
     )
   }
 
-  // Use logo2.png for light mode, logo.png for dark mode
-  const logoSrc = resolvedTheme === "light" ? "/logo2.png" : "/logo.png"
+  // Use white logo for dark mode, primary logo for light mode
+  const logoSrc = resolvedTheme === "dark" ? DERRIMUT_BRAND.logo.white : DERRIMUT_BRAND.logo.primary
   
   return (
     <Image 

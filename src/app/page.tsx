@@ -7,6 +7,7 @@ import Image from "next/image";
 import GymLocationsSection from "@/components/GymLocationsSection";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
+import { DERRIMUT_BRAND } from "@/constants/branding";
 
 const HomePage = () => {
   return (
@@ -47,16 +48,15 @@ const HomePage = () => {
                   <span className="text-primary">Your Fitness Journey</span>
                 </h1>
                 <h3 className="text-2xl md:text-3xl font-medium text-foreground">
-                  Powered By Elite Gym & Fitness
+                  {DERRIMUT_BRAND.tagline}
                 </h3>
               </div>
 
               <p className="text-lg text-muted-foreground max-w-2xl leading-relaxed">
-                Join The Elite Gym & Fitness Experience And Take Full Control Of
-                Your Fitness Journey. From AI-Powered Workout And Diet Plans To
-                Expert Trainer Support, Real-Time Bookings, And A Thriving
-                Fitness Community — Everything You Need Is In One Platform.
-                Ready To Train Smarter, Eat Better, And Stay Motivated?
+                Join {DERRIMUT_BRAND.nameShort} and take full control of your fitness journey. 
+                From AI-powered workout and diet plans to expert trainer support, real-time bookings, 
+                and 24/7 access across Australia — everything you need is in one platform. 
+                Ready to train smarter, eat better, and stay motivated?
               </p>
 
               {/* BUTTONS */}
@@ -459,58 +459,58 @@ const HomePage = () => {
             </Badge>
             <h2 className="text-3xl font-bold text-foreground mb-6">
               Choose Your 
-              <span className="text-primary"> Elite Membership</span>
+              <span className="text-primary"> Derrimut Membership</span>
             </h2>
             <p className="text-muted-foreground text-lg max-w-3xl mx-auto leading-relaxed">
-              From fitness enthusiasts to elite athletes, we have the perfect membership plan to match your fitness goals and lifestyle.
-              All plans include AI plan generation and trainer booking.
+              From fitness enthusiasts to professional athletes, we have the perfect membership plan to match your fitness goals and lifestyle.
+              All plans include AI plan generation, trainer booking, and 24/7 access across Australia.
             </p>
           </div>
 
           {/* Pricing Grid */}
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-12">
-            {/* Basic Plan */}
+            {/* 18 Month Minimum Plan */}
             <Card className="relative bg-background/50 backdrop-blur-sm border-2 hover:border-primary/30 transition-all duration-300 hover:shadow-xl h-[520px] flex flex-col">
               <CardHeader className="text-center pb-3 flex-shrink-0">
-                <CardTitle className="text-xl font-semibold mb-2">Basic</CardTitle>
-                <div className="text-3xl font-bold text-primary mb-1">Rs. 2,500</div>
-                <div className="text-sm text-muted-foreground">per month</div>
+                <CardTitle className="text-xl font-semibold mb-2">18 Month Minimum</CardTitle>
+                <div className="text-3xl font-bold text-primary mb-1">$14.95</div>
+                <div className="text-sm text-muted-foreground">per fortnight</div>
                 <CardDescription className="mt-3 text-sm">
-                  Essential gym access with standard equipment
+                  Best value with 18-month commitment
                 </CardDescription>
               </CardHeader>
               <CardContent className="flex-grow flex flex-col p-4">
                 <ul className="space-y-2 flex-1">
                   <li className="flex items-center gap-3 text-sm">
                     <div className="w-2 h-2 bg-green-500 rounded-full flex-shrink-0"></div>
-                    Full gym equipment access
+                    Access all Derrimut 24:7 gyms Australia wide
                   </li>
                   <li className="flex items-center gap-3 text-sm">
                     <div className="w-2 h-2 bg-green-500 rounded-full flex-shrink-0"></div>
-                    Standard locker facilities
+                    24/7 access at selected locations
                   </li>
                   <li className="flex items-center gap-3 text-sm">
                     <div className="w-2 h-2 bg-green-500 rounded-full flex-shrink-0"></div>
-                    All operating hours access
+                    Group fitness classes
                   </li>
                   <li className="flex items-center gap-3 text-sm">
                     <div className="w-2 h-2 bg-green-500 rounded-full flex-shrink-0"></div>
-                    Basic workout guidance
+                    Personal trainers available
                   </li>
                   <li className="flex items-center gap-3 text-sm">
                     <div className="w-2 h-2 bg-green-500 rounded-full flex-shrink-0"></div>
-                    Free parking
+                    Fully stocked supplement superstore
                   </li>
                 </ul>
                 <div className="mt-4">
                   <Button asChild variant="outline" className="w-full">
-                    <Link href="/membership">Choose Basic</Link>
+                    <Link href="/membership">Choose 18 Month</Link>
                   </Button>
                 </div>
               </CardContent>
             </Card>
 
-            {/* Premium Plan - Most Popular */}
+            {/* No Lock-in Plan - Most Popular */}
             <Card className="relative bg-background/50 backdrop-blur-sm border-2 border-primary hover:border-primary transition-all duration-300 hover:shadow-2xl shadow-primary/20 h-[520px] flex flex-col">
               <div className="absolute -top-4 left-1/2 transform -translate-x-1/2">
                 <Badge className="bg-primary text-primary-foreground px-6 py-2 text-sm font-semibold">
@@ -518,84 +518,84 @@ const HomePage = () => {
                 </Badge>
               </div>
               <CardHeader className="text-center pb-3 pt-6 flex-shrink-0">
-                <CardTitle className="text-xl font-semibold mb-2 text-primary">Premium</CardTitle>
-                <div className="text-3xl font-bold text-primary mb-1">Rs. 3,000</div>
-                <div className="text-sm text-muted-foreground">per month</div>
+                <CardTitle className="text-xl font-semibold mb-2 text-primary">No Lock-in</CardTitle>
+                <div className="text-3xl font-bold text-primary mb-1">$19.95</div>
+                <div className="text-sm text-muted-foreground">per fortnight</div>
                 <CardDescription className="mt-3 text-sm">
-                  Ultimate fitness experience with premium amenities
+                  Ultimate flexibility with 30-day cancellation notice
                 </CardDescription>
               </CardHeader>
               <CardContent className="flex-grow flex flex-col p-4">
                 <ul className="space-y-2 flex-1">
                   <li className="flex items-center gap-3 text-sm">
                     <div className="w-2 h-2 bg-green-500 rounded-full flex-shrink-0"></div>
-                    Full gym & premium equipment
+                    Access all Derrimut 24:7 gyms Australia wide
                   </li>
                   <li className="flex items-center gap-3 text-sm">
                     <div className="w-2 h-2 bg-green-500 rounded-full flex-shrink-0"></div>
-                    Personal training sessions (2/month)
+                    24/7 access at selected locations
                   </li>
                   <li className="flex items-center gap-3 text-sm">
                     <div className="w-2 h-2 bg-green-500 rounded-full flex-shrink-0"></div>
-                    Nutrition consultation included
+                    Group fitness classes
                   </li>
                   <li className="flex items-center gap-3 text-sm">
                     <div className="w-2 h-2 bg-green-500 rounded-full flex-shrink-0"></div>
-                    Spa & sauna access
+                    Personal trainers available
                   </li>
                   <li className="flex items-center gap-3 text-sm">
                     <div className="w-2 h-2 bg-green-500 rounded-full flex-shrink-0"></div>
-                    24/7 gym access
+                    Cancel anytime with 30-day notice
                   </li>
                   <li className="flex items-center gap-3 text-sm">
                     <div className="w-2 h-2 bg-green-500 rounded-full flex-shrink-0"></div>
-                    Priority class booking
+                    Fully stocked supplement superstore
                   </li>
                 </ul>
                 <div className="mt-4">
                   <Button asChild className="w-full bg-primary hover:bg-primary/90">
-                    <Link href="/membership">Go Premium</Link>
+                    <Link href="/membership">Go No Lock-in</Link>
                   </Button>
                 </div>
               </CardContent>
             </Card>
 
-            {/* Couple Plan */}
+            {/* 12 Month Upfront Plan */}
             <Card className="relative bg-background/50 backdrop-blur-sm border-2 hover:border-primary/30 transition-all duration-300 hover:shadow-xl h-[520px] flex flex-col">
               <CardHeader className="text-center pb-3 flex-shrink-0">
-                <CardTitle className="text-xl font-semibold mb-2">Couple</CardTitle>
-                <div className="text-3xl font-bold text-primary mb-1">Rs. 4,500</div>
-                <div className="text-sm text-muted-foreground">per month</div>
+                <CardTitle className="text-xl font-semibold mb-2">12 Month Upfront</CardTitle>
+                <div className="text-3xl font-bold text-primary mb-1">$749</div>
+                <div className="text-sm text-muted-foreground">one-time payment</div>
                 <CardDescription className="mt-3 text-sm">
-                  Train together, stay together with couple benefits
+                  Best value - save on fortnightly fees
                 </CardDescription>
               </CardHeader>
               <CardContent className="flex-grow flex flex-col p-4">
                 <ul className="space-y-2 flex-1">
                   <li className="flex items-center gap-3 text-sm">
                     <div className="w-2 h-2 bg-green-500 rounded-full flex-shrink-0"></div>
-                    Full gym access for 2 people
+                    Access all Derrimut 24:7 gyms Australia wide
                   </li>
                   <li className="flex items-center gap-3 text-sm">
                     <div className="w-2 h-2 bg-green-500 rounded-full flex-shrink-0"></div>
-                    Couple workout programs
+                    24/7 access at selected locations
                   </li>
                   <li className="flex items-center gap-3 text-sm">
                     <div className="w-2 h-2 bg-green-500 rounded-full flex-shrink-0"></div>
-                    Premium locker facilities
+                    Group fitness classes
                   </li>
                   <li className="flex items-center gap-3 text-sm">
                     <div className="w-2 h-2 bg-green-500 rounded-full flex-shrink-0"></div>
-                    Personal training discounts
+                    Personal trainers available
                   </li>
                   <li className="flex items-center gap-3 text-sm">
                     <div className="w-2 h-2 bg-green-500 rounded-full flex-shrink-0"></div>
-                    Nutrition consultation included
+                    Save compared to fortnightly payments
                   </li>
                 </ul>
                 <div className="mt-4">
                   <Button asChild variant="outline" className="w-full">
-                    <Link href="/membership">Choose Couple</Link>
+                    <Link href="/membership">Choose Upfront</Link>
                   </Button>
                 </div>
               </CardContent>
@@ -605,16 +605,17 @@ const HomePage = () => {
           {/* Bottom CTA */}
           <div className="text-center">
             <p className="text-muted-foreground mb-6">
-              All plans include AI-powered workout generation, recipe database access, and community features.
+              All plans include AI-powered workout generation, recipe database access, 24/7 access, and community features.
+              $88 establishment fee applies to all new memberships.
             </p>
             <div className="flex items-center justify-center gap-4 text-sm text-muted-foreground mb-8">
               <div className="flex items-center gap-2">
                 <div className="w-2 h-2 bg-green-500 rounded-full"></div>
-                No setup fees
+                24/7 Access
               </div>
               <div className="flex items-center gap-2">
                 <div className="w-2 h-2 bg-green-500 rounded-full"></div>
-                Cancel anytime
+                Multi-location access
               </div>
               <div className="flex items-center gap-2">
                 <div className="w-2 h-2 bg-green-500 rounded-full"></div>
@@ -634,11 +635,11 @@ const HomePage = () => {
           <div className="bg-gradient-to-r from-primary/10 to-secondary/10 rounded-3xl p-12 text-center border-2 border-primary/20">
             <h2 className="text-3xl font-bold text-foreground mb-6">
               Ready to Join the 
-              <span className="text-primary"> Elite Family?</span>
+              <span className="text-primary"> Derrimut Family?</span>
             </h2>
             <p className="text-muted-foreground text-lg max-w-3xl mx-auto mb-8 leading-relaxed">
               Start your transformation journey today with AI-powered plans, expert trainers, 
-              and a community that believes in your success.
+              and a community that believes in your success. {DERRIMUT_BRAND.tagline}
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
               <Button size="lg" asChild className="px-12 py-6 text-lg font-semibold">

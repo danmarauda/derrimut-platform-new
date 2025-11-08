@@ -5,6 +5,7 @@ import Link from "next/link";
 import Image from "next/image";
 import { useState, useEffect } from "react";
 import { ThemeAwareLogo } from "./ThemeAwareLogo";
+import { DERRIMUT_BRAND } from "@/constants/branding";
 
 const Footer = () => {
   const [mounted, setMounted] = useState(false);
@@ -35,11 +36,11 @@ const Footer = () => {
                 />
               </div>
               <span className="text-xl font-bold text-foreground">
-                ELITE GYM
+                {DERRIMUT_BRAND.nameShort.toUpperCase()}
               </span>
             </Link>
             <p className="text-sm text-muted-foreground">
-              © {getCurrentYear()} EliteGym - All rights reserved
+              © {getCurrentYear()} {DERRIMUT_BRAND.nameShort} - All rights reserved
             </p>
           </div>
 

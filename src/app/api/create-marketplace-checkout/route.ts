@@ -59,7 +59,7 @@ export async function POST(request: NextRequest) {
 
       lineItems.push({
         price_data: {
-          currency: "lkr",
+          currency: "aud",
           product_data: {
             name: item.product.name,
             description: item.product.description,
@@ -83,7 +83,7 @@ export async function POST(request: NextRequest) {
     if (shippingCost > 0) {
       lineItems.push({
         price_data: {
-          currency: "lkr",
+          currency: "aud",
           product_data: {
             name: "Shipping & Handling",
             description: `Delivery to ${shippingAddress.city}`,
@@ -98,7 +98,7 @@ export async function POST(request: NextRequest) {
     if (tax > 0) {
       lineItems.push({
         price_data: {
-          currency: "lkr",
+          currency: "aud",
           product_data: {
             name: "VAT (18%)",
             description: "Value Added Tax",
@@ -160,28 +160,23 @@ export async function POST(request: NextRequest) {
 
 // Helper functions (same as in orders.ts)
 function calculateShipping(subtotal: number, city: string): number {
-  // Free shipping for orders over LKR 10,000
-  if (subtotal >= 10000) {
+  // Free shipping for orders over AUD 200
+  if (subtotal >= 200) {
     return 0;
   }
 
-  // Colombo area - LKR 500
-  const colomboAreas = ["colombo", "dehiwala", "mount lavinia", "nugegoda", "maharagama", "kotte"];
-  if (colomboAreas.some(area => city.toLowerCase().includes(area))) {
-    return 500;
-  }
-
-  // Other major cities - LKR 750
-  const majorCities = ["kandy", "galle", "jaffna", "negombo", "kurunegala", "ratnapura"];
+  // Australian shipping rates
+  // Major cities - AUD 10
+  const majorCities = ["sydney", "melbourne", "brisbane", "perth", "adelaide", "canberra", "darwin", "hobart"];
   if (majorCities.some(cityName => city.toLowerCase().includes(cityName))) {
-    return 750;
+    return 10;
   }
 
-  // Remote areas - LKR 1000
-  return 1000;
+  // Regional areas - AUD 15
+  return 15;
 }
 
 function calculateTax(subtotal: number): number {
-  // Simplified tax calculation - 18% VAT
-  return Math.round(subtotal * 0.18);
+  // Simplified tax calculation - 10% GST (Australia)
+  return Math.round(subtotal * 0.10);
 }
