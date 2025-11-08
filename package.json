@@ -19,7 +19,11 @@
     "convex:set-env": "node scripts/set-convex-env.js",
     "convex:set-env-all": "node scripts/set-convex-env-all.js",
     "vercel:setup-env": "node scripts/setup-vercel-env.js",
-    "vercel:deploy": "vercel --prod"
+    "vercel:set-env": "node scripts/set-vercel-env-auto.js",
+    "vercel:deploy": "vercel --prod",
+    "vercel:deploy-full": "node scripts/deploy-vercel-full.js",
+    "clerk:dns-config": "node scripts/clerk-dns-config.js",
+    "clerk:dns-add": "node scripts/add-clerk-dns-vercel.js"
   },
   "dependencies": {
     "@clerk/nextjs": "^6.28.1",
