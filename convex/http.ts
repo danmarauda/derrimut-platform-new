@@ -471,7 +471,8 @@ http.route({
         processed: false,
       });
       
-      switch (event.type) {
+      try {
+        switch (event.type) {
         case "customer.subscription.created":
           console.log("💳 Processing subscription creation event");
           const createdSubscription = event.data.object;
@@ -689,29 +690,32 @@ http.route({
 
         default:
           console.log(`Unhandled event type ${event.type}`);
-      }
-      
-      // Mark event as successfully processed
-      await ctx.runMutation(api.webhooks.markWebhookEventProcessed, {
-        eventId,
-        processed: true,
-      });
+        }
+        
+        // Mark event as successfully processed
+        await ctx.runMutation(api.webhooks.markWebhookEventProcessed, {
+          eventId,
+          processed: true,
+        });
 
-      return new Response("Success", { status: 200 });
+        return new Response("Success", { status: 200 });
+      } catch (processingError) {
+        console.error("Error processing webhook event:", processingError);
+        
+        // Mark event as failed
+        try {
+          await ctx.runMutation(api.webhooks.markWebhookEventFailed, {
+            eventId,
+            error: processingError instanceof Error ? processingError.message : String(processingError),
+          });
+        } catch (markError) {
+          console.error("Error marking webhook as failed:", markError);
+        }
+        
+        throw processingError; // Re-throw to be caught by outer catch
+      }
     } catch (error) {
       console.error("Error processing webhook:", error);
-      
-      // Mark event as failed
-      const eventId = event.id || `stripe_${Date.now()}_${Math.random()}`;
-      try {
-        await ctx.runMutation(api.webhooks.markWebhookEventFailed, {
-          eventId,
-          error: error instanceof Error ? error.message : String(error),
-        });
-      } catch (markError) {
-        console.error("Error marking webhook as failed:", markError);
-      }
-      
       return new Response("Error processing webhook", { status: 500 });
     }
   }),
