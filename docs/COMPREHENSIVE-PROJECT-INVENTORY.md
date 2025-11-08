@@ -2,7 +2,7 @@
 
 **Generated:** 2025-01-09
 **Project:** Derrimut 24:7 Gym Platform
-**Tech Stack:** Next.js 15, React 19, Convex, Clerk, Stripe, TypeScript
+**Tech Stack:** Next.js 16, React 19, Convex, Clerk, Stripe, TypeScript
 
 ---
 
@@ -926,7 +926,7 @@ Location: `public/`
 ## 🏗️ Project Architecture Summary
 
 ### Technology Stack
-- **Framework:** Next.js 15 (App Router)
+- **Framework:** Next.js 16 (App Router)
 - **UI:** React 19
 - **Styling:** Tailwind CSS 4
 - **Backend:** Convex (real-time database + serverless functions)

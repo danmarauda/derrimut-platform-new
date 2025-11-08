@@ -35,7 +35,7 @@ The Derrimut Platform API is built on **Convex** (real-time backend) and **Next.
 ### Technology Stack
 
 - **Convex**: Real-time database and backend functions
-- **Next.js 15**: API routes for external integrations
+- **Next.js 16**: API routes for external integrations
 - **Clerk**: Authentication and user management
 - **Stripe**: Payment processing
 - **Vapi**: Voice AI integration

@@ -39,7 +39,7 @@ The Derrimut Platform is a modern, full-stack fitness management application bui
 
 | Layer | Technology | Purpose |
 |-------|------------|---------|
-| Frontend | Next.js 15 + React 19 | Server-side rendering, routing |
+| Frontend | Next.js 16 + React 19 | Server-side rendering, routing |
 | UI Components | shadcn/ui + Tailwind CSS | Accessible, customizable components |
 | Backend | Convex | Real-time database and serverless functions |
 | Authentication | Clerk | User management and SSO |
@@ -77,7 +77,7 @@ The Derrimut Platform is a modern, full-stack fitness management application bui
                                  │
 ┌────────────────────────────────▼─────────────────────────────────────────┐
 │                        APPLICATION LAYER                                 │
-│                      (Next.js 15 App Router)                             │
+│                      (Next.js 16 App Router)                             │
 │                                                                          │
 │  ┌─────────────────────────────────────────────────────────────────┐   │
 │  │                      Server Components                           │   │
