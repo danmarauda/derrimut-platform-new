@@ -39,9 +39,9 @@ export default function AdminMembershipsPage() {
   };
 
   const formatPrice = (price: number) => {
-    return new Intl.NumberFormat("en-LK", {
+    return new Intl.NumberFormat("en-AU", {
       style: "currency",
-      currency: "LKR",
+      currency: "AUD",
       minimumFractionDigits: 0,
     }).format(price);
   };
@@ -168,7 +168,7 @@ export default function AdminMembershipsPage() {
       'Email',
       'Membership Type',
       'Status',
-      'Price (LKR)',
+      'Price (AUD)',
       'Stripe Customer ID',
       'Stripe Subscription ID',
       'Start Date',

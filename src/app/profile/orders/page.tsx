@@ -48,7 +48,7 @@ const OrdersPage = () => {
 
   // Format currency
   const formatCurrency = (amount: number) => {
-    return `LKR ${amount.toLocaleString()}`;
+    return `AUD ${amount.toLocaleString()}`;
   };
 
   // Get status color

@@ -185,7 +185,7 @@ export default function MarketplaceAdminPage() {
       'Product Name',
       'Description',
       'Category',
-      'Price (LKR)',
+      'Price (AUD)',
       'Stock',
       'Status',
       'Featured',
@@ -460,7 +460,7 @@ export default function MarketplaceAdminPage() {
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div>
                     <label className="block text-sm font-medium text-foreground mb-2">
-                      Price (LKR) *
+                      Price (AUD) *
                     </label>
                     <input
                       type="number"

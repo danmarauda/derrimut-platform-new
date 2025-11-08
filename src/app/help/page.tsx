@@ -65,7 +65,7 @@ const HelpPage = () => {
       questions: [
         {
           question: "What products are available in the marketplace?",
-          answer: "Supplements (protein, BCAA, creatine), Equipment (dumbbells, resistance bands, yoga mats), Apparel (performance wear, shoes), Accessories (smart bottles, gym bags), and Nutrition (protein bars, vitamins). All priced in LKR with member discounts."
+          answer: "Supplements (protein, BCAA, creatine), Equipment (dumbbells, resistance bands, yoga mats), Apparel (performance wear, shoes), Accessories (smart bottles, gym bags), and Nutrition (protein bars, vitamins). All priced in AUD with member discounts."
         },
         {
           question: "What are the shipping costs?",
@@ -73,7 +73,7 @@ const HelpPage = () => {
         },
         {
           question: "Do members get discounts on marketplace items?",
-          answer: "Yes! Members receive exclusive discounts on all marketplace products. Payments processed securely in Sri Lankan Rupees (LKR) with order tracking and delivery updates."
+          answer: "Yes! Members receive exclusive discounts on all marketplace products. Payments processed securely in Australian Dollars (AUD) with order tracking and delivery updates."
         }
       ]
     },
@@ -82,7 +82,7 @@ const HelpPage = () => {
       questions: [
         {
           question: "How much do memberships cost?",
-          answer: "Basic: Rs. 2,500/month (gym access, trainers included). Premium: Rs. 3,000/month (adds 24/7 access, AI programs, priority booking). Couple: Rs. 4,500/month (Premium features for 2 people). All payments via secure Stripe in LKR."
+          answer: "18 Month Minimum: $14.95/fortnight. 12 Month Minimum: $17.95/fortnight. No Lock-in: $19.95/fortnight. 12 Month Upfront: $749 one-time. All payments via secure Stripe in AUD."
         },
         {
           question: "Are there any hidden fees?",

@@ -163,7 +163,7 @@ export default function InventoryPage() {
       'Condition',
       'Status',
       'Purchase Date',
-      'Purchase Price (LKR)',
+      'Purchase Price (AUD)',
       'Vendor',
       'Warranty Expiry',
       'Location',

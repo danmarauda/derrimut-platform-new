@@ -52,9 +52,9 @@ export default function SalaryManagementDashboard() {
 
   const formatCurrency = (amount: number) => {
     if (!mounted) return 'Rs. 0';
-    return new Intl.NumberFormat("en-LK", {
+    return new Intl.NumberFormat("en-AU", {
       style: "currency",
-      currency: "LKR",
+      currency: "AUD",
       minimumFractionDigits: 0,
     }).format(amount);
   };

@@ -75,7 +75,7 @@ const AboutPage = () => {
               <h3 className="text-xl font-semibold mb-3 text-primary">Integrated Marketplace</h3>
               <p className="text-muted-foreground">
                 Shop supplements, equipment, apparel, and nutrition products with member discounts. 
-                Free shipping on orders over Rs. 10,000 with secure LKR payment processing.
+                Free shipping on orders over AUD 200 with secure AUD payment processing.
               </p>
             </div>
             

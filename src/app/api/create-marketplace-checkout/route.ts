@@ -54,7 +54,7 @@ export async function POST(request: NextRequest) {
       const itemTotal = item.quantity * item.priceAtTime;
       subtotal += itemTotal;
 
-      // Convert LKR to cents for Stripe (multiply by 100)
+      // Convert AUD to cents for Stripe (multiply by 100)
       const priceInCents = Math.round(item.priceAtTime * 100);
 
       lineItems.push({

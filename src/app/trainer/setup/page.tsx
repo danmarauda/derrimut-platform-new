@@ -313,7 +313,7 @@ export default function TrainerSetup() {
 
                   <div>
                     <label className="block text-sm font-medium text-foreground mb-2">
-                      Session Rate (LKR) <span className="text-destructive">*</span>
+                      Session Rate (AUD) <span className="text-destructive">*</span>
                     </label>
                     <div className="relative">
                       <DollarSign className="absolute left-3 top-1/2 transform -translate-y-1/2 h-5 w-5 text-muted-foreground" />

@@ -33,9 +33,9 @@ export default function SalaryReportsPage() {
 
   const formatCurrency = (amount: number | undefined | null) => {
     if (!mounted || !amount || isNaN(amount)) return 'Rs. 0';
-    return new Intl.NumberFormat("en-LK", {
+    return new Intl.NumberFormat("en-AU", {
       style: "currency",
-      currency: "LKR",
+      currency: "AUD",
       minimumFractionDigits: 0,
     }).format(amount);
   };

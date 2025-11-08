@@ -13,7 +13,7 @@ export async function POST(req: NextRequest) {
           id: "cs_test_" + Date.now(),
           mode: "payment",
           payment_status: "paid",
-          amount_total: 250000, // LKR 2500 in cents
+          amount_total: 250000, // AUD 2500 in cents
           payment_intent: "pi_test_" + Date.now(),
           metadata: {
             type: "marketplace_order",

@@ -38,7 +38,7 @@ export default function WebhookTestPage() {
             id: "cs_test_" + Date.now(),
             mode: "payment",
             payment_status: "paid",
-            amount_total: 500000, // LKR 5000 in paisa
+            amount_total: 500000, // AUD 5000 in cents
             metadata: {
               userId: user.id,
               trainerId: trainers[0]._id,
@@ -191,7 +191,7 @@ export default function WebhookTestPage() {
                             {booking.status}
                           </span>
                           <p className="text-white font-medium mt-1">
-                            LKR {booking.totalAmount.toLocaleString()}
+                            AUD {booking.totalAmount.toLocaleString()}
                           </p>
                         </div>
                       </div>

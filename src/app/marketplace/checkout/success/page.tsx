@@ -25,9 +25,9 @@ const CheckoutSuccessContent = () => {
   }, [sessionId]);
 
   const formatPrice = (price: number) => {
-    return new Intl.NumberFormat("en-LK", {
+    return new Intl.NumberFormat("en-AU", {
       style: "currency",
-      currency: "LKR",
+      currency: "AUD",
     }).format(price);
   };
 

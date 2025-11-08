@@ -46,7 +46,7 @@ const TermsPage = () => {
                   <li>Voice-activated AI fitness consultations available 24/7</li>
                   <li>ALL trainer sessions included with membership (no hourly fees)</li>
                   <li>Two Kandy locations with certified professionals (6AM-10PM availability)</li>
-                  <li>Integrated marketplace with LKR pricing and member discounts</li>
+                  <li>Integrated marketplace with AUD pricing and member discounts</li>
                   <li>24/7 platform access with Premium member gym access</li>
                   <li>Community features supporting 1000+ active members</li>
                 </ul>

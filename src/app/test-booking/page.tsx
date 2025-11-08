@@ -38,7 +38,7 @@ export default function TestBookingPage() {
         sessionDate: "2025-08-20",
         startTime: "14:00",
         duration: 60,
-        totalAmount: 5000, // LKR 5000
+        totalAmount: 5000, // AUD 5000
       });
       
       setResult(`✅ Test booking created successfully! ID: ${bookingId}`);
@@ -120,7 +120,7 @@ export default function TestBookingPage() {
                               {booking.sessionDate} • {booking.startTime}
                             </p>
                             <p className="text-gray-500 text-xs">
-                              {booking.sessionType} • LKR {booking.totalAmount.toLocaleString()}
+                              {booking.sessionType} • AUD {booking.totalAmount.toLocaleString()}
                             </p>
                           </div>
                           <span className={`px-2 py-1 rounded-full text-xs ${

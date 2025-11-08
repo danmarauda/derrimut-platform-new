@@ -43,7 +43,7 @@ export async function POST(req: NextRequest) {
               description: `${sessionDate} at ${startTime} (${duration} minutes)${notes ? `\nNotes: ${notes}` : ''}`,
               images: ["https://your-domain.com/logo.png"],
             },
-            unit_amount: Math.round(amount * 100), // Convert to cents (paisa for LKR)
+            unit_amount: Math.round(amount * 100), // Convert to cents (AUD)
           },
           quantity: 1,
         },

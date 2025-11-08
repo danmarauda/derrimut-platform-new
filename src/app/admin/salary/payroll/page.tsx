@@ -54,9 +54,9 @@ export default function PayrollProcessingPage() {
 
   const formatCurrency = (amount: number) => {
     if (!mounted) return 'Rs. 0';
-    return new Intl.NumberFormat("en-LK", {
+    return new Intl.NumberFormat("en-AU", {
       style: "currency",
-      currency: "LKR",
+      currency: "AUD",
       minimumFractionDigits: 0,
     }).format(amount);
   };
@@ -195,16 +195,16 @@ export default function PayrollProcessingPage() {
       'Employee Name',
       'Employee ID',
       'Role',
-      'Base Salary (LKR)',
-      'Allowances (LKR)',
-      'Performance Bonus (LKR)',
-      'Gross Pay (LKR)',
-      'Tax Deduction (LKR)',
-      'EPF Deduction (LKR)',
-      'ETF Deduction (LKR)',
-      'Other Deductions (LKR)',
-      'Total Deductions (LKR)',
-      'Net Salary (LKR)',
+      'Base Salary (AUD)',
+      'Allowances (AUD)',
+      'Performance Bonus (AUD)',
+      'Gross Pay (AUD)',
+      'Tax Deduction (AUD)',
+      'EPF Deduction (AUD)',
+      'ETF Deduction (AUD)',
+      'Other Deductions (AUD)',
+      'Total Deductions (AUD)',
+      'Net Salary (AUD)',
       'Status',
       'Payment Period'
     ];

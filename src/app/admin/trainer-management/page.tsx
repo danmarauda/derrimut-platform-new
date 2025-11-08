@@ -156,7 +156,7 @@ export default function AdminTrainerManagementPage() {
                     </div>
                     <div className="flex items-center justify-between text-sm">
                       <span className="text-muted-foreground">Rate:</span>
-                      <span className="text-foreground">LKR {application.hourlyRate.toLocaleString()}/hr</span>
+                      <span className="text-foreground">AUD {application.hourlyRate.toLocaleString()}/hr</span>
                     </div>
                   </div>
 
@@ -224,7 +224,7 @@ export default function AdminTrainerManagementPage() {
                       <div className="text-xs text-muted-foreground">Sessions</div>
                     </div>
                     <div>
-                      <div className="text-lg font-bold text-foreground">LKR {trainer.hourlyRate.toLocaleString()}</div>
+                      <div className="text-lg font-bold text-foreground">AUD {trainer.hourlyRate.toLocaleString()}</div>
                       <div className="text-xs text-muted-foreground">Per Hour</div>
                     </div>
                   </div>
@@ -284,7 +284,7 @@ export default function AdminTrainerManagementPage() {
                       <div className="text-xs text-muted-foreground/70">Sessions</div>
                     </div>
                     <div>
-                      <div className="text-lg font-bold text-muted-foreground">LKR {trainer.hourlyRate.toLocaleString()}</div>
+                      <div className="text-lg font-bold text-muted-foreground">AUD {trainer.hourlyRate.toLocaleString()}</div>
                       <div className="text-xs text-muted-foreground/70">Per Hour</div>
                     </div>
                   </div>
@@ -367,7 +367,7 @@ export default function AdminTrainerManagementPage() {
                       </div>
                       <div className="flex justify-between">
                         <span className="text-muted-foreground">Hourly Rate:</span>
-                        <span className="text-foreground">LKR {selectedTrainer.hourlyRate.toLocaleString()}</span>
+                        <span className="text-foreground">AUD {selectedTrainer.hourlyRate.toLocaleString()}</span>
                       </div>
                       <div className="flex justify-between">
                         <span className="text-muted-foreground">Total Sessions:</span>

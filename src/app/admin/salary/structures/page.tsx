@@ -85,9 +85,9 @@ export default function SalaryStructuresPage() {
 
   const formatCurrency = (amount: number) => {
     if (!mounted) return 'Rs. 0';
-    return new Intl.NumberFormat("en-LK", {
+    return new Intl.NumberFormat("en-AU", {
       style: "currency",
-      currency: "LKR",
+      currency: "AUD",
       minimumFractionDigits: 0,
     }).format(amount);
   };
@@ -109,18 +109,18 @@ export default function SalaryStructuresPage() {
       'Employee Name',
       'Employee ID', 
       'Role',
-      'Base Salary (LKR)',
-      'Transport Allowance (LKR)',
-      'Meal Allowance (LKR)',
-      'Housing Allowance (LKR)',
-      'Performance Allowance (LKR)',
-      'Overtime Allowance (LKR)',
+      'Base Salary (AUD)',
+      'Transport Allowance (AUD)',
+      'Meal Allowance (AUD)',
+      'Housing Allowance (AUD)',
+      'Performance Allowance (AUD)',
+      'Overtime Allowance (AUD)',
       'Tax Deduction (%)',
       'EPF Deduction (%)',
       'ETF Deduction (%)',
-      'Insurance Deduction (LKR)',
-      'Advance Deduction (LKR)',
-      'Total Compensation (LKR)',
+      'Insurance Deduction (AUD)',
+      'Advance Deduction (AUD)',
+      'Total Compensation (AUD)',
       'Payment Frequency',
       'Status',
       'Effective Date'
@@ -482,7 +482,7 @@ export default function SalaryStructuresPage() {
 
                 <div>
                   <label className="block text-sm font-medium text-foreground mb-2">
-                    Base Salary (LKR) <span className="text-red-400">*</span>
+                    Base Salary (AUD) <span className="text-red-400">*</span>
                   </label>
                   <input
                     type="number"
@@ -504,7 +504,7 @@ export default function SalaryStructuresPage() {
                   {['transport', 'meal', 'housing', 'performance', 'overtime'].map((allowance) => (
                     <div key={allowance}>
                       <label className="block text-sm font-medium text-foreground mb-2 capitalize">
-                        {allowance} Allowance (LKR)
+                        {allowance} Allowance (AUD)
                       </label>
                       <input
                         type="number"
@@ -533,7 +533,7 @@ export default function SalaryStructuresPage() {
                   {['tax', 'epf', 'etf', 'insurance', 'advance'].map((deduction) => (
                     <div key={deduction}>
                       <label className="block text-sm font-medium text-foreground mb-2 capitalize">
-                        {deduction === 'epf' ? 'EPF' : deduction === 'etf' ? 'ETF' : deduction} ({deduction === 'tax' || deduction === 'epf' || deduction === 'etf' ? '%' : 'LKR'})
+                        {deduction === 'epf' ? 'EPF' : deduction === 'etf' ? 'ETF' : deduction} ({deduction === 'tax' || deduction === 'epf' || deduction === 'etf' ? '%' : 'AUD'})
                       </label>
                       <input
                         type="number"

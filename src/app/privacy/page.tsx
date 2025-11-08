@@ -34,7 +34,7 @@ const PrivacyPage = () => {
                   <li>Name and email address for account creation</li>
                   <li>Profile picture (optional)</li>
                   <li>Phone number for trainer session coordination</li>
-                  <li>Payment information (processed securely through Stripe in LKR)</li>
+                  <li>Payment information (processed securely through Stripe in AUD)</li>
                   <li>Fitness goals, health conditions, and preferences for voice AI consultations</li>
                   <li>Membership tier selection (Basic Rs. 2,500, Premium Rs. 3,000, Couple Rs. 4,500)</li>
                 </ul>
@@ -58,7 +58,7 @@ const PrivacyPage = () => {
                 <ul className="list-disc pl-6 space-y-2">
                   <li>Provide 24/7 access to our fitness platform and voice AI consultations</li>
                   <li>Generate personalized workout and nutrition plans (300+ programs created)</li>
-                  <li>Process membership payments and marketplace transactions in LKR</li>
+                  <li>Process membership payments and marketplace transactions in AUD</li>
                   <li>Coordinate trainer sessions (available 6AM-10PM daily, all included with membership)</li>
                   <li>Provide 24/7 gym access for Premium members with swipe card entry</li>
                   <li>Send updates about our Kandy locations and new features</li>
@@ -76,7 +76,7 @@ const PrivacyPage = () => {
                 </p>
                 <ul className="list-disc pl-6 space-y-2">
                   <li><strong>With Certified Trainers:</strong> When booking sessions (all included with membership), we share relevant fitness information with your chosen trainer</li>
-                  <li><strong>Service Providers:</strong> Stripe for LKR payments, Clerk for authentication, Convex for data storage, VAPI for AI consultations</li>
+                  <li><strong>Service Providers:</strong> Stripe for AUD payments, Clerk for authentication, Convex for data storage, VAPI for AI consultations</li>
                   <li><strong>Marketplace Partners:</strong> For supplement and equipment deliveries within Sri Lanka</li>
                   <li><strong>Legal Requirements:</strong> When required by Sri Lankan law or to protect member safety</li>
                 </ul>

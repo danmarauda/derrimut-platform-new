@@ -55,9 +55,9 @@ export default function AdminDashboard() {
   };
 
   const formatCurrency = (amount: number) => {
-    return new Intl.NumberFormat("en-LK", {
+    return new Intl.NumberFormat("en-AU", {
       style: "currency",
-      currency: "LKR",
+      currency: "AUD",
       minimumFractionDigits: 0,
     }).format(amount);
   };
@@ -206,8 +206,8 @@ export default function AdminDashboard() {
       ['Active Memberships', activeMemberships, 'Currently active paid memberships'],
       ['Expired Memberships', expiredMemberships, 'Memberships that have expired'],
       ['Total Memberships', totalMemberships, 'All memberships (active + expired)'],
-      ['Monthly Revenue (LKR)', monthlyRevenue, 'Revenue from new memberships this month'],
-      ['Total Active Revenue (LKR)', totalRevenue, 'Total revenue from active memberships'],
+      ['Monthly Revenue (AUD)', monthlyRevenue, 'Revenue from new memberships this month'],
+      ['Total Active Revenue (AUD)', totalRevenue, 'Total revenue from active memberships'],
       ['Revenue Growth (%)', revenueGrowth, 'Month-over-month revenue growth'],
       ['Total Recipes', totalRecipes, 'All recipes in the system'],
       ['Recommended Recipes', recommendedRecipesCount, 'Recipes marked as recommended'],

@@ -59,9 +59,9 @@ const PaymentSlipsPage = () => {
 
   // Format currency
   const formatCurrency = (amount: number) => {
-    return new Intl.NumberFormat('en-LK', {
+    return new Intl.NumberFormat('en-AU', {
       style: 'currency',
-      currency: 'LKR',
+      currency: 'AUD',
       minimumFractionDigits: 2,
     }).format(amount);
   };

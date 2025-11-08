@@ -79,9 +79,9 @@ export default function SalaryAdvancesPage() {
 
   const formatCurrency = (amount: number) => {
     if (!mounted) return 'Rs. 0';
-    return new Intl.NumberFormat("en-LK", {
+    return new Intl.NumberFormat("en-AU", {
       style: "currency",
-      currency: "LKR",
+      currency: "AUD",
       minimumFractionDigits: 0,
     }).format(amount);
   };
@@ -388,7 +388,7 @@ export default function SalaryAdvancesPage() {
 
                 <div>
                   <label className="block text-sm font-medium text-foreground mb-2">
-                    Requested Amount (LKR) <span className="text-red-400">*</span>
+                    Requested Amount (AUD) <span className="text-red-400">*</span>
                   </label>
                   <input
                     type="number"
@@ -502,7 +502,7 @@ export default function SalaryAdvancesPage() {
               {approvalData.action === "approve" && (
                 <div>
                   <label className="block text-sm font-medium text-foreground mb-2">
-                    Approved Amount (LKR) <span className="text-red-400">*</span>
+                    Approved Amount (AUD) <span className="text-red-400">*</span>
                   </label>
                   <input
                     type="number"
