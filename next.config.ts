@@ -30,18 +30,6 @@ const nextConfig: NextConfig = {
     } : false,
   },
 
-  // Next.js 16: Experimental features (stable in 16)
-  experimental: {
-    // Enable React 19 features
-    reactCompiler: false, // Set to true when React Compiler is stable
-  },
-
-  // Next.js 16: Optimized caching
-  onDemandRevalidation: {
-    // Enable on-demand revalidation
-    maxDuration: 60,
-  },
-
   // Security Headers - Task 4.3: Comprehensive Security Headers
   async headers() {
     return [

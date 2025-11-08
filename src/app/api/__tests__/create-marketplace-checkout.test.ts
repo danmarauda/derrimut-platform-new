@@ -324,7 +324,7 @@ describe('POST /api/create-marketplace-checkout', () => {
 
       const callArgs = mockStripeCreate.mock.calls[0][0];
       const taxItem = callArgs.line_items.find((item: any) =>
-        item.price_data?.product_data?.name?.includes('VAT')
+        item.price_data?.product_data?.name?.includes('GST')
       );
 
       expect(taxItem).toBeDefined();

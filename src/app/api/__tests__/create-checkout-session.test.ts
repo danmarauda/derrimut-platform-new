@@ -229,7 +229,7 @@ describe('POST /api/create-checkout-session', () => {
     });
 
     it('should handle malformed JSON gracefully', async () => {
-      (mockRequest.json as jest.Mock).mockRejectedValue(new Error('Invalid JSON'));
+      (mockRequest.json as ReturnType<typeof vi.fn>).mockRejectedValue(new Error('Invalid JSON'));
 
       const response = await POST(mockRequest as NextRequest);
       const data = await response.json();
