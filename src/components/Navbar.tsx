@@ -372,7 +372,7 @@ const Navbar = () => {
               {/* Role-based navigation */}
               {(userRole === "admin" || userRole === "trainer" || userRole === "user") && (
                 <>
-                  <div className="h-px bg-white/10/10 my-6"></div>
+                  <div className="h-px bg-white/10 my-6"></div>
                   <div className="space-y-4">
                     {userRole === "admin" && (
                       <Link
@@ -440,7 +440,7 @@ const Navbar = () => {
                           },
                         }}
                       />
-                      <span className="text-sm text-white/60/60">Account Settings</span>
+                      <span className="text-sm text-white/60">Account Settings</span>
                     </div>
                   </>
                 ) : (
