@@ -2,6 +2,7 @@
 
 import { AdminLayout } from "@/components/AdminLayout";
 import { RoleGuard } from "@/components/RoleGuard";
+import { StatisticsGrid } from "@/components/dashboard/StatisticsGrid";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
 import { 
@@ -42,28 +43,25 @@ import { api } from "convex/_generated/api";
 export default function SuperAdminDashboard() {
   const { user, isSignedIn } = useUser();
   
-  // Fetch REAL data from Convex - NO MOCK DATA
   const dashboardSummary = useQuery(api.analytics.getDashboardSummary, isSignedIn ? {} : "skip");
   const revenueTrends = useQuery(api.analytics.getRevenueTrends, isSignedIn ? {} : "skip");
   const locationData = useQuery(api.analytics.getLocationAnalytics, isSignedIn ? {} : "skip");
   const aiMetrics = useQuery(api.analytics.getAIMetrics, isSignedIn ? {} : "skip");
   const churnData = useQuery(api.analytics.getChurnAnalytics, isSignedIn ? {} : "skip");
 
-  // Loading state
   const isLoading = !dashboardSummary || !revenueTrends || !locationData || !aiMetrics || !churnData;
 
   if (isLoading) {
     return (
-      <div className="min-h-screen flex items-center justify-center">
+      <div className="min-h-screen bg-neutral-950 flex items-center justify-center">
         <div className="text-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-red-600 mx-auto mb-4"></div>
-          <p className="text-gray-600">Loading dashboard...</p>
+          <div className="h-16 w-16 border-4 border-white/20 border-t-white/60 rounded-full animate-spin mx-auto mb-4"></div>
+          <p className="text-white/60">Loading dashboard...</p>
         </div>
       </div>
     );
   }
 
-  // Calculate state distribution from location data
   const stateDistribution = locationData.reduce((acc, loc) => {
     acc[loc.state] = (acc[loc.state] || 0) + 1;
     return acc;
@@ -83,16 +81,9 @@ export default function SuperAdminDashboard() {
     }).format(amount);
   };
 
-  // Calculate totals across all locations
   const totalRevenueFromLocations = locationData.reduce((sum, loc) => sum + loc.revenue, 0);
   const totalMembersFromLocations = locationData.reduce((sum, loc) => sum + loc.members, 0);
   const avgGrowth = locationData.reduce((sum, loc) => sum + loc.growth, 0) / locationData.length;
-
-  // State distribution for pie chart
-  const stateDistributionFromLocations = [
-    { name: 'VIC', value: locationData.filter(l => l.state === 'VIC').length, color: '#ef4444' },
-    { name: 'SA', value: locationData.filter(l => l.state === 'SA').length, color: '#3b82f6' },
-  ];
 
   return (
     <RoleGuard allowedRoles={["superadmin"]}>
@@ -102,118 +93,70 @@ export default function SuperAdminDashboard() {
         showAddButton={false}
       >
       <div className="space-y-8">
-        {/* Hero Banner with Animated Gradient */}
-        <motion.div
-          initial={{ opacity: 0, y: -20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.5 }}
-        >
-          <Card className="bg-gradient-to-br from-red-600 via-red-700 to-red-900 text-white border-0 shadow-2xl overflow-hidden relative">
-            <div className="absolute inset-0 bg-black/10"></div>
-            <CardHeader className="relative z-10">
-              <div className="flex items-center justify-between">
-                <div>
-                  <div className="flex items-center gap-3 mb-2">
-                    <Sparkles className="h-8 w-8 text-yellow-300 animate-pulse" />
-                    <CardTitle className="text-3xl font-bold">Welcome, Super Admin</CardTitle>
-                  </div>
-                  <CardDescription className="text-red-100 text-lg">
-                    Real-time intelligence across 18 locations • {dashboardSummary.totalMembers.toLocaleString()} active members • AI-powered insights
-                  </CardDescription>
+        {/* Hero Banner */}
+        <Card variant="premium" className="bg-gradient-to-r from-white/10 to-white/5 border-white/20">
+          <CardHeader>
+            <div className="flex items-center justify-between">
+              <div>
+                <div className="flex items-center gap-3 mb-2">
+                  <Sparkles className="h-8 w-8 text-white/70" />
+                  <CardTitle className="text-3xl font-semibold text-white">Welcome, Super Admin</CardTitle>
                 </div>
-                <div className="flex flex-col items-end gap-2">
-                  <Badge className="bg-green-500 text-white px-3 py-1 text-sm">
-                    <CheckCircle2 className="h-4 w-4 mr-1 inline" />
-                    All Systems Operational
-                  </Badge>
-                  <div className="text-red-100 text-sm">Last updated: {new Date().toLocaleTimeString()}</div>
-                </div>
+                <CardDescription className="text-white/60 text-lg">
+                  Real-time intelligence across 18 locations • {dashboardSummary.totalMembers.toLocaleString()} active members • AI-powered insights
+                </CardDescription>
               </div>
-            </CardHeader>
-          </Card>
-        </motion.div>
+              <Badge variant="accent" className="text-sm">
+                <CheckCircle2 className="h-4 w-4 mr-1" />
+                All Systems Operational
+              </Badge>
+            </div>
+          </CardHeader>
+        </Card>
 
-        {/* === SECTION 1: EXECUTIVE OVERVIEW === */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.5, delay: 0.1 }}
-        >
+        {/* Executive Overview - Using StatisticsGrid */}
+        <div>
           <div className="flex items-center gap-2 mb-4">
-            <TrendingUp className="h-6 w-6 text-red-600" />
-            <h2 className="text-2xl font-bold">Executive Overview</h2>
+            <TrendingUp className="h-6 w-6 text-white/70" />
+            <h2 className="text-2xl font-semibold text-white">Executive Overview</h2>
           </div>
           
-          {/* Key Performance Indicators */}
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
-            <Card className="border-l-4 border-l-red-600 shadow-lg hover:shadow-xl transition-shadow">
-              <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                <CardTitle className="text-sm font-medium text-muted-foreground">Total Monthly Revenue</CardTitle>
-                <DollarSign className="h-5 w-5 text-red-600" />
-              </CardHeader>
-              <CardContent>
-                <div className="text-3xl font-bold text-red-600">{formatCurrency(dashboardSummary.totalRevenue)}</div>
-                <div className="flex items-center gap-2 mt-2">
-                  <Badge className="bg-green-100 text-green-700 hover:bg-green-100">
-                    <ArrowUp className="h-3 w-3 mr-1" />
-                    +{avgGrowth.toFixed(1)}%
-                  </Badge>
-                  <p className="text-xs text-muted-foreground">vs last month</p>
-                </div>
-              </CardContent>
-            </Card>
+          <StatisticsGrid
+            stats={[
+              {
+                title: "Total Monthly Revenue",
+                value: formatCurrency(dashboardSummary.totalRevenue),
+                change: avgGrowth,
+                icon: DollarSign,
+                trend: "up",
+              },
+              {
+                title: "Active Members",
+                value: dashboardSummary.totalMembers.toLocaleString(),
+                change: 8.3,
+                icon: Users,
+                trend: "up",
+              },
+              {
+                title: "AI Consultations",
+                value: aiMetrics.totalConsultations.toLocaleString(),
+                change: aiMetrics.completionRate,
+                icon: Brain,
+                trend: "up",
+              },
+              {
+                title: "Active Locations",
+                value: locationData.length,
+                change: 0,
+                icon: Building2,
+                trend: "up",
+              },
+            ]}
+          />
+        </div>
 
-            <Card className="border-l-4 border-l-blue-600 shadow-lg hover:shadow-xl transition-shadow">
-              <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                <CardTitle className="text-sm font-medium text-muted-foreground">Active Members</CardTitle>
-                <Users className="h-5 w-5 text-blue-600" />
-              </CardHeader>
-              <CardContent>
-                <div className="text-3xl font-bold text-blue-600">{dashboardSummary.totalMembers.toLocaleString()}</div>
-                <div className="flex items-center gap-2 mt-2">
-                  <Badge className="bg-green-100 text-green-700 hover:bg-green-100">
-                    <ArrowUp className="h-3 w-3 mr-1" />
-                    +8.3%
-                  </Badge>
-                  <p className="text-xs text-muted-foreground">growing monthly</p>
-                </div>
-              </CardContent>
-            </Card>
-
-            <Card className="border-l-4 border-l-purple-600 shadow-lg hover:shadow-xl transition-shadow">
-              <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                <CardTitle className="text-sm font-medium text-muted-foreground">AI Consultations</CardTitle>
-                <Brain className="h-5 w-5 text-purple-600" />
-              </CardHeader>
-              <CardContent>
-                <div className="text-3xl font-bold text-purple-600">{aiMetrics.totalConsultations.toLocaleString()}</div>
-                <div className="flex items-center gap-2 mt-2">
-                  <Badge className="bg-purple-100 text-purple-700 hover:bg-purple-100">
-                    {aiMetrics.completionRate}% completion
-                  </Badge>
-                  <p className="text-xs text-muted-foreground">this month</p>
-                </div>
-              </CardContent>
-            </Card>
-
-            <Card className="border-l-4 border-l-green-600 shadow-lg hover:shadow-xl transition-shadow">
-              <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                <CardTitle className="text-sm font-medium text-muted-foreground">Active Locations</CardTitle>
-                <Building2 className="h-5 w-5 text-green-600" />
-              </CardHeader>
-              <CardContent>
-                <div className="text-3xl font-bold text-green-600">{locationData.length}</div>
-                <div className="flex items-center gap-2 mt-2">
-                  <Badge className="bg-blue-100 text-blue-700 hover:bg-blue-100">
-                    VIC: {stateDistribution["VIC"] || 0} | SA: {stateDistribution["SA"] || 0}
-                  </Badge>
-                </div>
-              </CardContent>
-            </Card>
-          </div>
-
-          {/* Revenue Trend Chart */}
-          <Card className="shadow-lg">
+        {/* Revenue Trend Chart */}
+        <Card className="shadow-lg">
             <CardHeader>
               <div className="flex items-center justify-between">
                 <div>

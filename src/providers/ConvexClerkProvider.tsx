@@ -3,6 +3,7 @@
 import { ClerkProvider, useAuth } from "@clerk/nextjs";
 import { ConvexReactClient } from "convex/react";
 import { ConvexProviderWithClerk } from "convex/react-clerk";
+import { clerkAppearance } from "@/lib/clerk-appearance";
 
 const convexUrl =
   process.env.NEXT_PUBLIC_CONVEX_URL ??
@@ -19,6 +20,7 @@ function ConvexClerkProvider({ children }: { children: React.ReactNode }) {
     <ClerkProvider 
       publishableKey={process.env.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY!}
       afterSignOutUrl="/"
+      appearance={clerkAppearance}
     >
       <ConvexProviderWithClerk 
         client={convex} 

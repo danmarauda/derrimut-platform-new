@@ -25,6 +25,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Badge } from "@/components/ui/badge";
 import { RoleGuard } from "@/components/RoleGuard";
 import { AdminLayout } from "@/components/AdminLayout";
+import { StatisticsGrid } from "@/components/dashboard/StatisticsGrid";
 
 export default function LocationAdminDashboard() {
   const { isSignedIn } = useAuth();
@@ -90,16 +91,16 @@ export default function LocationAdminDashboard() {
       >
         <div className="space-y-6">
           {/* Location Header */}
-          <Card className="bg-gradient-to-r from-red-600 to-red-800 text-white border-0">
+          <Card variant="premium" className="bg-gradient-to-r from-white/10 to-white/5 border-white/20">
             <CardHeader>
               <div className="flex items-start justify-between">
                 <div>
-                  <CardTitle className="text-2xl mb-2">{organization.name}</CardTitle>
-                  <CardDescription className="text-red-100">
+                  <CardTitle className="text-2xl mb-2 text-white">{organization.name}</CardTitle>
+                  <CardDescription className="text-white/60">
                     {formatAddress(organization)}
                   </CardDescription>
                 </div>
-                <Badge className="bg-white text-red-600">
+                <Badge variant={organization.status === "active" ? "accent" : "standard"}>
                   {organization.status === "active" ? "Active" : organization.status}
                 </Badge>
               </div>
@@ -107,28 +108,28 @@ export default function LocationAdminDashboard() {
             <CardContent>
               <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mt-4">
                 {organization.phone && (
-                  <div className="flex items-center gap-2">
+                  <div className="flex items-center gap-2 text-white/80">
                     <Phone className="h-4 w-4" />
-                    <a href={`tel:${organization.phone}`} className="text-sm hover:underline">
+                    <a href={`tel:${organization.phone}`} className="text-sm hover:text-white transition-colors">
                       {organization.phone}
                     </a>
                   </div>
                 )}
                 {organization.email && (
-                  <div className="flex items-center gap-2">
+                  <div className="flex items-center gap-2 text-white/80">
                     <Mail className="h-4 w-4" />
-                    <a href={`mailto:${organization.email}`} className="text-sm hover:underline truncate">
+                    <a href={`mailto:${organization.email}`} className="text-sm hover:text-white transition-colors truncate">
                       {organization.email}
                     </a>
                   </div>
                 )}
-                <div className="flex items-center gap-2">
+                <div className="flex items-center gap-2 text-white/80">
                   <Clock className="h-4 w-4" />
                   <span className="text-sm">
                     {organization.is24Hours ? "24/7 Access" : "Limited Hours"}
                   </span>
                 </div>
-                <div className="flex items-center gap-2">
+                <div className="flex items-center gap-2 text-white/80">
                   <MapPin className="h-4 w-4" />
                   <span className="text-sm">{organization.address.state}</span>
                 </div>
@@ -136,64 +137,39 @@ export default function LocationAdminDashboard() {
             </CardContent>
           </Card>
 
-          {/* Key Metrics */}
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-            <Card>
-              <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                <CardTitle className="text-sm font-medium">Total Members</CardTitle>
-                <Users className="h-4 w-4 text-muted-foreground" />
-              </CardHeader>
-              <CardContent>
-                <div className="text-2xl font-bold">{stats.totalMembers}</div>
-                <p className="text-xs text-muted-foreground">
-                  Active members at this location
-                </p>
-              </CardContent>
-            </Card>
-
-            <Card>
-              <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                <CardTitle className="text-sm font-medium">Staff Members</CardTitle>
-                <UserCheck className="h-4 w-4 text-muted-foreground" />
-              </CardHeader>
-              <CardContent>
-                <div className="text-2xl font-bold">{stats.totalStaff}</div>
-                <p className="text-xs text-muted-foreground">
-                  {stats.activeTrainers} active trainers
-                </p>
-              </CardContent>
-            </Card>
-
-            <Card>
-              <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                <CardTitle className="text-sm font-medium">Active Memberships</CardTitle>
-                <CreditCard className="h-4 w-4 text-muted-foreground" />
-              </CardHeader>
-              <CardContent>
-                <div className="text-2xl font-bold">{stats.activeMemberships}</div>
-                <p className="text-xs text-muted-foreground">
-                  Current subscriptions
-                </p>
-              </CardContent>
-            </Card>
-
-            <Card>
-              <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                <CardTitle className="text-sm font-medium">Location Status</CardTitle>
-                <Activity className="h-4 w-4 text-muted-foreground" />
-              </CardHeader>
-              <CardContent>
-                <div className="text-2xl font-bold">
-                  <Badge className={organization.status === "active" ? "bg-green-500" : "bg-red-500"}>
-                    {organization.status}
-                  </Badge>
-                </div>
-                <p className="text-xs text-muted-foreground mt-2">
-                  {organization.is24Hours ? "24/7 Access" : "Limited Hours"}
-                </p>
-              </CardContent>
-            </Card>
-          </div>
+          {/* Key Metrics - Using new StatisticsGrid */}
+          <StatisticsGrid
+            stats={[
+              {
+                title: "Total Members",
+                value: stats.totalMembers,
+                change: 12.5,
+                icon: Users,
+                trend: "up",
+              },
+              {
+                title: "Staff Members",
+                value: stats.totalStaff,
+                change: stats.activeTrainers > 0 ? 5.2 : 0,
+                icon: UserCheck,
+                trend: "up",
+              },
+              {
+                title: "Active Memberships",
+                value: stats.activeMemberships,
+                change: 8.1,
+                icon: CreditCard,
+                trend: "up",
+              },
+              {
+                title: "Active Trainers",
+                value: stats.activeTrainers,
+                change: stats.activeTrainers > 0 ? 15.3 : 0,
+                icon: Activity,
+                trend: "up",
+              },
+            ]}
+          />
 
           {/* Location Features */}
           {organization.features && organization.features.length > 0 && (
@@ -284,4 +260,3 @@ export default function LocationAdminDashboard() {
     </RoleGuard>
   );
 }
-

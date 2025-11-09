@@ -57,11 +57,11 @@ const nextConfig: NextConfig = {
             key: 'Content-Security-Policy',
             value: [
               "default-src 'self'",
-              "script-src 'self' 'unsafe-eval' 'unsafe-inline' https://clerk.com https://*.clerk.accounts.dev https://clerk.derrimut.aliaslabs.ai https://js.stripe.com https://cdn.vapi.ai https://browser.sentry-cdn.com",
+              "script-src 'self' 'unsafe-eval' 'unsafe-inline' https://clerk.com https://*.clerk.accounts.dev https://clerk.derrimut.aliaslabs.ai https://js.stripe.com https://cdn.vapi.ai https://browser.sentry-cdn.com https://va.vercel-scripts.com",
               "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com",
               "img-src 'self' data: blob: https: http:",
               "font-src 'self' data: https://fonts.gstatic.com",
-              "connect-src 'self' https://*.convex.cloud https://clerk.com https://*.clerk.accounts.dev https://accounts.derrimut.aliaslabs.ai https://clerk.derrimut.aliaslabs.ai https://api.stripe.com https://api.vapi.ai https://generativelanguage.googleapis.com https://*.sentry.io wss://*.convex.cloud https://vapi.ai",
+              "connect-src 'self' https://*.convex.cloud https://clerk.com https://*.clerk.accounts.dev https://accounts.derrimut.aliaslabs.ai https://clerk.derrimut.aliaslabs.ai https://api.stripe.com https://api.vapi.ai https://generativelanguage.googleapis.com https://*.sentry.io wss://*.convex.cloud https://vapi.ai https://va.vercel-scripts.com",
               "frame-src 'self' https://js.stripe.com https://hooks.stripe.com https://clerk.com https://*.clerk.accounts.dev",
               "worker-src 'self' blob:",
               "object-src 'none'",

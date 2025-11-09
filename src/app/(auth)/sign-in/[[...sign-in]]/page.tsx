@@ -1,10 +1,35 @@
 import { SignIn } from "@clerk/nextjs";
+import { clerkAppearance } from "@/lib/clerk-appearance";
 
 const SignInPage = () => {
   return (
-    <main className="flex h-screen w-full items-center justify-center">
-      <SignIn />
+    <main className="flex min-h-screen w-full items-center justify-center bg-neutral-950 relative overflow-hidden">
+      {/* Background Effects - Matching homepage */}
+      <div className="absolute inset-0 bg-gradient-to-br from-neutral-950 via-neutral-950 to-neutral-900" />
+      <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_50%,rgba(255,255,255,0.03)_0%,transparent_50%)]" />
+      
+      {/* Glassmorphic Container */}
+      <div className="relative z-10 w-full max-w-md mx-6">
+        <div className="bg-white/5 border border-white/10 rounded-2xl p-8 backdrop-blur-sm border-gradient before:rounded-2xl">
+          <div className="text-center mb-8">
+            <h1 className="text-3xl font-semibold text-white tracking-tight mb-2">
+              Welcome Back
+            </h1>
+            <p className="text-white/60 text-sm">
+              Sign in to continue your fitness journey
+            </p>
+          </div>
+          
+          <SignIn 
+            appearance={clerkAppearance}
+            routing="path"
+            path="/sign-in"
+            signUpUrl="/sign-up"
+          />
+        </div>
+      </div>
     </main>
   );
 };
+
 export default SignInPage;

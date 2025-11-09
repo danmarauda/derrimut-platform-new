@@ -10,6 +10,7 @@ import { useState, useEffect } from "react";
 import { ShoppingCart, Menu, X } from "lucide-react";
 import { ThemeAwareLogo } from "./ThemeAwareLogo";
 import { DERRIMUT_BRAND } from "@/constants/branding";
+import { clerkAppearance } from "@/lib/clerk-appearance";
 
 const Navbar = () => {
   const { isSignedIn, user } = useUser();
@@ -241,11 +242,7 @@ const Navbar = () => {
                 </Link>
                 <UserButton
                   afterSignOutUrl="/"
-                  appearance={{
-                    elements: {
-                      avatarBox: "h-10 w-10",
-                    },
-                  }}
+                  appearance={clerkAppearance}
                 />
               </>
             ) : (
