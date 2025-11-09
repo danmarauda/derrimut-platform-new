@@ -31,7 +31,7 @@ interface MembershipPlanCardProps {
     membershipType: string;
   } | null;
   onSubscribe: (plan: MembershipPlan) => Promise<void>;
-  loading?: boolean;
+  loading?: string | null;
 }
 
 export function MembershipPlanCard({ plan, currentMembership, onSubscribe, loading }: MembershipPlanCardProps) {
