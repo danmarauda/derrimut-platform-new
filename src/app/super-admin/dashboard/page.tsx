@@ -156,75 +156,70 @@ export default function SuperAdminDashboard() {
         </div>
 
         {/* Revenue Trend Chart */}
-        <Card className="shadow-lg">
-            <CardHeader>
-              <div className="flex items-center justify-between">
-                <div>
-                  <CardTitle className="flex items-center gap-2">
-                    <LineChartIcon className="h-5 w-5 text-red-600" />
-                    Revenue & Growth Trends
-                  </CardTitle>
-                  <CardDescription>12-month historical data with AI-powered forecasting</CardDescription>
-                </div>
-                <Badge className="bg-gradient-to-r from-purple-500 to-purple-700 text-white">
-                  <Sparkles className="h-3 w-3 mr-1 inline" />
-                  AI Predictions Enabled
-                </Badge>
+        <Card variant="premium">
+          <CardHeader>
+            <div className="flex items-center justify-between">
+              <div>
+                <CardTitle className="flex items-center gap-2 text-white">
+                  <LineChartIcon className="h-5 w-5 text-white/70" />
+                  Revenue & Growth Trends
+                </CardTitle>
+                <CardDescription className="text-white/60">12-month historical data with AI-powered forecasting</CardDescription>
               </div>
-            </CardHeader>
-            <CardContent>
-              <ResponsiveContainer width="100%" height={300}>
-                <AreaChart data={revenueTrends}>
-                  <defs>
-                    <linearGradient id="colorRevenue" x1="0" y1="0" x2="0" y2="1">
-                      <stop offset="5%" stopColor="#ef4444" stopOpacity={0.3}/>
-                      <stop offset="95%" stopColor="#ef4444" stopOpacity={0}/>
-                    </linearGradient>
-                    <linearGradient id="colorPredicted" x1="0" y1="0" x2="0" y2="1">
-                      <stop offset="5%" stopColor="#a855f7" stopOpacity={0.3}/>
-                      <stop offset="95%" stopColor="#a855f7" stopOpacity={0}/>
-                    </linearGradient>
-                  </defs>
-                  <CartesianGrid strokeDasharray="3 3" stroke="#e5e7eb" />
-                  <XAxis dataKey="month" stroke="#6b7280" />
-                  <YAxis stroke="#6b7280" />
-                  <Tooltip 
-                    contentStyle={{ backgroundColor: '#fff', border: '1px solid #e5e7eb', borderRadius: '8px' }}
-                    formatter={(value) => formatCurrency(value as number)}
-                  />
-                  <Legend />
-                  <Area 
-                    type="monotone" 
-                    dataKey="revenue" 
-                    stroke="#ef4444" 
-                    strokeWidth={3}
-                    fill="url(#colorRevenue)" 
-                    name="Actual Revenue"
-                  />
-                  <Area 
-                    type="monotone" 
-                    dataKey="predicted" 
-                    stroke="#a855f7" 
-                    strokeWidth={3}
-                    strokeDasharray="5 5"
-                    fill="url(#colorPredicted)" 
-                    name="AI Forecast"
-                  />
-                </AreaChart>
-              </ResponsiveContainer>
-            </CardContent>
-          </Card>
-        </motion.div>
+              <Badge variant="accent" className="text-sm">
+                <Sparkles className="h-3 w-3 mr-1" />
+                AI Predictions Enabled
+              </Badge>
+            </div>
+          </CardHeader>
+          <CardContent>
+            <ResponsiveContainer width="100%" height={300}>
+              <AreaChart data={revenueTrends}>
+                <defs>
+                  <linearGradient id="colorRevenue" x1="0" y1="0" x2="0" y2="1">
+                    <stop offset="5%" stopColor="#ef4444" stopOpacity={0.3}/>
+                    <stop offset="95%" stopColor="#ef4444" stopOpacity={0}/>
+                  </linearGradient>
+                  <linearGradient id="colorPredicted" x1="0" y1="0" x2="0" y2="1">
+                    <stop offset="5%" stopColor="#a855f7" stopOpacity={0.3}/>
+                    <stop offset="95%" stopColor="#a855f7" stopOpacity={0}/>
+                  </linearGradient>
+                </defs>
+                <CartesianGrid strokeDasharray="3 3" stroke="#ffffff20" />
+                <XAxis dataKey="month" stroke="#ffffff60" />
+                <YAxis stroke="#ffffff60" />
+                <Tooltip 
+                  contentStyle={{ backgroundColor: 'rgba(10, 10, 10, 0.95)', border: '1px solid rgba(255, 255, 255, 0.1)', borderRadius: '8px', color: '#ffffff' }}
+                  formatter={(value) => formatCurrency(value as number)}
+                />
+                <Legend />
+                <Area 
+                  type="monotone" 
+                  dataKey="revenue" 
+                  stroke="#ef4444" 
+                  strokeWidth={3}
+                  fill="url(#colorRevenue)" 
+                  name="Actual Revenue"
+                />
+                <Area 
+                  type="monotone" 
+                  dataKey="predicted" 
+                  stroke="#a855f7" 
+                  strokeWidth={3}
+                  strokeDasharray="5 5"
+                  fill="url(#colorPredicted)" 
+                  name="AI Forecast"
+                />
+              </AreaChart>
+            </ResponsiveContainer>
+          </CardContent>
+        </Card>
 
         {/* === SECTION 2: MULTI-LOCATION ANALYTICS === */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.5, delay: 0.2 }}
-        >
+        <div>
           <div className="flex items-center gap-2 mb-4">
-            <MapPin className="h-6 w-6 text-blue-600" />
-            <h2 className="text-2xl font-bold">Multi-Location Performance</h2>
+            <MapPin className="h-6 w-6 text-white/70" />
+            <h2 className="text-2xl font-semibold text-white">Multi-Location Performance</h2>
           </div>
 
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
@@ -324,17 +319,13 @@ export default function SuperAdminDashboard() {
               </CardContent>
             </Card>
           </div>
-        </motion.div>
+        </div>
 
         {/* === SECTION 3: PREDICTIVE INTELLIGENCE === */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.5, delay: 0.3 }}
-        >
+        <div>
           <div className="flex items-center gap-2 mb-4">
-            <Brain className="h-6 w-6 text-purple-600" />
-            <h2 className="text-2xl font-bold">AI-Powered Predictive Intelligence</h2>
+            <Brain className="h-6 w-6 text-white/70" />
+            <h2 className="text-2xl font-semibold text-white">AI-Powered Predictive Intelligence</h2>
           </div>
 
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
@@ -480,17 +471,13 @@ export default function SuperAdminDashboard() {
               </CardContent>
             </Card>
           </div>
-        </motion.div>
+        </div>
 
         {/* === SECTION 4: VOICE AI INSIGHTS === */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.5, delay: 0.4 }}
-        >
+        <div>
           <div className="flex items-center gap-2 mb-4">
-            <Sparkles className="h-6 w-6 text-yellow-500" />
-            <h2 className="text-2xl font-bold">Voice AI Performance Insights</h2>
+            <Sparkles className="h-6 w-6 text-white/70" />
+            <h2 className="text-2xl font-semibold text-white">Voice AI Performance Insights</h2>
           </div>
 
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
@@ -621,18 +608,14 @@ export default function SuperAdminDashboard() {
               </CardContent>
             </Card>
           </div>
-        </motion.div>
+        </div>
 
         {/* Quick Actions Footer */}
-        <motion.div
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ duration: 0.5, delay: 0.5 }}
-        >
-          <Card className="shadow-lg bg-gradient-to-r from-gray-50 to-gray-100">
+        <div>
+          <Card variant="premium">
             <CardHeader>
-              <CardTitle>Platform Management</CardTitle>
-              <CardDescription>Quick access to administration tools</CardDescription>
+              <CardTitle className="text-white">Platform Management</CardTitle>
+              <CardDescription className="text-white/60">Quick access to administration tools</CardDescription>
             </CardHeader>
             <CardContent>
               <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
@@ -667,7 +650,7 @@ export default function SuperAdminDashboard() {
               </div>
             </CardContent>
           </Card>
-        </motion.div>
+        </div>
       </div>
     </AdminLayout>
     </RoleGuard>

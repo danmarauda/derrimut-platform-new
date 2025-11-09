@@ -17,12 +17,12 @@ import Link from "next/link";
 
 interface ProfileStatsProps {
   role?: string;
-  memberSince?: Date | number;
+  memberSince?: Date | number | null;
   activePlans?: number;
 }
 
 export function ProfileStats({ role, memberSince, activePlans }: ProfileStatsProps) {
-  const formatDate = (date?: Date | number) => {
+  const formatDate = (date?: Date | number | null) => {
     if (!date) return "N/A";
     try {
       return new Date(date).toLocaleDateString("en-US", {

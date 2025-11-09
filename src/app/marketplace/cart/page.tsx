@@ -4,17 +4,16 @@ import { useState } from "react";
 import { useQuery, useMutation } from "convex/react";
 import { useUser } from "@clerk/nextjs";
 import { api } from "../../../../convex/_generated/api";
+import { CartPage } from "@/components/marketplace/CartPage";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { ShoppingCart, Plus, Minus, X, ArrowLeft, Package } from "lucide-react";
-import Link from "next/link";
-import Image from "next/image";
+import { ShoppingCart } from "lucide-react";
+import { useRouter } from "next/navigation";
 
-const CartPage = () => {
+const CartPageRoute = () => {
   const { user } = useUser();
+  const router = useRouter();
   const [updatingQuantity, setUpdatingQuantity] = useState<string | null>(null);
   const [removingItem, setRemovingItem] = useState<string | null>(null);
-  const [isCheckingOut, setIsCheckingOut] = useState(false);
 
   const cartItems = useQuery(
     api.cart.getUserCart,
@@ -30,14 +29,14 @@ const CartPage = () => {
   const removeFromCart = useMutation(api.cart.removeFromCart);
   const clearCart = useMutation(api.cart.clearCart);
 
-  const handleQuantityUpdate = async (cartItemId: string, newQuantity: number) => {
-    if (!user?.id || newQuantity < 1) return;
+  const handleQuantityUpdate = async (cartItemId: string, quantity: number) => {
+    if (!user?.id || quantity < 1) return;
     
     setUpdatingQuantity(cartItemId);
     try {
       await updateQuantity({
         cartItemId: cartItemId as any,
-        quantity: newQuantity,
+        quantity,
         clerkId: user.id,
       });
     } catch (error) {
@@ -65,246 +64,58 @@ const CartPage = () => {
     }
   };
 
-  const handleCheckout = () => {
-    if (!cartItems || cartItems.length === 0) return;
+  const handleClearCart = async () => {
+    if (!user?.id) return;
     
-    setIsCheckingOut(true);
-    // Navigate to checkout page
-    window.location.href = "/marketplace/checkout";
-  };
-
-  const formatPrice = (price: number) => {
-    return new Intl.NumberFormat("en-LK", {
-      style: "currency",
-      currency: "AUD",
-    }).format(price);
-  };
-
-  const calculateShipping = (subtotal: number) => {
-    if (subtotal >= 200) return 0; // Free shipping over AUD 200
-    return 500; // Standard shipping
-  };
-
-  const calculateTax = (subtotal: number) => {
-    return Math.round(subtotal * 0.10); // 10% GST (Australia)
+    if (!confirm("Are you sure you want to clear your cart?")) return;
+    
+    try {
+      await clearCart({ clerkId: user.id });
+    } catch (error) {
+      console.error("Error clearing cart:", error);
+      alert("Error clearing cart. Please try again.");
+    }
   };
 
   if (!user) {
     return (
-      <div className="flex flex-col min-h-screen text-foreground overflow-hidden relative bg-background">
-        <div className="absolute inset-0 bg-gradient-to-br from-background via-primary/5 to-primary/10"></div>
-        <div className="container mx-auto px-4 py-32 relative z-10 flex-1">
-          <div className="text-center">
-            <ShoppingCart className="h-16 w-16 text-muted-foreground mx-auto mb-4" />
-            <h1 className="text-2xl font-bold text-foreground mb-2">Sign In Required</h1>
-            <p className="text-muted-foreground mb-6">Please sign in to view your shopping cart</p>
-            <Button asChild className="bg-primary hover:bg-primary/90">
-              <Link href="/sign-in">Sign In</Link>
-            </Button>
+      <div className="min-h-screen bg-neutral-950 flex items-center justify-center px-4">
+        <div className="text-center max-w-md">
+          <div className="h-20 w-20 rounded-full bg-white/5 flex items-center justify-center mx-auto mb-6 border border-white/10">
+            <ShoppingCart className="h-10 w-10 text-white/30" />
           </div>
+          <h2 className="text-2xl font-semibold text-white mb-3">Sign In Required</h2>
+          <p className="text-white/60 mb-8">Please sign in to view your shopping cart</p>
+          <Button variant="primary" onClick={() => router.push("/sign-in")}>
+            Sign In
+          </Button>
+        </div>
+      </div>
+    );
+  }
+
+  if (!cartItems || !cartSummary) {
+    return (
+      <div className="min-h-screen bg-neutral-950 flex items-center justify-center">
+        <div className="text-center">
+          <div className="h-16 w-16 border-4 border-white/20 border-t-white/60 rounded-full animate-spin mx-auto mb-4"></div>
+          <p className="text-white/60">Loading cart...</p>
         </div>
       </div>
     );
   }
 
   return (
-    <div className="flex flex-col min-h-screen text-foreground overflow-hidden relative bg-background">
-      {/* Background Effects */}
-      <div className="absolute inset-0 bg-gradient-to-br from-background via-primary/5 to-primary/10"></div>
-      <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_50%,rgba(var(--primary),0.1)_0%,transparent_50%)]"></div>
-      
-      <div className="container mx-auto px-4 py-32 relative z-10 flex-1">
-        {/* Header */}
-        <div className="flex items-center mb-8">
-          <Button variant="secondary" asChild className="mr-4 border-border text-foreground hover:bg-accent">
-            <Link href="/marketplace">
-              <ArrowLeft className="h-4 w-4 mr-2" />
-              Back to Shop
-            </Link>
-          </Button>
-          <div>
-            <h1 className="text-3xl md:text-4xl font-bold text-foreground">
-              Shopping <span className="text-primary">Cart</span>
-            </h1>
-            <p className="text-muted-foreground">
-              {cartSummary ? `${cartSummary.totalItems} items in your cart` : "Loading cart..."}
-            </p>
-          </div>
-        </div>
-
-        {cartItems && cartItems.length > 0 ? (
-          <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-            {/* Cart Items */}
-            <div className="lg:col-span-2 space-y-4">
-              {cartItems.map((item) => (
-                <Card key={item._id} className="bg-card/50 border-border">
-                  <CardContent className="p-6">
-                    <div className="flex items-center space-x-4">
-                      {/* Product Image */}
-                      <div className="w-20 h-20 bg-muted rounded-lg overflow-hidden flex-shrink-0">
-                        {item.product?.imageUrl ? (
-                          <Image
-                            src={item.product.imageUrl}
-                            alt={item.product.name}
-                            width={80}
-                            height={80}
-                            className="w-full h-full object-cover"
-                          />
-                        ) : (
-                          <div className="w-full h-full flex items-center justify-center">
-                            <Package className="h-8 w-8 text-muted-foreground" />
-                          </div>
-                        )}
-                      </div>
-
-                      {/* Product Details */}
-                      <div className="flex-1">
-                        <h3 className="text-lg font-semibold text-foreground">
-                          {item.product?.name}
-                        </h3>
-                        <p className="text-sm text-muted-foreground capitalize">
-                          {item.product?.category}
-                        </p>
-                        <p className="text-sm text-muted-foreground mt-1">
-                          {formatPrice(item.priceAtTime)} each
-                        </p>
-                      </div>
-
-                      {/* Quantity Controls */}
-                      <div className="flex items-center space-x-2">
-                        <Button
-                          variant="secondary"
-                          size="sm"
-                          onClick={() => handleQuantityUpdate(item._id, item.quantity - 1)}
-                          disabled={item.quantity <= 1 || updatingQuantity === item._id}
-                          className="h-8 w-8 p-0 border-border hover:bg-accent"
-                        >
-                          <Minus className="h-4 w-4" />
-                        </Button>
-                        
-                        <span className="text-foreground font-medium w-8 text-center">
-                          {updatingQuantity === item._id ? "..." : item.quantity}
-                        </span>
-                        
-                        <Button
-                          variant="secondary"
-                          size="sm"
-                          onClick={() => handleQuantityUpdate(item._id, item.quantity + 1)}
-                          disabled={Boolean(updatingQuantity === item._id || (item.product && item.quantity >= item.product.stock))}
-                          className="h-8 w-8 p-0 border-border hover:bg-accent"
-                        >
-                          <Plus className="h-4 w-4" />
-                        </Button>
-                      </div>
-
-                      {/* Price */}
-                      <div className="text-right">
-                        <p className="text-lg font-bold text-foreground">
-                          {formatPrice(item.priceAtTime * item.quantity)}
-                        </p>
-                      </div>
-
-                      {/* Remove Button */}
-                      <Button
-                        variant="secondary"
-                        size="sm"
-                        onClick={() => handleRemoveItem(item._id)}
-                        disabled={removingItem === item._id}
-                        className="h-8 w-8 p-0 border-destructive text-destructive hover:bg-destructive hover:text-destructive-foreground"
-                      >
-                        {removingItem === item._id ? "..." : <X className="h-4 w-4" />}
-                      </Button>
-                    </div>
-                  </CardContent>
-                </Card>
-              ))}
-            </div>
-
-            {/* Order Summary */}
-            <div className="lg:col-span-1">
-              <Card className="bg-card/50 border-border sticky top-8">
-                <CardHeader>
-                  <CardTitle className="text-foreground">Order Summary</CardTitle>
-                </CardHeader>
-                <CardContent className="space-y-4">
-                  {cartSummary && (
-                    <>
-                      <div className="flex justify-between">
-                        <span className="text-muted-foreground">Subtotal ({cartSummary.totalItems} items)</span>
-                        <span className="text-foreground">{formatPrice(cartSummary.totalPrice)}</span>
-                      </div>
-                      
-                      <div className="flex justify-between">
-                        <span className="text-muted-foreground">Shipping</span>
-                        <span className="text-foreground">
-                          {calculateShipping(cartSummary.totalPrice) === 0 ? 
-                            "Free" : 
-                            formatPrice(calculateShipping(cartSummary.totalPrice))
-                          }
-                        </span>
-                      </div>
-                      
-                      <div className="flex justify-between">
-                        <span className="text-muted-foreground">Tax (VAT 18%)</span>
-                        <span className="text-foreground">{formatPrice(calculateTax(cartSummary.totalPrice))}</span>
-                      </div>
-                      
-                      <hr className="border-border" />
-                      
-                      <div className="flex justify-between text-lg font-bold">
-                        <span className="text-foreground">Total</span>
-                        <span className="text-foreground">
-                          {formatPrice(
-                            cartSummary.totalPrice + 
-                            calculateShipping(cartSummary.totalPrice) + 
-                            calculateTax(cartSummary.totalPrice)
-                          )}
-                        </span>
-                      </div>
-
-                      {calculateShipping(cartSummary.totalPrice) > 0 && cartSummary.totalPrice < 10000 && (
-                        <div className="text-sm text-orange-400 bg-orange-500/10 p-3 rounded-lg border border-orange-500/20">
-                          Add {formatPrice(10000 - cartSummary.totalPrice)} more for free shipping!
-                        </div>
-                      )}
-                      
-                      <Button
-                        onClick={handleCheckout}
-                        disabled={isCheckingOut}
-                        className="w-full bg-primary hover:bg-primary/90 text-primary-foreground font-semibold py-3"
-                      >
-                        {isCheckingOut ? "Processing..." : "Proceed to Checkout"}
-                      </Button>
-                    </>
-                  )}
-                  
-                  <Button
-                    variant="secondary"
-                    asChild
-                    className="w-full border-border text-foreground hover:bg-accent"
-                  >
-                    <Link href="/marketplace">Continue Shopping</Link>
-                  </Button>
-                </CardContent>
-              </Card>
-            </div>
-          </div>
-        ) : (
-          /* Empty Cart */
-          <div className="text-center py-16">
-            <ShoppingCart className="h-16 w-16 text-muted-foreground mx-auto mb-4" />
-            <h2 className="text-2xl font-bold text-foreground mb-2">Your cart is empty</h2>
-            <p className="text-muted-foreground mb-6">
-              Discover our amazing fitness products and start building your perfect workout setup
-            </p>
-            <Button asChild className="bg-primary hover:bg-primary/90">
-              <Link href="/marketplace">Start Shopping</Link>
-            </Button>
-          </div>
-        )}
-      </div>
-    </div>
+    <CartPage
+      cartItems={cartItems}
+      cartSummary={cartSummary}
+      onQuantityUpdate={handleQuantityUpdate}
+      onRemoveItem={handleRemoveItem}
+      onClearCart={handleClearCart}
+      updatingQuantity={updatingQuantity}
+      removingItem={removingItem}
+    />
   );
 };
 
-export default CartPage;
+export default CartPageRoute;
