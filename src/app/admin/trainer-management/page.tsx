@@ -165,7 +165,7 @@ export default function AdminTrainerManagementPage() {
                     <p className="text-muted-foreground text-xs mb-2">Specializations:</p>
                     <div className="flex flex-wrap gap-1">
                       {application.specializations.map((spec: string, index: number) => (
-                        <Badge key={index} variant="secondary" className="text-xs">
+                        <Badge variant="standard" className="text-xs">
                           {spec}
                         </Badge>
                       ))}
@@ -189,7 +189,7 @@ export default function AdminTrainerManagementPage() {
                     </Button>
                     <Button
                       onClick={() => handleRejectApplication(application._id)}
-                      variant="outline"
+                      variant="secondary"
                       className="flex-1 border-red-500 text-red-400 hover:bg-red-500/10"
                     >
                       <X className="h-4 w-4 mr-1" />
@@ -233,7 +233,7 @@ export default function AdminTrainerManagementPage() {
                   <div className="mb-4">
                     <div className="flex flex-wrap gap-1">
                       {trainer.specializations.map((spec: string, index: number) => (
-                        <Badge key={index} variant="secondary" className="text-xs">
+                        <Badge variant="standard" className="text-xs">
                           {spec}
                         </Badge>
                       ))}
@@ -243,7 +243,7 @@ export default function AdminTrainerManagementPage() {
                   <div className="flex gap-2">
                     <Button
                       onClick={() => setSelectedTrainer(trainer)}
-                      variant="outline"
+                      variant="secondary"
                       className="flex-1 border-border text-foreground hover:bg-accent"
                     >
                       <Eye className="h-4 w-4 mr-1" />
@@ -251,7 +251,7 @@ export default function AdminTrainerManagementPage() {
                     </Button>
                     <Button
                       onClick={() => handleToggleTrainerStatus(trainer._id, trainer.isActive)}
-                      variant="outline"
+                      variant="secondary"
                       className="flex-1 border-red-500 text-red-400 hover:bg-red-500/10"
                     >
                       Deactivate
@@ -274,7 +274,7 @@ export default function AdminTrainerManagementPage() {
                       className="w-16 h-16 rounded-full mx-auto mb-3 object-cover grayscale"
                     />
                     <h3 className="text-lg font-semibold text-foreground">{trainer.name}</h3>
-                    <Badge variant="secondary" className="mt-2 bg-muted text-muted-foreground">
+                    <Badge variant="standard" className="mt-2 bg-muted text-muted-foreground">
                       Inactive
                     </Badge>
                   </div>
@@ -293,7 +293,7 @@ export default function AdminTrainerManagementPage() {
                   <div className="flex gap-2">
                     <Button
                       onClick={() => setSelectedTrainer(trainer)}
-                      variant="outline"
+                      variant="secondary"
                       className="flex-1 border-border text-foreground hover:bg-accent"
                     >
                       <Eye className="h-4 w-4 mr-1" />
@@ -320,7 +320,7 @@ export default function AdminTrainerManagementPage() {
                 <h2 className="text-2xl font-bold text-foreground">{selectedTrainer.name}</h2>
                 <Button
                   onClick={() => setSelectedTrainer(null)}
-                  variant="outline"
+                  variant="secondary"
                   className="border-border text-foreground hover:bg-accent"
                 >
                   <X className="h-4 w-4" />
@@ -381,7 +381,7 @@ export default function AdminTrainerManagementPage() {
                     <h4 className="text-foreground font-medium mb-2">Specializations</h4>
                     <div className="flex flex-wrap gap-1">
                       {selectedTrainer.specializations.map((spec: string, index: number) => (
-                        <Badge key={index} variant="secondary">
+                        <Badge variant="standard">
                           {spec}
                         </Badge>
                       ))}

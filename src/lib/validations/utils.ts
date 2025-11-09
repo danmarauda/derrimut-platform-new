@@ -12,7 +12,7 @@ import { z, ZodError } from 'zod';
  * Formats Zod validation errors into user-friendly messages
  */
 export function formatZodError(error: ZodError): string[] {
-  return error.errors.map((err) => {
+  return error.issues.map((err) => {
     const path = err.path.join('.');
     return path ? `${path}: ${err.message}` : err.message;
   });

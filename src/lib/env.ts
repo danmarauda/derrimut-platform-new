@@ -28,6 +28,9 @@ const serverSchema = z.object({
   // Gemini AI
   GEMINI_API_KEY: z.string().optional(),
 
+  // Vercel AI Gateway (optional - enables rate limiting, cost tracking, monitoring)
+  AI_GATEWAY_API_KEY: z.string().optional(),
+
   // Node Environment
   NODE_ENV: z.enum(['development', 'production', 'test']).default('development'),
 });

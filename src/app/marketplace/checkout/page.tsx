@@ -270,7 +270,7 @@ const CheckoutPage = () => {
       <div className="container mx-auto px-4 py-32 relative z-10 flex-1">
         {/* Header */}
         <div className="flex items-center mb-8">
-          <Button variant="outline" asChild className="mr-4 border-border text-foreground hover:bg-accent">
+          <Button variant="secondary" asChild className="mr-4 border-border text-foreground hover:bg-accent">
             <Link href="/marketplace/cart">
               <ArrowLeft className="h-4 w-4 mr-2" />
               Back to Cart

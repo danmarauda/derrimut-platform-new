@@ -657,7 +657,7 @@ const AdminRecipesPage = () => {
                     setDifficultyFilter("all");
                     setRecommendedFilter("all");
                   }}
-                  variant="outline"
+                  variant="secondary"
                   size="sm"
                   className="h-6 px-2 text-xs border-red-500/50 text-red-400 hover:bg-red-500/10"
                 >
@@ -683,7 +683,7 @@ const AdminRecipesPage = () => {
           <div className="flex gap-2">
             <Button
               onClick={handleExportRecipes}
-              variant="outline"
+              variant="secondary"
               className="border-border text-foreground hover:bg-accent"
             >
               <Download className="h-4 w-4 mr-2" />
@@ -798,14 +798,14 @@ const AdminRecipesPage = () => {
                   <div className="flex gap-2 mt-auto">
                     <Link href={`/recipes/${recipe._id}`} className="flex-1">
                       <Button
-                        variant="outline"
+                        variant="secondary"
                         className="w-full border-border text-muted-foreground hover:bg-accent"
                       >
                         View
                       </Button>
                     </Link>
                     <Button
-                      variant="outline"
+                      variant="secondary"
                       size="sm"
                       className="border-yellow-500/50 text-yellow-400 hover:bg-yellow-500/10"
                       onClick={() =>
@@ -822,7 +822,7 @@ const AdminRecipesPage = () => {
                       />
                     </Button>
                     <Button
-                      variant="outline"
+                      variant="secondary"
                       size="sm"
                       className="border-blue-500/50 text-blue-400 hover:bg-blue-500/10"
                       onClick={() => handleEditRecipe(recipe._id)}
@@ -830,7 +830,7 @@ const AdminRecipesPage = () => {
                       <Edit2 className="h-4 w-4" />
                     </Button>
                     <Button
-                      variant="outline"
+                      variant="secondary"
                       size="sm"
                       className="border-red-500/50 text-red-400 hover:bg-red-500/10"
                       onClick={() => handleDeleteRecipe(recipe._id)}
@@ -888,7 +888,7 @@ const AdminRecipesPage = () => {
                 </h3>
                 <Button
                   onClick={() => setShowAddModal(false)}
-                  variant="outline"
+                  variant="secondary"
                   size="sm"
                   className="border-border text-muted-foreground hover:bg-accent"
                 >
@@ -1179,7 +1179,7 @@ const AdminRecipesPage = () => {
                       {newRecipe.ingredients.length > 1 && (
                         <Button
                           onClick={() => removeIngredient(index)}
-                          variant="outline"
+                          variant="secondary"
                           size="sm"
                           className="border-red-500/50 text-red-400 hover:bg-red-500/10"
                         >
@@ -1190,7 +1190,7 @@ const AdminRecipesPage = () => {
                   ))}
                   <Button
                     onClick={addIngredient}
-                    variant="outline"
+                    variant="secondary"
                     size="sm"
                     className="border-green-500/50 text-green-400 hover:bg-green-500/10"
                   >
@@ -1221,7 +1221,7 @@ const AdminRecipesPage = () => {
                       {newRecipe.instructions.length > 1 && (
                         <Button
                           onClick={() => removeInstruction(index)}
-                          variant="outline"
+                          variant="secondary"
                           size="sm"
                           className="border-red-500/50 text-red-400 hover:bg-red-500/10 self-start"
                         >
@@ -1232,7 +1232,7 @@ const AdminRecipesPage = () => {
                   ))}
                   <Button
                     onClick={addInstruction}
-                    variant="outline"
+                    variant="secondary"
                     size="sm"
                     className="border-green-500/50 text-green-400 hover:bg-green-500/10"
                   >
@@ -1267,7 +1267,7 @@ const AdminRecipesPage = () => {
               <div className="flex justify-end gap-3 p-6 border-t border-border">
                 <Button
                   onClick={() => setShowAddModal(false)}
-                  variant="outline"
+                  variant="secondary"
                   className="border-border text-muted-foreground hover:bg-accent"
                 >
                   Cancel
@@ -1293,7 +1293,7 @@ const AdminRecipesPage = () => {
                 </h3>
                 <Button
                   onClick={() => setShowEditModal(false)}
-                  variant="outline"
+                  variant="secondary"
                   size="sm"
                   className="border-border text-muted-foreground hover:bg-accent"
                 >
@@ -1584,7 +1584,7 @@ const AdminRecipesPage = () => {
                       {editRecipe.ingredients.length > 1 && (
                         <Button
                           onClick={() => removeEditIngredient(index)}
-                          variant="outline"
+                          variant="secondary"
                           size="sm"
                           className="border-red-500/50 text-red-400 hover:bg-red-500/10"
                         >
@@ -1595,7 +1595,7 @@ const AdminRecipesPage = () => {
                   ))}
                   <Button
                     onClick={addEditIngredient}
-                    variant="outline"
+                    variant="secondary"
                     size="sm"
                     className="border-green-500/50 text-green-400 hover:bg-green-500/10"
                   >
@@ -1626,7 +1626,7 @@ const AdminRecipesPage = () => {
                       {editRecipe.instructions.length > 1 && (
                         <Button
                           onClick={() => removeEditInstruction(index)}
-                          variant="outline"
+                          variant="secondary"
                           size="sm"
                           className="border-red-500/50 text-red-400 hover:bg-red-500/10 self-start"
                         >
@@ -1637,7 +1637,7 @@ const AdminRecipesPage = () => {
                   ))}
                   <Button
                     onClick={addEditInstruction}
-                    variant="outline"
+                    variant="secondary"
                     size="sm"
                     className="border-green-500/50 text-green-400 hover:bg-green-500/10"
                   >
@@ -1672,7 +1672,7 @@ const AdminRecipesPage = () => {
               <div className="flex justify-end gap-3 p-6 border-t border-border">
                 <Button
                   onClick={() => setShowEditModal(false)}
-                  variant="outline"
+                  variant="secondary"
                   className="border-border text-muted-foreground hover:bg-accent"
                 >
                   Cancel

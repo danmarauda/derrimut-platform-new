@@ -88,7 +88,7 @@ const ContactPage = () => {
                     setError("");
                   }} 
                   className="mt-4"
-                  variant="outline"
+                  variant="secondary"
                 >
                   Send Another Message
                 </Button>

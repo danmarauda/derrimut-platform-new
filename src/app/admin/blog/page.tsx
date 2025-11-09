@@ -173,7 +173,7 @@ const AdminBlogPage = () => {
           <div className="flex gap-2">
             <Button
               onClick={handleExportPosts}
-              variant="outline"
+              variant="secondary"
               className="border-border text-foreground hover:bg-accent"
             >
               <Download className="h-4 w-4 mr-2" />
@@ -289,7 +289,7 @@ const AdminBlogPage = () => {
                   setStatusFilter("all");
                   setCategoryFilter("all");
                 }}
-                variant="outline"
+                variant="secondary"
                 className="border-gray-600 text-gray-300 hover:border-red-500"
               >
                 Clear Filters
@@ -325,7 +325,7 @@ const AdminBlogPage = () => {
                         >
                           {post.status}
                         </Badge>
-                        {post.isFeatured && <Badge variant="outline">Featured</Badge>}
+                        {post.isFeatured && <Badge variant="standard">Featured</Badge>}
                       </div>
                       
                       <p className="text-muted-foreground text-sm mb-3 line-clamp-2">
@@ -349,7 +349,7 @@ const AdminBlogPage = () => {
                           <Heart className="h-4 w-4" />
                           {post.likes} likes
                         </div>
-                        <Badge variant="outline">{post.category}</Badge>
+                        <Badge variant="standard">{post.category}</Badge>
                       </div>
                     </div>
 
@@ -357,7 +357,7 @@ const AdminBlogPage = () => {
                       {post.status === "published" && (
                         <Link href={`/blog/${post.slug}`} target="_blank">
                           <Button
-                            variant="outline"
+                            variant="secondary"
                             size="sm"
                             className="border-border text-foreground hover:border-blue-500 hover:text-blue-500"
                           >
@@ -368,7 +368,7 @@ const AdminBlogPage = () => {
                       
                       <Link href={`/admin/blog/edit/${post._id}`}>
                         <Button
-                          variant="outline"
+                          variant="secondary"
                           size="sm"
                           className="border-border text-foreground hover:border-yellow-500 hover:text-yellow-500"
                         >
@@ -378,7 +378,7 @@ const AdminBlogPage = () => {
                       
                       <Button
                         onClick={() => handleDeletePost(post._id)}
-                        variant="outline"
+                        variant="secondary"
                         size="sm"
                         className="border-border text-foreground hover:border-red-500 hover:text-red-500"
                       >

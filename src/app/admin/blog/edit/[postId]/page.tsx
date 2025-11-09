@@ -200,7 +200,7 @@ const EditBlogPostPage = () => {
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-4">
             <Link href="/admin/blog">
-              <Button variant="outline" className="border-border text-foreground hover:border-primary">
+              <Button variant="secondary" className="border-border text-foreground hover:border-primary">
                 <ArrowLeft className="h-4 w-4 mr-2" />
                 Back
               </Button>
@@ -215,7 +215,7 @@ const EditBlogPostPage = () => {
             <Button
               type="button"
               onClick={() => setShowPreview(!showPreview)}
-              variant="outline"
+              variant="secondary"
               className="border-border text-foreground hover:border-blue-500 hover:text-blue-500"
             >
               <Eye className="h-4 w-4 mr-2" />
@@ -223,7 +223,7 @@ const EditBlogPostPage = () => {
             </Button>
             <Button
               onClick={handleSaveAsDraft}
-              variant="outline"
+              variant="secondary"
               className="border-border text-foreground hover:border-yellow-500 hover:text-yellow-500"
               disabled={isSubmitting}
             >
@@ -234,7 +234,7 @@ const EditBlogPostPage = () => {
             {formData.status !== "archived" && (
               <Button
                 onClick={handleArchive}
-                variant="outline"
+                variant="secondary"
                 className="border-border text-foreground hover:border-orange-500 hover:text-orange-500"
                 disabled={isSubmitting}
               >

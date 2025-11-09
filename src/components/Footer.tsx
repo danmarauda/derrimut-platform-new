@@ -19,11 +19,11 @@ const Footer = () => {
     return new Date().getFullYear().toString();
   };
   return (
-    <footer className="border-t border-border bg-background/80 backdrop-blur-sm">
-      {/* Top border glow */}
-      <div className="h-px w-full bg-gradient-to-r from-transparent via-primary/30 to-transparent"></div>
+    <footer className="border-t border-white/10 bg-neutral-950/80 backdrop-blur-sm">
+      {/* Top border gradient */}
+      <div className="h-px w-full bg-gradient-to-r from-transparent via-white/10 to-transparent"></div>
 
-      <div className="container mx-auto px-4 py-8">
+      <div className="container mx-auto px-4 lg:px-8 py-8">
         <div className="flex flex-col md:flex-row justify-between items-center gap-6">
           {/* Logo and Copyright */}
           <div className="flex flex-col items-center md:items-start gap-2">
@@ -35,11 +35,11 @@ const Footer = () => {
                   className="object-contain"
                 />
               </div>
-              <span className="text-xl font-bold text-foreground">
+              <span className="text-xl font-semibold text-white tracking-tight">
                 {DERRIMUT_BRAND.nameShort.toUpperCase()}
               </span>
             </Link>
-            <p className="text-sm text-muted-foreground">
+            <p className="text-sm text-white/60">
               © {getCurrentYear()} {DERRIMUT_BRAND.nameShort} - All rights reserved
             </p>
           </div>
@@ -48,46 +48,46 @@ const Footer = () => {
           <div className="grid grid-cols-2 md:grid-cols-3 gap-x-12 gap-y-2 text-sm">
             <Link
               href="/about"
-              className="text-muted-foreground hover:text-primary transition-colors"
+              className="text-white/60 hover:text-white transition-colors"
             >
               About
             </Link>
             <Link
               href="/terms"
-              className="text-muted-foreground hover:text-primary transition-colors"
+              className="text-white/60 hover:text-white transition-colors"
             >
               Terms
             </Link>
             <Link
               href="/privacy"
-              className="text-muted-foreground hover:text-primary transition-colors"
+              className="text-white/60 hover:text-white transition-colors"
             >
               Privacy
             </Link>
             <Link
               href="/contact"
-              className="text-muted-foreground hover:text-primary transition-colors"
+              className="text-white/60 hover:text-white transition-colors"
             >
               Contact
             </Link>
             <Link
               href="/blog"
-              className="text-muted-foreground hover:text-primary transition-colors"
+              className="text-white/60 hover:text-white transition-colors"
             >
               Blog
             </Link>
             <Link
               href="/help"
-              className="text-muted-foreground hover:text-primary transition-colors"
+              className="text-white/60 hover:text-white transition-colors"
             >
               Help
             </Link>
           </div>
 
           {/* Status */}
-          <div className="flex items-center gap-2 px-3 py-2 border border-border rounded-md bg-background/50">
-            <div className="w-2 h-2 rounded-full bg-green-500"></div>
-            <span className="text-xs font-mono text-foreground">SYSTEM OPERATIONAL</span>
+          <div className="flex items-center gap-2 px-3 py-2 border border-white/10 rounded-lg bg-white/5 backdrop-blur-sm">
+            <div className="w-2 h-2 rounded-full bg-emerald-500"></div>
+            <span className="text-xs font-mono text-white/70">SYSTEM OPERATIONAL</span>
           </div>
         </div>
       </div>

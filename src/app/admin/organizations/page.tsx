@@ -2,7 +2,7 @@
 
 import { AdminLayout } from "@/components/AdminLayout";
 import { useQuery } from "convex/react";
-import { api } from "../../../convex/_generated/api";
+import { api } from "convex/_generated/api";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
 import { 
@@ -95,7 +95,7 @@ export default function OrganizationsAdminPage() {
     };
   }, [organizations]);
 
-  const formatAddress = (org: typeof organizations[0]) => {
+  const formatAddress = (org: NonNullable<typeof organizations>[number]) => {
     return `${org.address.street}, ${org.address.city} ${org.address.state} ${org.address.postcode}`;
   };
 
@@ -291,12 +291,12 @@ export default function OrganizationsAdminPage() {
                         <div className="text-xs font-medium text-muted-foreground mb-1">Features:</div>
                         <div className="flex flex-wrap gap-1">
                           {org.features.slice(0, 3).map((feature, idx) => (
-                            <Badge key={idx} variant="outline" className="text-xs">
+                            <Badge variant="standard" className="text-xs">
                               {feature.replace(/_/g, " ")}
                             </Badge>
                           ))}
                           {org.features.length > 3 && (
-                            <Badge variant="outline" className="text-xs">
+                            <Badge variant="standard" className="text-xs">
                               +{org.features.length - 3} more
                             </Badge>
                           )}
@@ -309,7 +309,7 @@ export default function OrganizationsAdminPage() {
                         <span><Users className="h-3 w-3 inline mr-1" />{org.totalMembers || 0}</span>
                         <span>Staff: {org.totalStaff || 0}</span>
                       </div>
-                      <Button variant="outline" size="sm" asChild>
+                      <Button variant="secondary" size="sm" asChild>
                         <Link href={`/admin/organizations/${org._id}`}>
                           <Edit className="h-3 w-3 mr-1" />
                           Edit

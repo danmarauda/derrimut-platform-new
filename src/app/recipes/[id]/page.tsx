@@ -129,7 +129,7 @@ const RecipeDetailPage = () => {
         <div className="mb-6">
           <Link href="/recipes">
             <Button
-              variant="outline"
+              variant="secondary"
               className="border-primary/30 text-primary hover:bg-primary/10"
             >
               <ArrowLeft className="h-4 w-4 mr-2" />
@@ -203,7 +203,7 @@ const RecipeDetailPage = () => {
                 {recipe.tags.slice(0, 4).map((tag: string) => (
                   <Badge
                     key={tag}
-                    variant="outline"
+                    variant="secondary"
                     className="border-border text-muted-foreground"
                   >
                     {tag}
@@ -219,7 +219,7 @@ const RecipeDetailPage = () => {
               {recipe.tags.slice(0, 6).map((tag: string) => (
                 <Badge
                   key={tag}
-                  variant="outline"
+                  variant="secondary"
                   className="border-border text-muted-foreground"
                 >
                   {tag}

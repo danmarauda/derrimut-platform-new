@@ -150,7 +150,7 @@ const ProgressPage = () => {
           </Button>
           <Button 
             asChild 
-            variant="outline" 
+            variant="secondary" 
             className="border-border text-foreground hover:bg-accent"
           >
             <a href="/profile/diet-plans">Check Diet Plans</a>

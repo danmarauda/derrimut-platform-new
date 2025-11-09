@@ -265,8 +265,7 @@ class Logger {
 // Export singleton instance
 export const logger = new Logger();
 
-// Export types
-export type { LogContext };
+// LogContext is already exported above as an interface
 
 // Default export
 export default logger;

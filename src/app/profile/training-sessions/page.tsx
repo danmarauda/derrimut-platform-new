@@ -171,7 +171,7 @@ export default function TrainingSessionsPage() {
                     {booking.status === "completed" && (
                       <Button
                         size="sm"
-                        variant="outline"
+                        variant="secondary"
                         className="flex-1 border-border text-foreground hover:bg-muted"
                         onClick={() => window.location.href = '/reviews'}
                       >
@@ -183,7 +183,7 @@ export default function TrainingSessionsPage() {
                     {booking.status === "confirmed" && isUpcoming(booking.sessionDate) && (
                       <Button
                         size="sm"
-                        variant="outline"
+                        variant="secondary"
                         className="flex-1 border-red-500/50 text-red-500 hover:bg-red-500/10"
                         onClick={async () => {
                           if (confirm(`Are you sure you want to cancel your training session with ${booking.trainerName}?\n\nSession: ${booking.sessionType.replace('_', ' ')}\nDate: ${formatDate(new Date(booking.sessionDate))}\n\nThis action cannot be undone.`)) {
@@ -207,7 +207,7 @@ export default function TrainingSessionsPage() {
                     
                     <Button
                       size="sm"
-                      variant="outline"
+                      variant="secondary"
                       className="flex-1 border-border text-foreground hover:bg-muted"
                       onClick={() => window.location.href = `/trainer-profile/${booking.trainerId}`}
                     >

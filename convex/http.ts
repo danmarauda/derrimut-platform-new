@@ -4,13 +4,41 @@ import { Webhook } from "svix";
 import { api } from "./_generated/api";
 import { httpAction, type ActionCtx } from "./_generated/server";
 import { Id } from "./_generated/dataModel";
-import { GoogleGenerativeAI } from "@google/generative-ai";
 import type { WorkoutPlan, DietPlan, WorkoutDay, WorkoutRoutine, DietMeal, FitnessPlanRequest } from "../src/types/fitness";
 import type { StripeSession, StripeSubscription, ShippingAddress, BookingSessionMetadata, MarketplaceSessionMetadata } from "../src/types/stripe";
 
 const http = httpRouter();
 
-const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY!);
+/**
+ * Call AI Gateway API route to generate text
+ * This uses Vercel AI Gateway for rate limiting, cost tracking, and monitoring
+ */
+async function generateTextViaGateway(prompt: string, model: string = "gemini-2.5-flash", temperature: number = 0.4, responseFormat?: { type: 'json_object' }): Promise<string> {
+  // Get the Next.js app URL from environment or use default
+  const nextjsUrl = process.env.NEXTJS_URL || process.env.NEXT_PUBLIC_CONVEX_URL?.replace('/convex', '') || 'http://localhost:3000';
+  const apiUrl = `${nextjsUrl}/api/ai/generate`;
+
+  const response = await fetch(apiUrl, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({
+      prompt,
+      model,
+      temperature,
+      responseFormat,
+    }),
+  });
+
+  if (!response.ok) {
+    const error = await response.json().catch(() => ({ error: 'Unknown error' }));
+    throw new Error(`AI Gateway error: ${error.error || response.statusText}`);
+  }
+
+  const data = await response.json();
+  return data.text;
+}
 
 http.route({
   path: "/clerk-webhook",
@@ -244,15 +272,6 @@ http.route({
 
       console.log("Payload is here:", payload);
 
-      const model = genAI.getGenerativeModel({
-        model: "gemini-2.5-flash",
-        generationConfig: {
-          temperature: 0.4, // lower temperature for more predictable outputs
-          topP: 0.9,
-          responseMimeType: "application/json",
-        },
-      });
-
       const workoutPrompt = `You are an experienced fitness coach creating a personalized workout plan based on:
       Age: ${age}
       Height: ${height}
@@ -296,8 +315,13 @@ http.route({
       
       DO NOT add any fields that are not in this example. Your response must be a valid JSON object with no additional text.`;
 
-      const workoutResult = await model.generateContent(workoutPrompt);
-      const workoutPlanText = workoutResult.response.text();
+      // Generate workout plan using Vercel AI Gateway
+      const workoutPlanText = await generateTextViaGateway(
+        workoutPrompt,
+        "gemini-2.5-flash",
+        0.4,
+        { type: 'json_object' }
+      );
 
       // VALIDATE THE INPUT COMING FROM AI
       let workoutPlan = JSON.parse(workoutPlanText);
@@ -340,8 +364,13 @@ http.route({
         
         DO NOT add any fields that are not in this example. Your response must be a valid JSON object with no additional text.`;
 
-      const dietResult = await model.generateContent(dietPrompt);
-      const dietPlanText = dietResult.response.text();
+      // Generate diet plan using Vercel AI Gateway
+      const dietPlanText = await generateTextViaGateway(
+        dietPrompt,
+        "gemini-2.5-flash",
+        0.4,
+        { type: 'json_object' }
+      );
 
       // VALIDATE THE INPUT COMING FROM AI
       let dietPlan = JSON.parse(dietPlanText);

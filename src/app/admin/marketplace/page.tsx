@@ -274,7 +274,7 @@ export default function MarketplaceAdminPage() {
       <div className="mb-8 flex gap-2">
         <Button
           onClick={handleExportItems}
-          variant="outline"
+          variant="secondary"
           className="border-border text-foreground hover:bg-accent"
         >
           <Download className="h-5 w-5 mr-2" />

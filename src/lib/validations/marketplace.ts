@@ -16,9 +16,7 @@ export const orderStatusSchema = z.enum([
   'delivered',
   'cancelled',
   'refunded'
-], {
-  errorMap: () => ({ message: 'Invalid order status' })
-});
+], { message: 'Invalid order status' });
 
 // Payment status enum
 export const orderPaymentStatusSchema = z.enum([
@@ -26,9 +24,7 @@ export const orderPaymentStatusSchema = z.enum([
   'paid',
   'failed',
   'refunded'
-], {
-  errorMap: () => ({ message: 'Invalid payment status' })
-});
+], { message: 'Invalid payment status' });
 
 // Shipping address schema
 export const shippingAddressSchema = z.object({

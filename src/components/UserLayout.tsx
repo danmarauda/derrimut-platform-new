@@ -99,7 +99,7 @@ export function UserLayout({
       <div className="lg:hidden relative z-20 pt-20 pb-4 px-4">
         <div className="flex items-center gap-4">
           <Button
-            variant="ghost"
+            variant="tertiary"
             size="sm"
             onClick={() => setSidebarOpen(!sidebarOpen)}
             className="p-2 h-10 w-10 flex-shrink-0"

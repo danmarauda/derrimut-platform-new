@@ -104,14 +104,14 @@ const MembershipPage = () => {
           gradient: "from-purple-500/10 to-purple-600/5",
           description: "Train together",
         };
-      case "premium":
+      case "12-month-upfront":
         return {
           icon: <Crown className="h-6 w-6" />,
           color: "text-primary",
           border: "border-primary/50",
           button: "bg-primary hover:bg-primary/90",
           gradient: "from-primary/10 to-primary/5",
-          description: "Ultimate experience",
+          description: "Best value",
         };
       default:
         return {
@@ -269,7 +269,7 @@ const MembershipPage = () => {
                 <Card
                   key={plan._id}
                   className={`relative bg-card/90 backdrop-blur-sm border transition-all duration-500 group flex flex-col h-full hover:shadow-2xl hover:-translate-y-2 transform-gpu ${
-                    plan.type === "premium"
+                    plan.sortOrder === 1 || plan.type === "12-month-upfront"
                       ? "border-primary/60 ring-2 ring-primary/30 shadow-primary/20"
                       : config.border
                   } ${isCurrentPlan ? "border-primary/80 ring-2 ring-primary/40 shadow-primary/30" : ""}`}
@@ -279,8 +279,8 @@ const MembershipPage = () => {
                     className={`absolute inset-0 bg-gradient-to-br ${config.gradient} rounded-lg opacity-60 group-hover:opacity-80 transition-opacity duration-500`}
                   />
 
-                  {/* Professional Popular badge for premium */}
-                  {plan.type === "premium" && (
+                  {/* Professional Popular badge for featured plan */}
+                  {(plan.sortOrder === 1 || plan.type === "12-month-upfront") && (
                     <div className="absolute -top-3 left-1/2 transform -translate-x-1/2 z-20">
                       <Badge className="bg-gradient-to-r from-amber-600 to-orange-600 text-white font-semibold shadow-lg text-xs px-4 py-1.5 border border-amber-500/20">
                         <span className="font-semibold tracking-wide">
@@ -329,7 +329,7 @@ const MembershipPage = () => {
                       <div className="text-muted-foreground text-sm font-medium mb-2">
                         per month
                       </div>
-                      {plan.type === "premium" && (
+                      {(plan.sortOrder === 1 || plan.type === "12-month-upfront") && (
                         <div className="text-sm text-emerald-600 font-semibold mt-2 bg-emerald-500/10 px-3 py-1 rounded-full">
                           Best Value
                         </div>
@@ -365,10 +365,10 @@ const MembershipPage = () => {
                     <div className="mb-6">
                       <div className="bg-gradient-to-r from-emerald-500/10 to-emerald-600/5 border border-emerald-500/20 rounded-lg p-3 text-center">
                         <p className="text-sm text-emerald-600 font-medium">
-                          {plan.type === "premium"
-                            ? "🏆 Priority + Personal Training"
-                            : plan.type === "couple"
-                            ? "💑 Special Couple Benefits"
+                          {plan.type === "12-month-upfront"
+                            ? "🏆 Best Value - Save More"
+                            : plan.type === "no-lock-in"
+                            ? "💑 Ultimate Flexibility"
                             : "🎯 Complete Gym Access"}
                         </p>
                       </div>
@@ -399,8 +399,8 @@ const MembershipPage = () => {
                         ) : (
                           <div className="flex items-center gap-2">
                             <Sparkles className="h-4 w-4" />
-                            {plan.type === "premium"
-                              ? "Upgrade Now"
+                            {plan.sortOrder === 1 || plan.type === "12-month-upfront"
+                              ? "Get Best Value"
                               : "Get Started"}
                           </div>
                         )}

@@ -487,7 +487,7 @@ const ProfilePage = () => {
                 <div className="flex gap-3 justify-end">
                   <Button
                     onClick={downloadMembershipCard}
-                    variant="outline"
+                    variant="secondary"
                     size="sm"
                     className="border-primary/30 text-primary hover:bg-primary/10"
                   >
@@ -495,7 +495,7 @@ const ProfilePage = () => {
                     Download Card
                   </Button>
                   <Button
-                    variant="destructive"
+                    variant="tertiary"
                     size="sm"
                     onClick={handleCancelMembership}
                     className="bg-red-600 hover:bg-red-700"
@@ -565,7 +565,7 @@ const ProfilePage = () => {
                     </Button>
                     <Button 
                       asChild 
-                      variant="outline" 
+                      variant="secondary" 
                       className=""
                     >
                       <a href="/profile/diet-plans">View Diet Plan</a>

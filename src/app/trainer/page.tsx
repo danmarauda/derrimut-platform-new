@@ -615,7 +615,7 @@ export default function TrainerDashboard() {
                                 </Button>
                                 <Button
                                   size="sm"
-                                  variant="outline"
+                                  variant="secondary"
                                   onClick={() => handleBookingAction(booking._id, "cancel")}
                                   className="border-red-500 text-red-500 hover:bg-red-500 hover:text-white"
                                 >
@@ -774,7 +774,7 @@ export default function TrainerDashboard() {
                           <div className="flex gap-2">
                             <Button
                               size="sm"
-                              variant="outline"
+                              variant="secondary"
                               className="border-border text-foreground hover:bg-accent"
                             >
                               <Eye className="h-4 w-4 mr-1" />
@@ -904,7 +904,7 @@ export default function TrainerDashboard() {
                       {trainerReviews.length >= 20 && (
                         <div className="text-center">
                           <Button
-                            variant="outline"
+                            variant="secondary"
                             className="border-border text-foreground hover:bg-accent"
                           >
                             Load More Reviews

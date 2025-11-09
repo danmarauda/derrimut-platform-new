@@ -159,7 +159,7 @@ export default function BookSessionPage() {
               
               <Button 
                 onClick={() => router.back()}
-                variant="outline"
+                variant="secondary"
                 className="w-full border-border text-muted-foreground hover:bg-accent"
               >
                 Go Back

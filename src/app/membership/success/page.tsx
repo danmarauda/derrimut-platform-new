@@ -75,7 +75,7 @@ const MembershipSuccessContent = () => {
             <div className="bg-destructive/10 border border-destructive rounded-lg p-6 max-w-md">
               <h2 className="text-xl font-bold text-destructive mb-2">Error Processing Membership</h2>
               <p className="text-muted-foreground mb-4">{error}</p>
-              <Button onClick={() => router.push("/membership")} variant="outline">
+              <Button onClick={() => router.push("/membership")} variant="secondary">
                 Return to Membership Page
               </Button>
             </div>
@@ -172,7 +172,7 @@ const MembershipSuccessContent = () => {
             <Button asChild size="lg" className="bg-primary hover:bg-primary/90 text-primary-foreground font-semibold shadow-lg hover:shadow-xl transform hover:scale-[1.02] transition-all duration-300">
               <Link href="/profile">View Profile</Link>
             </Button>
-            <Button asChild size="lg" variant="outline" className="border-primary/50 text-foreground hover:bg-primary/10 font-semibold transition-all duration-300">
+            <Button asChild size="lg" variant="secondary" className="border-primary/50 text-foreground hover:bg-primary/10 font-semibold transition-all duration-300">
               <Link href="/generate-program">Generate Fitness Plan</Link>
             </Button>
           </div>

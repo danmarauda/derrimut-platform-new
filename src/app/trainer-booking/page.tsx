@@ -196,7 +196,7 @@ const TrainerBookingPage = () => {
 
             {(searchTerm || selectedSpecialization || selectedDate || selectedTimeSlot || minRating > 0) && (
               <Button
-                variant="outline"
+                variant="secondary"
                 size="sm"
                 onClick={() => {
                   setSearchTerm("");
@@ -293,7 +293,7 @@ const TrainerBookingPage = () => {
                   <div className="flex gap-3 mt-auto pt-4">
                     <Link href={`/trainer-profile/${trainer._id}`} className="flex-1">
                       <Button
-                        variant="outline"
+                        variant="secondary"
                         className="w-full py-3 border-border text-muted-foreground hover:bg-muted hover:text-foreground text-base font-medium"
                       >
                         View Profile
@@ -337,7 +337,7 @@ const TrainerBookingPage = () => {
                   setSelectedTimeSlot("");
                   setMinRating(0);
                 }}
-                variant="outline"
+                variant="secondary"
                 className="px-6 py-3 border-border text-primary hover:bg-primary/10 text-base font-medium"
               >
                 Clear Search

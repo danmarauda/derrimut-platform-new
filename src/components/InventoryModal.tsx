@@ -208,7 +208,7 @@ export function InventoryModal({ isOpen, onClose, editingItem }: InventoryModalP
             {editingItem ? "Edit Equipment" : "Add New Equipment"}
           </CardTitle>
           <Button
-            variant="outline"
+            variant="secondary"
             size="sm"
             onClick={onClose}
             className="border-border text-foreground hover:bg-accent"
@@ -507,7 +507,7 @@ export function InventoryModal({ isOpen, onClose, editingItem }: InventoryModalP
             <div className="flex items-center justify-end gap-3 pt-4 border-t border-border">
               <Button
                 type="button"
-                variant="outline"
+                variant="secondary"
                 onClick={onClose}
                 disabled={isSubmitting}
                 className="border-border text-foreground hover:bg-accent"

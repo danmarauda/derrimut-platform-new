@@ -76,22 +76,19 @@ export async function GET(request: NextRequest) {
         break;
 
       case 'performance':
-        // Test performance tracking
-        const transaction = Sentry.startTransaction({
+        // Test performance tracking using Sentry.startSpan (new API)
+        await Sentry.startSpan({
           op: 'test',
           name: 'Test Transaction',
+        }, async (span) => {
+          await Sentry.startSpan({
+            op: 'test-operation',
+            name: 'Testing Sentry performance tracking',
+          }, async () => {
+            // Simulate some work
+            await new Promise((resolve) => setTimeout(resolve, 100));
+          });
         });
-
-        const span = transaction.startChild({
-          op: 'test-operation',
-          description: 'Testing Sentry performance tracking',
-        });
-
-        // Simulate some work
-        await new Promise((resolve) => setTimeout(resolve, 100));
-
-        span.finish();
-        transaction.finish();
         break;
 
       default:
@@ -109,7 +106,11 @@ export async function GET(request: NextRequest) {
     }, { status: 200 });
   } catch (error) {
     const errorMessage = error instanceof Error ? error.message : 'Unknown error';
-    logger.error('Sentry test failed', { error: errorMessage });
+    logger.error('Sentry test failed', { 
+      error: error instanceof Error 
+        ? { message: error.message, name: error.name, stack: error.stack }
+        : { message: errorMessage, name: 'UnknownError' }
+    });
     
     return NextResponse.json(
       { 

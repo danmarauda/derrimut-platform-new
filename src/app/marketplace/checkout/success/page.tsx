@@ -131,14 +131,14 @@ const CheckoutSuccessContent = () => {
               </Link>
             </Button>
             
-            <Button variant="outline" asChild className="border-border text-foreground hover:bg-accent">
+            <Button variant="secondary" asChild className="border-border text-foreground hover:bg-accent">
               <Link href="/marketplace">
                 Continue Shopping
                 <ArrowRight className="h-4 w-4 ml-2" />
               </Link>
             </Button>
             
-            <Button variant="outline" asChild className="border-border text-foreground hover:bg-accent">
+            <Button variant="secondary" asChild className="border-border text-foreground hover:bg-accent">
               <Link href="/">
                 <Home className="h-4 w-4 mr-2" />
                 Back to Home
@@ -151,7 +151,7 @@ const CheckoutSuccessContent = () => {
             <p className="text-muted-foreground text-sm mb-2">
               Need help with your order?
             </p>
-            <Button variant="link" asChild className="text-primary hover:text-primary/80">
+            <Button variant="tertiary" asChild className="text-primary hover:text-primary/80">
               <Link href="/contact">Contact Support</Link>
             </Button>
           </div>

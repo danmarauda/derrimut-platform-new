@@ -158,7 +158,7 @@ function BookingSuccessContent() {
             </Button>
             <Button
               onClick={() => router.push("/")}
-              variant="outline"
+              variant="secondary"
               className="border-border text-muted-foreground hover:bg-accent"
             >
               <Home className="h-4 w-4" />

@@ -14,9 +14,7 @@ export const sessionTypeSchema = z.enum([
   'Group Class',
   'Nutrition Consultation',
   'Fitness Assessment'
-], {
-  errorMap: () => ({ message: 'Invalid session type' })
-});
+], { message: 'Invalid session type' });
 
 // Booking status enum
 export const bookingStatusSchema = z.enum([
@@ -25,9 +23,7 @@ export const bookingStatusSchema = z.enum([
   'completed',
   'cancelled',
   'no-show'
-], {
-  errorMap: () => ({ message: 'Invalid booking status' })
-});
+], { message: 'Invalid booking status' });
 
 // Payment status enum
 export const paymentStatusSchema = z.enum([
@@ -35,9 +31,7 @@ export const paymentStatusSchema = z.enum([
   'paid',
   'failed',
   'refunded'
-], {
-  errorMap: () => ({ message: 'Invalid payment status' })
-});
+], { message: 'Invalid payment status' });
 
 // Create booking schema (for checkout session)
 export const createBookingSchema = z.object({

@@ -220,7 +220,7 @@ export default function AdminMembershipsPage() {
       <div className="mb-6">
         <Button
           onClick={handleExportMemberships}
-          variant="outline"
+          variant="secondary"
           className="border-border text-foreground hover:bg-accent"
         >
           <Download className="h-4 w-4 mr-2" />
@@ -318,7 +318,7 @@ export default function AdminMembershipsPage() {
                           </div>
                         </td>
                         <td className="py-3 px-4">
-                          <Badge variant="outline" className="capitalize">
+                          <Badge variant="standard" className="capitalize">
                             {membership.membershipType}
                           </Badge>
                         </td>
@@ -348,7 +348,7 @@ export default function AdminMembershipsPage() {
                           {membership.status === 'active' && !membership.cancelAtPeriodEnd && (
                             <Button
                               size="sm"
-                              variant="destructive"
+                              variant="tertiary"
                               onClick={() => handleCancelMembership(membership.clerkId, membership.userName)}
                               className="bg-red-600 hover:bg-red-700 text-xs"
                             >

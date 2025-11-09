@@ -116,7 +116,7 @@ const CartPage = () => {
       <div className="container mx-auto px-4 py-32 relative z-10 flex-1">
         {/* Header */}
         <div className="flex items-center mb-8">
-          <Button variant="outline" asChild className="mr-4 border-border text-foreground hover:bg-accent">
+          <Button variant="secondary" asChild className="mr-4 border-border text-foreground hover:bg-accent">
             <Link href="/marketplace">
               <ArrowLeft className="h-4 w-4 mr-2" />
               Back to Shop
@@ -173,7 +173,7 @@ const CartPage = () => {
                       {/* Quantity Controls */}
                       <div className="flex items-center space-x-2">
                         <Button
-                          variant="outline"
+                          variant="secondary"
                           size="sm"
                           onClick={() => handleQuantityUpdate(item._id, item.quantity - 1)}
                           disabled={item.quantity <= 1 || updatingQuantity === item._id}
@@ -187,7 +187,7 @@ const CartPage = () => {
                         </span>
                         
                         <Button
-                          variant="outline"
+                          variant="secondary"
                           size="sm"
                           onClick={() => handleQuantityUpdate(item._id, item.quantity + 1)}
                           disabled={Boolean(updatingQuantity === item._id || (item.product && item.quantity >= item.product.stock))}
@@ -206,7 +206,7 @@ const CartPage = () => {
 
                       {/* Remove Button */}
                       <Button
-                        variant="outline"
+                        variant="secondary"
                         size="sm"
                         onClick={() => handleRemoveItem(item._id)}
                         disabled={removingItem === item._id}
@@ -279,7 +279,7 @@ const CartPage = () => {
                   )}
                   
                   <Button
-                    variant="outline"
+                    variant="secondary"
                     asChild
                     className="w-full border-border text-foreground hover:bg-accent"
                   >

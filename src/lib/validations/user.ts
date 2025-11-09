@@ -15,9 +15,7 @@ export const roleSchema = z.enum([
   'admin',
   'super_admin',
   'location_admin'
-], {
-  errorMap: () => ({ message: 'Invalid role' })
-});
+], { message: 'Invalid role' });
 
 // User profile schema
 export const userProfileSchema = z.object({

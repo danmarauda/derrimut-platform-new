@@ -135,7 +135,7 @@ export function getUserFriendlyMessage(error: unknown): string {
   }
 
   if (error instanceof TimeoutError) {
-    return `The ${error.operation} operation timed out. Please try again.';
+    return `The ${error.operation} operation timed out. Please try again.`;
   }
 
   if (isAppError(error)) {
@@ -256,7 +256,9 @@ export function assertOrThrow(
   context?: Record<string, any>
 ): asserts condition {
   if (!condition) {
-    throw new ErrorClass(message, context);
+    // AppError constructor: (message, statusCode, isOperational, context)
+    // Most error classes override with (message, context) but we need to handle both
+    throw new ErrorClass(message, 500, true, context);
   }
 }
 

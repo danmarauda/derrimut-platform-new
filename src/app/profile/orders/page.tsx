@@ -351,7 +351,7 @@ const OrdersPage = () => {
             <div className="flex justify-end">
               <Button 
                 onClick={downloadAllOrdersSummary}
-                variant="outline"
+                variant="secondary"
                 className="border-primary/30 text-primary hover:bg-primary/10"
               >
                 <Download className="h-4 w-4 mr-2" />
@@ -498,7 +498,7 @@ const OrdersPage = () => {
                       <div className="flex justify-end">
                         <Button
                           onClick={() => downloadOrderReceipt(order)}
-                          variant="outline"
+                          variant="secondary"
                           size="sm"
                           className="border-primary/30 text-primary hover:bg-primary/10"
                         >

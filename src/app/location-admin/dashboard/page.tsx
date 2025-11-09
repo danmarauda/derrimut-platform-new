@@ -46,9 +46,9 @@ export default function LocationAdminDashboard() {
   const allMemberships = useQuery(api.memberships.getAllMemberships, isSignedIn ? undefined : "skip");
   const activeTrainers = useQuery(api.trainerProfiles.getActiveTrainers, isSignedIn ? {} : "skip");
   
-  // Filter trainers by location (if they have organizationId)
+  // Filter trainers by location (check if trainer's user is in orgMembers)
   const locationTrainers = activeTrainers?.filter(trainer => 
-    trainer.organizationId === organization?._id
+    orgMembers?.some(member => member._id === trainer.userId)
   ) || [];
 
   // Calculate statistics for this location
@@ -205,7 +205,7 @@ export default function LocationAdminDashboard() {
               <CardContent>
                 <div className="flex flex-wrap gap-2">
                   {organization.features.map((feature, idx) => (
-                    <Badge key={idx} variant="outline">
+                    <Badge variant="standard">
                       {feature.replace(/_/g, " ")}
                     </Badge>
                   ))}
@@ -222,25 +222,25 @@ export default function LocationAdminDashboard() {
             </CardHeader>
             <CardContent>
               <div className="grid grid-cols-2 md:grid-cols-4 gap-2">
-                <Button variant="outline" className="h-auto flex-col py-3" asChild>
+                <Button variant="secondary" className="h-auto flex-col py-3" asChild>
                   <Link href="/admin/users">
                     <Users className="h-5 w-5 mb-1" />
                     <span className="text-xs">Members</span>
                   </Link>
                 </Button>
-                <Button variant="outline" className="h-auto flex-col py-3" asChild>
+                <Button variant="secondary" className="h-auto flex-col py-3" asChild>
                   <Link href="/admin/trainer-applications">
                     <UserCheck className="h-5 w-5 mb-1" />
                     <span className="text-xs">Trainers</span>
                   </Link>
                 </Button>
-                <Button variant="outline" className="h-auto flex-col py-3" asChild>
+                <Button variant="secondary" className="h-auto flex-col py-3" asChild>
                   <Link href="/admin/memberships">
                     <CreditCard className="h-5 w-5 mb-1" />
                     <span className="text-xs">Memberships</span>
                   </Link>
                 </Button>
-                <Button variant="outline" className="h-auto flex-col py-3" asChild>
+                <Button variant="secondary" className="h-auto flex-col py-3" asChild>
                   <Link href={`/admin/organizations/${organization._id}`}>
                     <Building2 className="h-5 w-5 mb-1" />
                     <span className="text-xs">Settings</span>
@@ -265,7 +265,7 @@ export default function LocationAdminDashboard() {
                         <p className="font-medium">{member.name}</p>
                         <p className="text-sm text-muted-foreground">{member.email}</p>
                       </div>
-                      <Badge variant="outline">
+                      <Badge variant="standard">
                         {member.organizationRole === "org_admin" ? "Admin" : "Staff"}
                       </Badge>
                     </div>

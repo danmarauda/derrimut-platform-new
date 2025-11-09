@@ -79,7 +79,7 @@ export default function NewDesignSystemPage() {
                 <Brain className="w-5 h-5" />
                 Get Started
               </PremiumButton>
-              <PremiumButton variant="ghost" className="px-8 py-3">
+              <PremiumButton variant="tertiary" className="px-8 py-3">
                 View Components
                 <ArrowRight className="w-4 h-4" />
               </PremiumButton>
@@ -124,8 +124,8 @@ export default function NewDesignSystemPage() {
             <h3 className="text-2xl font-semibold text-white mb-8">Buttons</h3>
             <div className="flex flex-wrap gap-4">
               <PremiumButton variant="primary">Primary Button</PremiumButton>
-              <PremiumButton variant="ghost">Ghost Button</PremiumButton>
-              <PremiumButton variant="outline">Outline Button</PremiumButton>
+              <PremiumButton variant="tertiary">Ghost Button</PremiumButton>
+              <PremiumButton variant="secondary">Outline Button</PremiumButton>
               <PremiumButton variant="primary" fullWidth className="sm:w-auto">
                 <Calendar className="w-4 h-4" />
                 With Icon
@@ -361,7 +361,7 @@ export default function NewDesignSystemPage() {
               <PremiumButton variant="primary" className="px-8 py-3">
                 Start Your Journey
               </PremiumButton>
-              <PremiumButton variant="ghost" className="px-8 py-3">
+              <PremiumButton variant="tertiary" className="px-8 py-3">
                 View Documentation
               </PremiumButton>
             </div>

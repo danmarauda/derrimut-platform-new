@@ -656,7 +656,7 @@ const MarketplacePage = () => {
                           <div className="flex justify-center mt-8">
                             <Button
                               onClick={() => loadMoreForCategory(categoryKey)}
-                              variant="outline"
+                              variant="secondary"
                               className="px-8 py-3 text-base hover:bg-primary hover:text-primary-foreground"
                             >
                               Load More ({categoryData.items.length - getVisibleItemsForCategory(categoryKey, categoryData.items).length} remaining)

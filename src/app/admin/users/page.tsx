@@ -363,7 +363,7 @@ export default function AdminUsersPage() {
           </div>
           <Button
             onClick={handleExportUsers}
-            variant="outline"
+            variant="secondary"
             className="border-border text-foreground hover:bg-accent"
           >
             <Download className="h-4 w-4 mr-2" />
@@ -464,7 +464,7 @@ export default function AdminUsersPage() {
                         </select>
                         <Button
                           size="sm"
-                          variant="outline"
+                          variant="secondary"
                           onClick={() => setSelectedUser(user)}
                           className="p-2 h-8 w-8"
                         >
@@ -494,7 +494,7 @@ export default function AdminUsersPage() {
               </p>
               {(searchTerm || roleFilter !== "all" || membershipFilter !== "all") && (
                 <Button 
-                  variant="outline" 
+                  variant="secondary" 
                   size="sm" 
                   className="mt-4"
                   onClick={() => {
@@ -530,7 +530,7 @@ export default function AdminUsersPage() {
                 </div>
               </div>
               <Button
-                variant="outline"
+                variant="secondary"
                 size="sm"
                 onClick={() => setSelectedUser(null)}
                 className="text-muted-foreground hover:text-foreground"

@@ -138,7 +138,7 @@ const ProductDetailPage = () => {
         <div className="mb-8">
           <Button
             onClick={() => router.back()}
-            variant="outline"
+            variant="secondary"
             className="border-border text-foreground hover:bg-accent hover:border-primary transition-all duration-200"
           >
             <ArrowLeft className="h-5 w-5 mr-2" />
@@ -245,7 +245,7 @@ const ProductDetailPage = () => {
                   <Button
                     onClick={() => handleQuantityChange(-1)}
                     disabled={quantity <= 1}
-                    variant="outline"
+                    variant="secondary"
                     size="sm"
                     className="border-border text-foreground hover:bg-accent"
                   >
@@ -257,7 +257,7 @@ const ProductDetailPage = () => {
                   <Button
                     onClick={() => handleQuantityChange(1)}
                     disabled={quantity >= product.stock}
-                    variant="outline"
+                    variant="secondary"
                     size="sm"
                     className="border-border text-foreground hover:bg-accent"
                   >
@@ -286,13 +286,13 @@ const ProductDetailPage = () => {
                     )}
                   </Button>
                   <Button
-                    variant="outline"
+                    variant="secondary"
                     className="border-border text-foreground hover:bg-accent"
                   >
                     <Heart className="h-5 w-5" />
                   </Button>
                   <Button
-                    variant="outline"
+                    variant="secondary"
                     className="border-border text-foreground hover:bg-accent"
                   >
                     <Share2 className="h-5 w-5" />
@@ -314,7 +314,7 @@ const ProductDetailPage = () => {
               {user && cartSummary && cartSummary.totalItems > 0 && (
                 <Button
                   asChild
-                  variant="outline"
+                  variant="secondary"
                   className="w-full border-border text-foreground hover:bg-accent"
                 >
                   <Link href="/marketplace/cart">
@@ -434,7 +434,7 @@ const ProductDetailPage = () => {
             <div className="text-center mt-8">
               <Button
                 asChild
-                variant="outline"
+                variant="secondary"
                 className="border-border text-foreground hover:bg-accent hover:border-primary"
               >
                 <Link href={`/marketplace?category=${product?.category}`}>

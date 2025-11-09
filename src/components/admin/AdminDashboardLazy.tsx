@@ -4,6 +4,8 @@ import dynamic from 'next/dynamic';
 import { ComponentLoader } from '@/components/LoadingSpinner';
 
 // Lazy load heavy admin components
+// Note: These components may not exist yet - uncomment when created
+/*
 export const SalaryManagement = dynamic(
   () => import('./SalaryManagement').then(mod => ({ default: mod.SalaryManagement })),
   {
@@ -43,3 +45,4 @@ export const TrainerApplications = dynamic(
     ssr: false
   }
 );
+*/

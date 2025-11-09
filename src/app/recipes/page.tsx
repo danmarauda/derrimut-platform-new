@@ -261,7 +261,7 @@ const RecipesPage = () => {
               selectedDifficulty !== "all" ||
               searchTerm) && (
               <Button
-                variant="outline"
+                variant="secondary"
                 size="sm"
                 onClick={() => {
                   setSelectedCategory("all");
@@ -526,7 +526,7 @@ const RecipesPage = () => {
                           {recipe.tags.slice(0, 3).map((tag: string) => (
                             <Badge
                               key={tag}
-                              variant="outline"
+                              variant="secondary"
                               className="text-xs border-gray-600 text-gray-400"
                             >
                               {tag}
@@ -534,7 +534,7 @@ const RecipesPage = () => {
                           ))}
                           {recipe.tags.length > 3 && (
                             <Badge
-                              variant="outline"
+                              variant="secondary"
                               className="text-xs border-gray-600 text-gray-400"
                             >
                               +{recipe.tags.length - 3}
@@ -662,7 +662,7 @@ const RecipesPage = () => {
                         {recipe.tags.slice(0, 3).map((tag: string) => (
                           <Badge
                             key={tag}
-                            variant="outline"
+                            variant="secondary"
                             className="text-xs border-gray-600 text-gray-400"
                           >
                             {tag}
@@ -670,7 +670,7 @@ const RecipesPage = () => {
                         ))}
                         {recipe.tags.length > 3 && (
                           <Badge
-                            variant="outline"
+                            variant="secondary"
                             className="text-xs border-gray-600 text-gray-400"
                           >
                             +{recipe.tags.length - 3}
@@ -808,7 +808,7 @@ const RecipesPage = () => {
                       {recipe.tags.slice(0, 3).map((tag: string) => (
                         <Badge
                           key={tag}
-                          variant="outline"
+                          variant="secondary"
                           className="text-xs border-gray-600 text-gray-400"
                         >
                           {tag}
@@ -816,7 +816,7 @@ const RecipesPage = () => {
                       ))}
                       {recipe.tags.length > 3 && (
                         <Badge
-                          variant="outline"
+                          variant="secondary"
                           className="text-xs border-gray-600 text-gray-400"
                         >
                           +{recipe.tags.length - 3}
@@ -930,7 +930,7 @@ const RecipesPage = () => {
                       {recipe.tags.slice(0, 3).map((tag: string) => (
                         <Badge
                           key={tag}
-                          variant="outline"
+                          variant="secondary"
                           className="text-xs border-gray-600 text-gray-400"
                         >
                           {tag}
@@ -938,7 +938,7 @@ const RecipesPage = () => {
                       ))}
                       {recipe.tags.length > 3 && (
                         <Badge
-                          variant="outline"
+                          variant="secondary"
                           className="text-xs border-gray-600 text-gray-400"
                         >
                           +{recipe.tags.length - 3}
