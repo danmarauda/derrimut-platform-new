@@ -340,7 +340,7 @@ export default function AdminTrainerManagementPage() {
                       <span className="text-foreground">({selectedTrainer.totalReviews})</span>
                     </div>
                     <Badge 
-                      variant={selectedTrainer.isActive ? "default" : "secondary"}
+                      variant={selectedTrainer.isActive ? "standard" : "standard"}
                       className={selectedTrainer.isActive ? "bg-green-600" : "bg-muted"}
                     >
                       {selectedTrainer.isActive ? "Active" : "Inactive"}

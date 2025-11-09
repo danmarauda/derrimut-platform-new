@@ -6,6 +6,7 @@ import { useAuth } from "@clerk/nextjs";
 import { api } from "../../../../convex/_generated/api";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
 import { AdminLayout } from "@/components/AdminLayout";
 import { 
@@ -22,27 +23,6 @@ import {
   Download
 } from "lucide-react";
 import Link from "next/link";
-
-// Theme-compatible Badge component
-const Badge = ({ children, className = "", variant = "default" }: { 
-  children: React.ReactNode; 
-  className?: string; 
-  variant?: "default" | "outline" | "secondary" | "destructive"
-}) => {
-  const baseClasses = "inline-flex items-center rounded-md border px-2.5 py-0.5 text-xs font-semibold transition-colors";
-  const variantClasses = {
-    default: "border-transparent bg-primary/20 text-primary",
-    outline: "border-border text-muted-foreground bg-transparent",
-    secondary: "border-transparent bg-orange-100 text-orange-800 dark:bg-orange-600/20 dark:text-orange-400",
-    destructive: "border-transparent bg-red-100 text-red-800 dark:bg-red-900/20 dark:text-red-300"
-  };
-  
-  return (
-    <div className={`${baseClasses} ${variantClasses[variant]} ${className}`}>
-      {children}
-    </div>
-  );
-};
 
 const AdminBlogPage = () => {
   const { isSignedIn } = useAuth();
@@ -319,13 +299,13 @@ const AdminBlogPage = () => {
                         <h3 className="font-semibold text-foreground text-lg">{post.title}</h3>
                         <Badge 
                           variant={
-                            post.status === "published" ? "default" :
-                            post.status === "draft" ? "secondary" : "destructive"
+                            post.status === "published" ? "standard" :
+                            post.status === "draft" ? "standard" : "accent"
                           }
                         >
                           {post.status}
                         </Badge>
-                        {post.isFeatured && <Badge variant="standard">Featured</Badge>}
+                        {post.isFeatured && <Badge variant="premium">Featured</Badge>}
                       </div>
                       
                       <p className="text-muted-foreground text-sm mb-3 line-clamp-2">

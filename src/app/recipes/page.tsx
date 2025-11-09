@@ -8,6 +8,7 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import {
   Clock,
@@ -27,30 +28,6 @@ import { useQuery } from "convex/react";
 import { api } from "../../../convex/_generated/api";
 import { useUser } from "@clerk/nextjs";
 import { RecipeImage } from "@/components/ui/RecipeImage";
-
-// Simple Badge component
-const Badge = ({
-  children,
-  className = "",
-  variant = "default",
-}: {
-  children: React.ReactNode;
-  className?: string;
-  variant?: "default" | "outline";
-}) => {
-  const baseClasses =
-    "inline-flex items-center rounded-md border px-2.5 py-0.5 text-xs font-semibold transition-colors";
-  const variantClasses =
-    variant === "outline"
-      ? "border-border text-muted-foreground bg-transparent"
-      : "border-transparent bg-primary/20 text-primary";
-
-  return (
-    <div className={`${baseClasses} ${variantClasses} ${className}`}>
-      {children}
-    </div>
-  );
-};
 
 // Simple Input component
 const Input = ({
@@ -526,7 +503,7 @@ const RecipesPage = () => {
                           {recipe.tags.slice(0, 3).map((tag: string) => (
                             <Badge
                               key={tag}
-                              variant="secondary"
+                              variant="standard"
                               className="text-xs border-gray-600 text-gray-400"
                             >
                               {tag}
@@ -534,7 +511,7 @@ const RecipesPage = () => {
                           ))}
                           {recipe.tags.length > 3 && (
                             <Badge
-                              variant="secondary"
+                              variant="standard"
                               className="text-xs border-gray-600 text-gray-400"
                             >
                               +{recipe.tags.length - 3}
@@ -662,7 +639,7 @@ const RecipesPage = () => {
                         {recipe.tags.slice(0, 3).map((tag: string) => (
                           <Badge
                             key={tag}
-                            variant="secondary"
+                            variant="standard"
                             className="text-xs border-gray-600 text-gray-400"
                           >
                             {tag}
@@ -670,7 +647,7 @@ const RecipesPage = () => {
                         ))}
                         {recipe.tags.length > 3 && (
                           <Badge
-                            variant="secondary"
+                            variant="standard"
                             className="text-xs border-gray-600 text-gray-400"
                           >
                             +{recipe.tags.length - 3}
@@ -808,7 +785,7 @@ const RecipesPage = () => {
                       {recipe.tags.slice(0, 3).map((tag: string) => (
                         <Badge
                           key={tag}
-                          variant="secondary"
+                          variant="standard"
                           className="text-xs border-gray-600 text-gray-400"
                         >
                           {tag}
@@ -816,7 +793,7 @@ const RecipesPage = () => {
                       ))}
                       {recipe.tags.length > 3 && (
                         <Badge
-                          variant="secondary"
+                          variant="standard"
                           className="text-xs border-gray-600 text-gray-400"
                         >
                           +{recipe.tags.length - 3}
@@ -930,7 +907,7 @@ const RecipesPage = () => {
                       {recipe.tags.slice(0, 3).map((tag: string) => (
                         <Badge
                           key={tag}
-                          variant="secondary"
+                          variant="standard"
                           className="text-xs border-gray-600 text-gray-400"
                         >
                           {tag}
@@ -938,7 +915,7 @@ const RecipesPage = () => {
                       ))}
                       {recipe.tags.length > 3 && (
                         <Badge
-                          variant="secondary"
+                          variant="standard"
                           className="text-xs border-gray-600 text-gray-400"
                         >
                           +{recipe.tags.length - 3}
