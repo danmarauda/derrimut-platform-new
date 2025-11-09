@@ -3,6 +3,9 @@
 import { Button } from '@/components/ui/button';
 import { Card, CardHeader, CardTitle, CardDescription, CardContent, CardFooter } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
+import { Input } from '@/components/ui/input';
+import { Textarea } from '@/components/ui/textarea';
+import { Label } from '@/components/ui/label';
 
 export default function ComponentTestPage() {
   return (
@@ -67,6 +70,31 @@ export default function ComponentTestPage() {
             <Badge variant="standard">Feature</Badge>
             <Badge variant="accent">Success</Badge>
           </div>
+        </section>
+
+        {/* Form Components */}
+        <section className="space-y-4">
+          <h2 className="text-2xl font-semibold text-white">Form Components</h2>
+          <Card variant="premium">
+            <CardHeader>
+              <CardTitle>Form Example</CardTitle>
+              <CardDescription>Testing migrated form components</CardDescription>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              <div className="space-y-2">
+                <Label htmlFor="email">Email Address</Label>
+                <Input id="email" type="email" placeholder="Enter your email" />
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="message">Message</Label>
+                <Textarea id="message" placeholder="Enter your message" />
+              </div>
+            </CardContent>
+            <CardFooter>
+              <Button variant="primary">Submit</Button>
+              <Button variant="tertiary">Cancel</Button>
+            </CardFooter>
+          </Card>
         </section>
 
         {/* Combined Example */}
