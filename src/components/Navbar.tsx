@@ -197,17 +197,63 @@ const Navbar = () => {
           )}
 
           {userRole === "user" && (
-            <Link
-              href="/check-in"
-              className={`text-foreground hover:text-primary transition-colors text-sm font-medium relative pb-2 ${
-                pathname === "/check-in" ? "" : ""
-              }`}
-            >
-              <span>Check In</span>
-              {pathname === "/check-in" && (
-                <div className="absolute bottom-0 left-0 w-full h-0.5 bg-primary"></div>
-              )}
-            </Link>
+            <>
+              <Link
+                href="/check-in"
+                className={`text-foreground hover:text-primary transition-colors text-sm font-medium relative pb-2 ${
+                  pathname === "/check-in" ? "" : ""
+                }`}
+              >
+                <span>Check In</span>
+                {pathname === "/check-in" && (
+                  <div className="absolute bottom-0 left-0 w-full h-0.5 bg-primary"></div>
+                )}
+              </Link>
+              <Link
+                href="/equipment"
+                className={`text-foreground hover:text-primary transition-colors text-sm font-medium relative pb-2 ${
+                  pathname === "/equipment" ? "" : ""
+                }`}
+              >
+                <span>Equipment</span>
+                {pathname === "/equipment" && (
+                  <div className="absolute bottom-0 left-0 w-full h-0.5 bg-primary"></div>
+                )}
+              </Link>
+              <Link
+                href="/classes"
+                className={`text-foreground hover:text-primary transition-colors text-sm font-medium relative pb-2 ${
+                  pathname === "/classes" ? "" : ""
+                }`}
+              >
+                <span>Classes</span>
+                {pathname === "/classes" && (
+                  <div className="absolute bottom-0 left-0 w-full h-0.5 bg-primary"></div>
+                )}
+              </Link>
+              <Link
+                href="/challenges"
+                className={`text-foreground hover:text-primary transition-colors text-sm font-medium relative pb-2 ${
+                  pathname === "/challenges" ? "" : ""
+                }`}
+              >
+                <span>Challenges</span>
+                {pathname === "/challenges" && (
+                  <div className="absolute bottom-0 left-0 w-full h-0.5 bg-primary"></div>
+                )}
+              </Link>
+              <Link
+                href="/community"
+                className={`text-foreground hover:text-primary transition-colors text-sm font-medium relative pb-2 ${
+                  pathname === "/community" ? "" : ""
+                }`}
+              >
+                <span>Community</span>
+                {pathname === "/community" && (
+                  <div className="absolute bottom-0 left-0 w-full h-0.5 bg-primary"></div>
+                )}
+              </Link>
+            </>
           )}
           {userRole === "user" && (
             <Link
