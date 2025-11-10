@@ -166,6 +166,7 @@ export const getUserReservations = query({
       throw new Error("Not authenticated");
     }
 
+    const clerkId = args.clerkId || identity.subject;
     const user = await ctx.db
       .query("users")
       .withIndex("by_clerk_id", (q) => q.eq("clerkId", clerkId))

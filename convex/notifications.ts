@@ -51,7 +51,6 @@ export const markNotificationRead = mutation({
 
     await ctx.db.patch(args.notificationId, {
       read: true,
-      readAt: Date.now(),
     });
 
     return { success: true };
@@ -77,7 +76,6 @@ export const markAllNotificationsRead = mutation({
       notifications.map((notification) =>
         ctx.db.patch(notification._id, {
           read: true,
-          readAt: Date.now(),
         })
       )
     );

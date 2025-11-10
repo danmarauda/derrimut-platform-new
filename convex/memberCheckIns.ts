@@ -148,10 +148,10 @@ export const getMemberCheckIns = query({
     const clerkId = args.clerkId || identity.subject;
     let query = ctx.db
       .query("memberCheckIns")
-      .withIndex("by_clerk_id", (q) => q.eq("clerkId", clerkId));
+      .withIndex("by_clerk_id", (q: any) => q.eq("clerkId", clerkId));
 
     if (args.locationId) {
-      query = query.filter((q) => q.eq(q.field("locationId"), args.locationId));
+      query = query.filter((q: any) => q.eq(q.field("locationId"), args.locationId));
     }
 
     const checkIns = await query
@@ -190,7 +190,7 @@ export const getCheckInStreak = query({
     const clerkId = args.clerkId || identity.subject;
     const checkIns = await ctx.db
       .query("memberCheckIns")
-      .withIndex("by_clerk_id", (q) => q.eq("clerkId", clerkId))
+      .withIndex("by_clerk_id", (q: any) => q.eq("clerkId", clerkId))
       .order("desc")
       .take(100);
 
@@ -226,7 +226,7 @@ export const getCheckInStreak = query({
 async function calculateStreak(ctx: any, clerkId: string) {
   const checkIns = await ctx.db
     .query("memberCheckIns")
-    .withIndex("by_clerk_id", (q) => q.eq("clerkId", clerkId))
+    .withIndex("by_clerk_id", (q: any) => q.eq("clerkId", clerkId))
     .order("desc")
     .take(100);
 
@@ -256,26 +256,31 @@ async function calculateStreak(ctx: any, clerkId: string) {
 async function updateEngagementScore(ctx: any, clerkId: string) {
   const checkIns = await ctx.db
     .query("memberCheckIns")
-    .withIndex("by_clerk_id", (q) => q.eq("clerkId", clerkId))
+    .withIndex("by_clerk_id", (q: any) => q.eq("clerkId", clerkId))
     .collect();
 
   const streakData = await calculateStreak(ctx, clerkId);
+  
+  // Get user first
+  const user = await ctx.db
+    .query("users")
+    .withIndex("by_clerk_id", (q: any) => q.eq("clerkId", clerkId))
+    .first();
+
+  if (!user) return;
+
+  // Plans use clerkId as userId (string)
   const plans = await ctx.db
     .query("plans")
-    .withIndex("by_user_id", (q) => q.eq("userId", clerkId))
-    .filter((q) => q.eq(q.field("isActive"), true))
+    .withIndex("by_user_id", (q: any) => q.eq("userId", clerkId))
+    .filter((q: any) => q.eq(q.field("isActive"), true))
     .collect();
 
+  // Get challenges - need user._id
   const challenges = await ctx.db
     .query("challengeParticipations")
-    .withIndex("by_user", (q) => {
-      const user = await ctx.db
-        .query("users")
-        .withIndex("by_clerk_id", (q) => q.eq("clerkId", clerkId))
-        .first();
-      return user ? q.eq("userId", user._id) : q.eq("userId", "" as any);
-    })
-    .filter((q) => q.eq(q.field("completed"), true))
+    .withIndex("by_user", (q: any) => q.eq("userId", user._id))
+    .filter((q: any) => q.eq(q.field("completed"), true))
     .collect();
 
   // Calculate score (0-100)
@@ -289,12 +294,7 @@ async function updateEngagementScore(ctx: any, clerkId: string) {
   // Update or create engagement record
   const existing = await ctx.db
     .query("memberEngagement")
-    .withIndex("by_clerk_id", (q) => q.eq("clerkId", clerkId))
-    .first();
-
-  const user = await ctx.db
-    .query("users")
-    .withIndex("by_clerk_id", (q) => q.eq("clerkId", clerkId))
+    .withIndex("by_clerk_id", (q: any) => q.eq("clerkId", clerkId))
     .first();
 
   if (!user) return;
@@ -329,7 +329,7 @@ async function updateEngagementScore(ctx: any, clerkId: string) {
 async function checkAchievements(ctx: any, clerkId: string, action: string) {
   const user = await ctx.db
     .query("users")
-    .withIndex("by_clerk_id", (q) => q.eq("clerkId", clerkId))
+    .withIndex("by_clerk_id", (q: any) => q.eq("clerkId", clerkId))
     .first();
 
   if (!user) return;
@@ -337,7 +337,7 @@ async function checkAchievements(ctx: any, clerkId: string, action: string) {
   if (action === "check_in") {
     const checkIns = await ctx.db
       .query("memberCheckIns")
-      .withIndex("by_clerk_id", (q) => q.eq("clerkId", clerkId))
+      .withIndex("by_clerk_id", (q: any) => q.eq("clerkId", clerkId))
       .collect();
 
     const streakData = await calculateStreak(ctx, clerkId);
@@ -359,8 +359,8 @@ async function checkAchievements(ctx: any, clerkId: string, action: string) {
         // Check if already unlocked
         const existing = await ctx.db
           .query("achievements")
-          .withIndex("by_user", (q) => q.eq("userId", user._id))
-          .filter((q) => q.eq(q.field("title"), achievement.title))
+          .withIndex("by_user", (q: any) => q.eq("userId", user._id))
+          .filter((q: any) => q.eq(q.field("title"), achievement.title))
           .first();
 
         if (!existing) {
@@ -406,7 +406,7 @@ export const getMemberEngagement = query({
     const clerkId = args.clerkId || identity.subject;
     const engagement = await ctx.db
       .query("memberEngagement")
-      .withIndex("by_clerk_id", (q) => q.eq("clerkId", clerkId))
+      .withIndex("by_clerk_id", (q: any) => q.eq("clerkId", clerkId))
       .first();
 
     if (!engagement) {
@@ -414,7 +414,7 @@ export const getMemberEngagement = query({
       await updateEngagementScore(ctx, clerkId);
       return await ctx.db
         .query("memberEngagement")
-        .withIndex("by_clerk_id", (q) => q.eq("clerkId", clerkId))
+        .withIndex("by_clerk_id", (q: any) => q.eq("clerkId", clerkId))
         .first();
     }
 
@@ -436,7 +436,7 @@ export const getMemberAchievements = query({
     const clerkId = args.clerkId || identity.subject;
     const achievements = await ctx.db
       .query("achievements")
-      .withIndex("by_clerk_id", (q) => q.eq("clerkId", clerkId))
+      .withIndex("by_clerk_id", (q: any) => q.eq("clerkId", clerkId))
       .order("desc")
       .collect();
 

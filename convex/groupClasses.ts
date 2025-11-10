@@ -161,7 +161,6 @@ export const cancelClassBooking = mutation({
 
     await ctx.db.patch(args.bookingId, {
       status: "cancelled",
-      cancelledAt: Date.now(),
     });
 
     return { success: true };
@@ -285,6 +284,8 @@ export const createClass = mutation({
       endTime: args.endTime,
       recurring: args.recurring || "none",
       isActive: true,
+      attendees: [],
+      waitlist: [],
       createdAt: Date.now(),
     });
 
