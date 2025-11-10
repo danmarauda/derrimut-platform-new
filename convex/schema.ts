@@ -929,4 +929,236 @@ export default defineSchema({
     .index("by_event_id", ["eventId"])
     .index("by_processed", ["processed"])
     .index("by_event_type", ["eventType"]),
+
+  // Member Check-ins (QR Code & App-based)
+  memberCheckIns: defineTable({
+    userId: v.id("users"),
+    clerkId: v.string(),
+    locationId: v.id("organizations"),
+    checkInTime: v.number(),
+    checkOutTime: v.optional(v.number()),
+    duration: v.optional(v.number()), // in minutes
+    qrCode: v.string(), // Unique QR code for this check-in
+    method: v.union(v.literal("qr"), v.literal("app"), v.literal("manual")),
+    notes: v.optional(v.string()),
+    createdAt: v.number(),
+  })
+    .index("by_user", ["userId"])
+    .index("by_clerk_id", ["clerkId"])
+    .index("by_location", ["locationId"])
+    .index("by_date", ["checkInTime"])
+    .index("by_user_date", ["clerkId", "checkInTime"]),
+
+  // Achievements & Badges
+  achievements: defineTable({
+    userId: v.id("users"),
+    clerkId: v.string(),
+    type: v.union(
+      v.literal("check_in_streak"),
+      v.literal("total_check_ins"),
+      v.literal("workout_completed"),
+      v.literal("challenge_completed"),
+      v.literal("milestone"),
+      v.literal("social")
+    ),
+    title: v.string(),
+    description: v.string(),
+    icon: v.string(), // Icon name/emoji
+    unlockedAt: v.number(),
+    metadata: v.optional(v.any()), // Additional data
+  })
+    .index("by_user", ["userId"])
+    .index("by_clerk_id", ["clerkId"])
+    .index("by_type", ["type"]),
+
+  // Challenges & Competitions
+  challenges: defineTable({
+    title: v.string(),
+    description: v.string(),
+    type: v.union(
+      v.literal("check_in"),
+      v.literal("workout"),
+      v.literal("social"),
+      v.literal("streak")
+    ),
+    goal: v.number(), // Target number
+    startDate: v.number(),
+    endDate: v.number(),
+    reward: v.optional(v.string()),
+    isActive: v.boolean(),
+    participants: v.array(v.id("users")),
+    createdAt: v.number(),
+  })
+    .index("by_active", ["isActive"])
+    .index("by_dates", ["startDate", "endDate"]),
+
+  // Challenge Participations
+  challengeParticipations: defineTable({
+    challengeId: v.id("challenges"),
+    userId: v.id("users"),
+    clerkId: v.string(),
+    progress: v.number(),
+    completed: v.boolean(),
+    completedAt: v.optional(v.number()),
+    joinedAt: v.number(),
+  })
+    .index("by_challenge", ["challengeId"])
+    .index("by_user", ["userId"])
+    .index("by_challenge_user", ["challengeId", "userId"]),
+
+  // Equipment Reservations
+  equipmentReservations: defineTable({
+    equipmentId: v.id("inventory"),
+    userId: v.id("users"),
+    clerkId: v.string(),
+    locationId: v.id("organizations"),
+    startTime: v.number(),
+    endTime: v.number(),
+    status: v.union(
+      v.literal("pending"),
+      v.literal("confirmed"),
+      v.literal("in_use"),
+      v.literal("completed"),
+      v.literal("cancelled")
+    ),
+    notes: v.optional(v.string()),
+    createdAt: v.number(),
+  })
+    .index("by_equipment", ["equipmentId"])
+    .index("by_user", ["userId"])
+    .index("by_location", ["locationId"])
+    .index("by_status", ["status"])
+    .index("by_time", ["startTime", "endTime"]),
+
+  // Group Fitness Classes
+  groupClasses: defineTable({
+    name: v.string(),
+    description: v.string(),
+    instructorId: v.id("users"),
+    instructorClerkId: v.string(),
+    locationId: v.id("organizations"),
+    category: v.union(
+      v.literal("yoga"),
+      v.literal("zumba"),
+      v.literal("spin"),
+      v.literal("hiit"),
+      v.literal("pilates"),
+      v.literal("strength"),
+      v.literal("cardio"),
+      v.literal("dance")
+    ),
+    capacity: v.number(),
+    duration: v.number(), // in minutes
+    startTime: v.number(),
+    endTime: v.number(),
+    recurring: v.union(
+      v.literal("none"),
+      v.literal("daily"),
+      v.literal("weekly"),
+      v.literal("monthly")
+    ),
+    dayOfWeek: v.optional(v.number()), // 0-6 for weekly
+    isActive: v.boolean(),
+    attendees: v.array(v.id("users")),
+    waitlist: v.array(v.id("users")),
+    createdAt: v.number(),
+  })
+    .index("by_instructor", ["instructorId"])
+    .index("by_location", ["locationId"])
+    .index("by_category", ["category"])
+    .index("by_active", ["isActive"])
+    .index("by_time", ["startTime"]),
+
+  // Class Bookings
+  classBookings: defineTable({
+    classId: v.id("groupClasses"),
+    userId: v.id("users"),
+    clerkId: v.string(),
+    status: v.union(
+      v.literal("booked"),
+      v.literal("attended"),
+      v.literal("no_show"),
+      v.literal("cancelled")
+    ),
+    bookedAt: v.number(),
+    attendedAt: v.optional(v.number()),
+  })
+    .index("by_class", ["classId"])
+    .index("by_user", ["userId"])
+    .index("by_status", ["status"]),
+
+  // Member Engagement Scores
+  memberEngagement: defineTable({
+    userId: v.id("users"),
+    clerkId: v.string(),
+    score: v.number(), // 0-100
+    checkInCount: v.number(),
+    checkInStreak: v.number(),
+    lastCheckIn: v.optional(v.number()),
+    workoutCompletions: v.number(),
+    challengeCompletions: v.number(),
+    socialInteractions: v.number(),
+    lastUpdated: v.number(),
+  })
+    .index("by_user", ["userId"])
+    .index("by_clerk_id", ["clerkId"])
+    .index("by_score", ["score"]),
+
+  // Notifications
+  notifications: defineTable({
+    userId: v.id("users"),
+    clerkId: v.string(),
+    type: v.union(
+      v.literal("achievement"),
+      v.literal("challenge"),
+      v.literal("class_reminder"),
+      v.literal("booking"),
+      v.literal("system"),
+      v.literal("social")
+    ),
+    title: v.string(),
+    message: v.string(),
+    link: v.optional(v.string()),
+    read: v.boolean(),
+    createdAt: v.number(),
+  })
+    .index("by_user", ["userId"])
+    .index("by_clerk_id", ["clerkId"])
+    .index("by_read", ["read"])
+    .index("by_created", ["createdAt"]),
+
+  // Community Posts
+  communityPosts: defineTable({
+    userId: v.id("users"),
+    clerkId: v.string(),
+    content: v.string(),
+    images: v.optional(v.array(v.string())),
+    type: v.union(
+      v.literal("progress"),
+      v.literal("workout"),
+      v.literal("achievement"),
+      v.literal("question"),
+      v.literal("general")
+    ),
+    likes: v.array(v.id("users")),
+    comments: v.array(v.id("communityComments")),
+    locationId: v.optional(v.id("organizations")),
+    createdAt: v.number(),
+    updatedAt: v.number(),
+  })
+    .index("by_user", ["userId"])
+    .index("by_type", ["type"])
+    .index("by_location", ["locationId"])
+    .index("by_created", ["createdAt"]),
+
+  // Community Comments
+  communityComments: defineTable({
+    postId: v.id("communityPosts"),
+    userId: v.id("users"),
+    clerkId: v.string(),
+    content: v.string(),
+    createdAt: v.number(),
+  })
+    .index("by_post", ["postId"])
+    .index("by_user", ["userId"]),
 });
