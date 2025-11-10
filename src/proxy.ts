@@ -5,7 +5,16 @@ const isProtectedRoute = createRouteMatcher([
   "/profile", 
   "/admin(.*)", 
   "/trainer(.*)", 
-  "/become-trainer"
+  "/become-trainer",
+  // S-Tier Feature Routes - require authentication
+  "/check-in",
+  "/achievements",
+  "/challenges",
+  "/equipment",
+  "/classes",
+  "/community",
+  "/engagement",
+  "/notifications"
 ]);
 
 /**
