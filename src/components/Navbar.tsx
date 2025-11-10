@@ -197,6 +197,19 @@ const Navbar = () => {
 
           {userRole === "user" && (
             <Link
+              href="/check-in"
+              className={`text-foreground hover:text-primary transition-colors text-sm font-medium relative pb-2 ${
+                pathname === "/check-in" ? "" : ""
+              }`}
+            >
+              <span>Check In</span>
+              {pathname === "/check-in" && (
+                <div className="absolute bottom-0 left-0 w-full h-0.5 bg-primary"></div>
+              )}
+            </Link>
+          )}
+          {userRole === "user" && (
+            <Link
               href="/become-trainer"
               className={`text-foreground hover:text-primary transition-colors text-sm font-medium relative pb-2 ${
                 pathname === "/become-trainer" ? "" : ""
@@ -329,6 +342,20 @@ const Navbar = () => {
               >
                 Membership
               </Link>
+              
+              {isSignedIn && (
+                <Link
+                  href="/check-in"
+                  className={`block text-2xl font-normal transition-colors ${
+                    pathname === "/check-in" 
+                      ? "text-white" 
+                      : "text-white/80 hover:text-white"
+                  }`}
+                  onClick={() => setMobileMenuOpen(false)}
+                >
+                  Check In
+                </Link>
+              )}
               
               <Link
                 href="/trainer-booking"
