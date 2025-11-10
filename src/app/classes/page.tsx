@@ -5,10 +5,11 @@ import { useQuery } from "convex/react";
 import { api } from "@/convex/_generated/api";
 import { useUser } from "@clerk/nextjs";
 import { Id } from "@/convex/_generated/dataModel";
-import { CreatePost, CommunityFeed } from "@/components/community";
-import { MessageSquare } from "lucide-react";
+import { ClassesList, UserClassBookings } from "@/components/classes";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Calendar, BookOpen } from "lucide-react";
 
-export default function CommunityPage() {
+export default function ClassesPage() {
   const { user } = useUser();
   const [selectedLocation, setSelectedLocation] = useState<Id<"organizations"> | null>(null);
   
@@ -34,28 +35,35 @@ export default function CommunityPage() {
     return (
       <div className="container mx-auto px-4 py-8">
         <div className="text-center text-white/70">
-          Please sign in to view the community feed
+          Please sign in to book classes
+        </div>
+      </div>
+    );
+  }
+  
+  if (!selectedLocation) {
+    return (
+      <div className="container mx-auto px-4 py-8">
+        <div className="text-center text-white/70">
+          Loading locations...
         </div>
       </div>
     );
   }
   
   return (
-    <div className="container mx-auto px-4 py-8 max-w-4xl">
+    <div className="container mx-auto px-4 py-8 max-w-7xl">
       <div className="mb-8">
-        <h1 className="text-4xl font-bold text-white mb-2 flex items-center gap-3">
-          <MessageSquare className="h-8 w-8" />
-          Community Feed
-        </h1>
+        <h1 className="text-4xl font-bold text-white mb-2">Group Fitness Classes</h1>
         <p className="text-white/70">
-          Share your fitness journey and connect with other members
+          Book your favorite group fitness classes
         </p>
       </div>
       
       {locations && locations.length > 1 && (
         <div className="mb-6">
           <select
-            value={selectedLocation || ""}
+            value={selectedLocation}
             onChange={(e) => setSelectedLocation(e.target.value as Id<"organizations">)}
             className="bg-white/5 border border-white/10 rounded-lg px-4 py-2 text-white"
           >
@@ -68,8 +76,26 @@ export default function CommunityPage() {
         </div>
       )}
       
-      <CreatePost />
-      <CommunityFeed locationId={selectedLocation || undefined} />
+      <Tabs defaultValue="browse" className="mb-6">
+        <TabsList>
+          <TabsTrigger value="browse">
+            <Calendar className="h-4 w-4 mr-2" />
+            Browse Classes
+          </TabsTrigger>
+          <TabsTrigger value="bookings">
+            <BookOpen className="h-4 w-4 mr-2" />
+            My Bookings
+          </TabsTrigger>
+        </TabsList>
+        
+        <TabsContent value="browse" className="mt-6">
+          <ClassesList locationId={selectedLocation} />
+        </TabsContent>
+        
+        <TabsContent value="bookings" className="mt-6">
+          <UserClassBookings />
+        </TabsContent>
+      </Tabs>
     </div>
   );
 }

@@ -11,6 +11,7 @@ import { ShoppingCart, Menu, X } from "lucide-react";
 import { ThemeAwareLogo } from "./ThemeAwareLogo";
 import { DERRIMUT_BRAND } from "@/constants/branding";
 import { clerkAppearance } from "@/lib/clerk-appearance";
+import { NotificationBell } from "@/components/notifications";
 
 const Navbar = () => {
   const { isSignedIn, user } = useUser();
@@ -225,22 +226,25 @@ const Navbar = () => {
 
         {/* AUTH BUTTONS & MOBILE MENU */}
         <div className="flex items-center gap-4" suppressHydrationWarning>
-          {/* Shopping Cart Icon */}
+          {/* Shopping Cart Icon & Notifications */}
           {isSignedIn && (
-            <Link href="/marketplace/cart" className="relative">
-              <Button
-                variant="tertiary"
-                size="sm"
-                className="text-white/90 hover:text-white hover:bg-white/10 p-2"
-              >
-                <ShoppingCart className="h-5 w-5" />
-                {cartSummary && cartSummary.totalItems > 0 && (
-                  <span className="absolute -top-1 -right-1 bg-primary text-primary-foreground text-xs rounded-full h-5 w-5 flex items-center justify-center font-bold">
-                    {cartSummary.totalItems > 9 ? "9+" : cartSummary.totalItems}
-                  </span>
-                )}
-              </Button>
-            </Link>
+            <>
+              <Link href="/marketplace/cart" className="relative">
+                <Button
+                  variant="tertiary"
+                  size="sm"
+                  className="text-white/90 hover:text-white hover:bg-white/10 p-2"
+                >
+                  <ShoppingCart className="h-5 w-5" />
+                  {cartSummary && cartSummary.totalItems > 0 && (
+                    <span className="absolute -top-1 -right-1 bg-primary text-primary-foreground text-xs rounded-full h-5 w-5 flex items-center justify-center font-bold">
+                      {cartSummary.totalItems > 9 ? "9+" : cartSummary.totalItems}
+                    </span>
+                  )}
+                </Button>
+              </Link>
+              <NotificationBell />
+            </>
           )}
 
           {/* Desktop Auth */}
@@ -344,17 +348,91 @@ const Navbar = () => {
               </Link>
               
               {isSignedIn && (
-                <Link
-                  href="/check-in"
-                  className={`block text-2xl font-normal transition-colors ${
-                    pathname === "/check-in" 
-                      ? "text-white" 
-                      : "text-white/80 hover:text-white"
-                  }`}
-                  onClick={() => setMobileMenuOpen(false)}
-                >
-                  Check In
-                </Link>
+                <>
+                  <Link
+                    href="/check-in"
+                    className={`block text-2xl font-normal transition-colors ${
+                      pathname === "/check-in" 
+                        ? "text-white" 
+                        : "text-white/80 hover:text-white"
+                    }`}
+                    onClick={() => setMobileMenuOpen(false)}
+                  >
+                    Check In
+                  </Link>
+                  
+                  <Link
+                    href="/equipment"
+                    className={`block text-2xl font-normal transition-colors ${
+                      pathname === "/equipment" 
+                        ? "text-white" 
+                        : "text-white/80 hover:text-white"
+                    }`}
+                    onClick={() => setMobileMenuOpen(false)}
+                  >
+                    Equipment
+                  </Link>
+                  
+                  <Link
+                    href="/classes"
+                    className={`block text-2xl font-normal transition-colors ${
+                      pathname === "/classes" 
+                        ? "text-white" 
+                        : "text-white/80 hover:text-white"
+                    }`}
+                    onClick={() => setMobileMenuOpen(false)}
+                  >
+                    Classes
+                  </Link>
+                  
+                  <Link
+                    href="/challenges"
+                    className={`block text-2xl font-normal transition-colors ${
+                      pathname === "/challenges" 
+                        ? "text-white" 
+                        : "text-white/80 hover:text-white"
+                    }`}
+                    onClick={() => setMobileMenuOpen(false)}
+                  >
+                    Challenges
+                  </Link>
+                  
+                  <Link
+                    href="/achievements"
+                    className={`block text-2xl font-normal transition-colors ${
+                      pathname === "/achievements" 
+                        ? "text-white" 
+                        : "text-white/80 hover:text-white"
+                    }`}
+                    onClick={() => setMobileMenuOpen(false)}
+                  >
+                    Achievements
+                  </Link>
+                  
+                  <Link
+                    href="/community"
+                    className={`block text-2xl font-normal transition-colors ${
+                      pathname === "/community" 
+                        ? "text-white" 
+                        : "text-white/80 hover:text-white"
+                    }`}
+                    onClick={() => setMobileMenuOpen(false)}
+                  >
+                    Community
+                  </Link>
+                  
+                  <Link
+                    href="/engagement"
+                    className={`block text-2xl font-normal transition-colors ${
+                      pathname === "/engagement" 
+                        ? "text-white" 
+                        : "text-white/80 hover:text-white"
+                    }`}
+                    onClick={() => setMobileMenuOpen(false)}
+                  >
+                    Analytics
+                  </Link>
+                </>
               )}
               
               <Link
