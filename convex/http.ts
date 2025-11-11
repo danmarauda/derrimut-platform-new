@@ -620,6 +620,28 @@ http.route({
           });
           
           console.log("✅ Membership created successfully!");
+
+          // Send membership welcome email
+          try {
+            const plan = await ctx.runQuery(api.memberships.getMembershipPlanByType, {
+              membershipType: createdMembershipType,
+            });
+
+            if (createdUser.email && plan) {
+              await ctx.runAction(api.emails.sendMembershipWelcome, {
+                to: createdUser.email,
+                userName: createdUser.name || "Member",
+                membershipType: createdMembershipType,
+                startDate: new Date(createdCurrentPeriodStart * 1000).toISOString(),
+                endDate: new Date(createdCurrentPeriodEnd * 1000).toISOString(),
+                price: plan.price,
+              });
+              console.log("✅ Membership welcome email sent");
+            }
+          } catch (emailError) {
+            console.error("⚠️ Error sending membership welcome email:", emailError);
+            // Don't fail the membership if email fails
+          }
           break;
 
         case "customer.subscription.updated":
@@ -827,6 +849,62 @@ async function handleMarketplaceOrder(
 
       console.log("✅ Payment status updated successfully:", paymentUpdate);
       console.log("✅ Final order number:", orderResult.orderNumber);
+
+      // Award loyalty points for purchase (1 point per $1 spent)
+      try {
+        const order = await ctx.runQuery(api.orders.getOrderById, {
+          orderId: orderResult.orderId,
+        });
+        
+        if (order && order.totalAmount > 0) {
+          const pointsEarned = Math.floor(order.totalAmount); // 1 point per AUD
+          await ctx.scheduler.runAfter(0, api.loyalty.addPoints, {
+            clerkId,
+            points: pointsEarned,
+            source: "purchase",
+            description: `Purchase: Order ${orderResult.orderNumber}`,
+            relatedId: orderResult.orderId,
+          });
+          console.log(`✅ Awarded ${pointsEarned} loyalty points for purchase`);
+        }
+      } catch (pointsError) {
+        console.error("⚠️ Error awarding loyalty points:", pointsError);
+        // Don't fail the order if points fail
+      }
+
+      // Send order confirmation email
+      try {
+        const user = await ctx.runQuery(api.users.getUserByClerkId, {
+          clerkId,
+        });
+
+        const order = await ctx.runQuery(api.orders.getOrderById, {
+          orderId: orderResult.orderId,
+        });
+
+        if (user && order && user.email) {
+          await ctx.runAction(api.emails.sendOrderConfirmation, {
+            to: user.email,
+            userName: user.name || "Customer",
+            orderNumber: orderResult.orderNumber,
+            orderDate: new Date(order.createdAt).toISOString(),
+            items: order.items.map((item: any) => ({
+              name: item.productName,
+              quantity: item.quantity,
+              price: item.pricePerItem,
+            })),
+            subtotal: order.subtotal,
+            shipping: order.shippingCost,
+            tax: order.tax,
+            total: order.totalAmount,
+            shippingAddress: order.shippingAddress,
+          });
+          console.log("✅ Order confirmation email sent");
+        }
+      } catch (emailError) {
+        console.error("⚠️ Error sending order confirmation email:", emailError);
+        // Don't fail the order if email fails
+      }
       
     } catch (convexError) {
       console.error("❌ Error with Convex operations:", convexError);
@@ -932,6 +1010,30 @@ async function handleBookingPayment(
     });
 
     console.log("✅ Paid booking created successfully:", bookingId, "for session:", session.id);
+
+    // Send booking confirmation email
+    try {
+      const trainer = await ctx.runQuery(api.trainerProfiles.getTrainerById, {
+        trainerId: trainerId as Id<"trainerProfiles">,
+      });
+
+      if (trainer && user.email) {
+        await ctx.runAction(api.emails.sendBookingConfirmation, {
+          to: user.email,
+          userName: user.name || "Member",
+          trainerName: trainer.name,
+          sessionDate,
+          sessionTime: startTime,
+          sessionType,
+          duration: parseInt(duration),
+          bookingId: bookingId.toString(),
+        });
+        console.log("✅ Booking confirmation email sent");
+      }
+    } catch (emailError) {
+      console.error("⚠️ Error sending booking confirmation email:", emailError);
+      // Don't fail the booking if email fails
+    }
   } catch (error) {
     console.error("❌ Error creating booking:", error);
     console.error("❌ Error stack:", error instanceof Error ? error.stack : "No stack trace");

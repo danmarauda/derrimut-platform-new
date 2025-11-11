@@ -9,8 +9,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Badge } from "@/components/ui/badge";
 import { AreaChart, Area, PieChart as RechartsPie, Pie, Cell, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
 import { motion } from 'framer-motion';
-import { useQuery } from "convex/react";
-import { api } from "convex/_generated/api";
+// Removed Convex imports for demo - using static data
 import { 
   Building2,
   Users, 
@@ -28,7 +27,9 @@ import {
 import { useEffect } from 'react';
 
 export default function DemoDashboard() {
-  const summary = useQuery(api.demo.getDemoAnalytics, { email: "aportelli@derrimut.com.au" });
+  // For demo purposes, skip Convex query and use static demo data
+  // This ensures the demo works even without Convex deployment
+  const summary = undefined; // Skip Convex query for demo
 
   useEffect(() => {
     const navbar = document.querySelector('header');
@@ -41,8 +42,8 @@ export default function DemoDashboard() {
     };
   }, []);
 
-  // Use fallback data if Convex query is still loading or fails
-  const demoData = summary || {
+  // Use demo data (no Convex dependency for demo)
+  const demoData = {
     summary: {
       totalRevenue: 245000,
       totalMembers: 1847,

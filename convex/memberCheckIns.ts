@@ -1,6 +1,7 @@
 import { mutation, query } from "./_generated/server";
 import { v } from "convex/values";
 import { Id } from "./_generated/dataModel";
+import { api } from "./_generated/api";
 
 /**
  * Member Check-In System
@@ -88,6 +89,20 @@ export const checkInMember = mutation({
 
     // Check for achievements
     await checkAchievements(ctx, identity.subject, "check_in");
+
+    // Award loyalty points for check-in (50 points)
+    await ctx.scheduler.runAfter(0, api.loyalty.addPoints, {
+      clerkId: identity.subject,
+      points: 50,
+      source: "check_in",
+      description: `Daily check-in at location`,
+      relatedId: checkInId,
+    });
+
+    // Track win-back campaign conversion (if user returned after being inactive)
+    await ctx.scheduler.runAfter(0, api.winBackCampaigns.trackConversion, {
+      userId: user._id,
+    });
 
     return checkInId;
   },

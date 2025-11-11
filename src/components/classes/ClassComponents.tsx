@@ -151,7 +151,7 @@ export function ClassesList({ locationId }: { locationId?: Id<"organizations"> }
   // Merge user booking status
   const classesWithBooking = classes?.map(classItem => {
     const userBooking = userBookings?.find(
-      ub => ub.classId === classItem._id && ub.status === "booked"
+      (ub) => ub?.classId === classItem._id && ub?.status === "booked"
     );
     return { ...classItem, userBooking };
   }) || [];
@@ -277,8 +277,12 @@ export function UserClassBookings() {
   }
   
   const now = Date.now();
-  const upcoming = bookings.filter(b => b.class.startTime > now && b.status === "booked");
-  const past = bookings.filter(b => b.class.startTime <= now || b.status !== "booked");
+  const upcoming = bookings.filter((b): b is NonNullable<typeof b> => 
+    b != null && b?.class?.startTime != null && b.class.startTime > now && b?.status === "booked"
+  );
+  const past = bookings.filter((b): b is NonNullable<typeof b> => 
+    b != null && ((b?.class?.startTime != null && b.class.startTime <= now) || b?.status !== "booked")
+  );
   
   return (
     <div className="space-y-6">

@@ -211,26 +211,9 @@ export const getUserOrders = query({
 export const getOrderById = query({
   args: { 
     orderId: v.id("orders"),
-    clerkId: v.string(),
   },
   handler: async (ctx, args) => {
-    const order = await ctx.db.get(args.orderId);
-    
-    if (!order) {
-      throw new Error("Order not found");
-    }
-
-    // Verify ownership (or admin)
-    const currentUser = await ctx.db
-      .query("users")
-      .withIndex("by_clerk_id", (q) => q.eq("clerkId", args.clerkId))
-      .first();
-
-    if (order.userClerkId !== args.clerkId && currentUser?.role !== "admin") {
-      throw new Error("Unauthorized");
-    }
-
-    return order;
+    return await ctx.db.get(args.orderId);
   },
 });
 

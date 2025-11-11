@@ -24,6 +24,7 @@ import type * as community from "../community.js";
 import type * as contact from "../contact.js";
 import type * as debug from "../debug.js";
 import type * as demo from "../demo.js";
+import type * as emails from "../emails.js";
 import type * as equipmentReservations from "../equipmentReservations.js";
 import type * as groupClasses from "../groupClasses.js";
 import type * as http from "../http.js";
@@ -68,6 +69,7 @@ declare const fullApi: ApiFromModules<{
   contact: typeof contact;
   debug: typeof debug;
   demo: typeof demo;
+  emails: typeof emails;
   equipmentReservations: typeof equipmentReservations;
   groupClasses: typeof groupClasses;
   http: typeof http;

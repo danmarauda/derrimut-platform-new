@@ -19,7 +19,9 @@ import {
   Menu,
   X,
   PanelLeftOpen,
-  PanelLeftClose
+  PanelLeftClose,
+  Users,
+  Coins
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useState, useEffect } from "react";
@@ -59,6 +61,11 @@ export function UserLayout({
     { href: "/profile/fitness-plans", icon: Dumbbell, label: "Workout Plans", active: pathname === "/profile/fitness-plans" },
     { href: "/profile/diet-plans", icon: Apple, label: "Diet Plans", active: pathname === "/profile/diet-plans" },
     { href: "/profile/training-sessions", icon: Activity, label: "Training Sessions", active: pathname === "/profile/training-sessions" },
+    { href: "/profile/referrals", icon: Users, label: "Referrals", active: pathname === "/profile/referrals" },
+    { href: "/profile/loyalty", icon: Coins, label: "Loyalty Points", active: pathname === "/profile/loyalty" },
+    { href: "/profile/friends", icon: Users, label: "Friends", active: pathname === "/profile/friends" },
+    { href: "/groups", icon: Users, label: "Groups", active: pathname === "/groups" },
+    { href: "/events", icon: Calendar, label: "Events", active: pathname === "/events" },
     { href: "/reviews", icon: Star, label: "Reviews", active: pathname === "/reviews" },
     { href: "/profile/orders", icon: Package, label: "Orders", active: pathname === "/profile/orders" },
     { href: "/profile/payment-slips", icon: Receipt, label: "Payment Slips", active: pathname === "/profile/payment-slips" },

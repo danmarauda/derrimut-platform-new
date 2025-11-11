@@ -86,6 +86,20 @@ export const createBooking = mutation({
       updatedAt: Date.now(),
     });
 
+    // Send booking confirmation email (non-blocking)
+    try {
+      const user = await ctx.db.get(args.userId);
+      if (user?.email) {
+        // Use action to send email (can't use actions directly in mutations, but we can schedule it)
+        // For now, we'll send it from the webhook handler or create a separate action call
+        // This is a placeholder - actual email sending will happen via action scheduler
+        console.log("📧 Booking confirmation email should be sent to:", user.email);
+      }
+    } catch (emailError) {
+      console.error("⚠️ Error preparing booking confirmation email:", emailError);
+      // Don't fail the booking if email fails
+    }
+
     return bookingId;
   },
 });

@@ -3,11 +3,13 @@
 import { UserLayout } from "@/components/UserLayout";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Palette, User, Bell, Shield, Sun, Moon, Monitor } from "lucide-react";
+import { Palette, User, Bell, Shield } from "lucide-react";
 import { useState, useEffect } from "react";
 import { useTheme } from "next-themes";
 import { useUser } from "@clerk/nextjs";
 import { useRouter } from "next/navigation";
+import { PushNotificationSubscription } from "@/components/push-notifications/PushNotificationSubscription";
+import { SMSSubscription } from "@/components/sms-notifications/SMSSubscription";
 
 export default function SettingsPage() {
   const { theme, setTheme } = useTheme();
@@ -15,7 +17,6 @@ export default function SettingsPage() {
   const router = useRouter();
   const [mounted, setMounted] = useState(false);
 
-  // Redirect to home if user is not authenticated
   useEffect(() => {
     if (isLoaded && !user) {
       router.push("/");
@@ -31,13 +32,9 @@ export default function SettingsPage() {
     setTheme(value);
   };
 
-  // Show loading state during auth check or hydration
   if (!mounted || !isLoaded) {
     return (
-      <UserLayout 
-        title="Settings" 
-        subtitle="Manage your account preferences and settings"
-      >
+      <UserLayout title="Settings" subtitle="Manage your account preferences and settings">
         <div className="space-y-6">
           <div className="animate-pulse">
             <div className="h-32 bg-card rounded-lg"></div>
@@ -47,19 +44,14 @@ export default function SettingsPage() {
     );
   }
 
-  // Don't render anything if user is not authenticated (will redirect)
   if (!user) {
     return null;
   }
 
   return (
-    <UserLayout 
-      title="Settings" 
-      subtitle="Manage your account preferences and settings"
-    >
+    <UserLayout title="Settings" subtitle="Manage your account preferences and settings">
       <div className="max-w-6xl mx-auto">
         <Tabs defaultValue="appearance" className="space-y-8">
-          {/* Tab Navigation */}
           <TabsList className="grid w-full grid-cols-4 bg-card/50 border border-border p-1 h-12 rounded-lg">
             <TabsTrigger
               value="appearance"
@@ -91,47 +83,40 @@ export default function SettingsPage() {
             </TabsTrigger>
           </TabsList>
 
-          {/* Appearance Tab */}
           <TabsContent value="appearance" className="space-y-6">
-            <div className="grid gap-6">
-              {/* Theme Settings */}
-              <Card className="bg-card/50 border-border">
-                <CardHeader>
-                  <CardTitle className="text-foreground flex items-center gap-2">
-                    <Palette className="h-5 w-5 text-primary" />
-                    Theme Preference
-                  </CardTitle>
-                  <CardDescription className="text-muted-foreground">
-                    Choose how Derrimut 24:7 Gym appears to you. Your preference will be saved automatically.
-                  </CardDescription>
-                </CardHeader>
-                <CardContent className="space-y-6">
-                  <div className="flex items-center justify-between">
-                    <div className="space-y-1">
-                      <h3 className="text-sm font-medium text-foreground">Theme Mode</h3>
-                      <p className="text-sm text-muted-foreground">
-                        Select your preferred interface theme
-                      </p>
-                    </div>
-                    <div className="min-w-[140px]">
-                      {mounted && (
-                        <select
-                          value={theme}
-                          onChange={(e) => handleThemeChange(e.target.value)}
-                          className="w-full px-3 py-2 bg-card border border-border rounded-md text-foreground focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/20"
-                        >
-                          <option value="light">Light Theme</option>
-                          <option value="dark">Dark Theme</option>
-                        </select>
-                      )}
-                    </div>
+            <Card className="bg-card/50 border-border">
+              <CardHeader>
+                <CardTitle className="text-foreground flex items-center gap-2">
+                  <Palette className="h-5 w-5 text-primary" />
+                  Theme Preference
+                </CardTitle>
+                <CardDescription className="text-muted-foreground">
+                  Choose how Derrimut 24:7 Gym appears to you
+                </CardDescription>
+              </CardHeader>
+              <CardContent className="space-y-6">
+                <div className="flex items-center justify-between">
+                  <div className="space-y-1">
+                    <h3 className="text-sm font-medium text-foreground">Theme Mode</h3>
+                    <p className="text-sm text-muted-foreground">Select your preferred theme</p>
                   </div>
-                </CardContent>
-              </Card>
-            </div>
+                  <div className="min-w-[140px]">
+                    {mounted && (
+                      <select
+                        value={theme}
+                        onChange={(e) => handleThemeChange(e.target.value)}
+                        className="w-full px-3 py-2 bg-card border border-border rounded-md text-foreground focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/20"
+                      >
+                        <option value="light">Light Theme</option>
+                        <option value="dark">Dark Theme</option>
+                      </select>
+                    )}
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
           </TabsContent>
 
-          {/* Account Tab */}
           <TabsContent value="account" className="space-y-6">
             <Card className="bg-card/50 border-border">
               <CardHeader>
@@ -140,7 +125,7 @@ export default function SettingsPage() {
                   Account Settings
                 </CardTitle>
                 <CardDescription className="text-muted-foreground">
-                  Manage your account information and preferences
+                  Manage your account information
                 </CardDescription>
               </CardHeader>
               <CardContent>
@@ -152,28 +137,13 @@ export default function SettingsPage() {
             </Card>
           </TabsContent>
 
-          {/* Notifications Tab */}
           <TabsContent value="notifications" className="space-y-6">
-            <Card className="bg-card/50 border-border">
-              <CardHeader>
-                <CardTitle className="text-foreground flex items-center gap-2">
-                  <Bell className="h-5 w-5 text-primary" />
-                  Notification Settings
-                </CardTitle>
-                <CardDescription className="text-muted-foreground">
-                  Control how and when you receive notifications
-                </CardDescription>
-              </CardHeader>
-              <CardContent>
-                <div className="text-center py-12">
-                  <Bell className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
-                  <p className="text-muted-foreground">Notification settings coming soon...</p>
-                </div>
-              </CardContent>
-            </Card>
+            <div className="space-y-6">
+              <PushNotificationSubscription />
+              <SMSSubscription />
+            </div>
           </TabsContent>
 
-          {/* Privacy Tab */}
           <TabsContent value="privacy" className="space-y-6">
             <Card className="bg-card/50 border-border">
               <CardHeader>
@@ -182,7 +152,7 @@ export default function SettingsPage() {
                   Privacy & Security
                 </CardTitle>
                 <CardDescription className="text-muted-foreground">
-                  Manage your privacy settings and account security
+                  Manage your privacy settings
                 </CardDescription>
               </CardHeader>
               <CardContent>

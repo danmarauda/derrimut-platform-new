@@ -1,5 +1,6 @@
 import { mutation, query } from "./_generated/server";
 import { v } from "convex/values";
+import { api } from "./_generated/api";
 import { Id } from "./_generated/dataModel";
 
 /**
@@ -193,7 +194,7 @@ export const updateChallengeProgress = mutation({
       completedAt: completed ? Date.now() : participation.completedAt,
     });
 
-    // If completed, unlock achievement
+    // If completed, unlock achievement and award points
     if (completed) {
       const existingAchievement = await ctx.db
         .query("achievements")
@@ -218,6 +219,15 @@ export const updateChallengeProgress = mutation({
           metadata: { challengeId: challenge._id },
         });
       }
+
+      // Award loyalty points for challenge completion (200 points)
+      await ctx.scheduler.runAfter(0, api.loyalty.addPoints, {
+        clerkId: identity.subject,
+        points: 200,
+        source: "challenge",
+        description: `Completed challenge: ${challenge.title}`,
+        relatedId: args.challengeId,
+      });
     }
 
     return { success: true, completed };

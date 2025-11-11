@@ -27,7 +27,26 @@ const ProfilePage = () => {
   const userId = user?.id as string;
   const [mounted, setMounted] = useState(false);
   
+  const trackReferral = useMutation(api.referrals.trackReferral);
+  
   useMembershipExpiryCheck();
+
+  // Track referral code from localStorage after signup
+  useEffect(() => {
+    if (user?.id && mounted) {
+      const referralCode = localStorage.getItem("referralCode");
+      if (referralCode) {
+        trackReferral({
+          refereeClerkId: user.id,
+          referralCode,
+        }).catch((error) => {
+          console.error("Error tracking referral:", error);
+        });
+        // Clear from localStorage after tracking
+        localStorage.removeItem("referralCode");
+      }
+    }
+  }, [user?.id, mounted, trackReferral]);
 
   useEffect(() => {
     if (isLoaded && !user) {

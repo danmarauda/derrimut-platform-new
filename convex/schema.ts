@@ -11,12 +11,17 @@ export default defineSchema({
     accountType: v.optional(v.union(v.literal("personal"), v.literal("organization"))), // personal = member, organization = location admin
     organizationId: v.optional(v.id("organizations")), // If part of an organization
     organizationRole: v.optional(v.union(v.literal("org_admin"), v.literal("org_member"))), // Role within organization
+    referralCode: v.optional(v.string()), // Unique referral code for this user
+    referredBy: v.optional(v.id("users")), // User who referred this user
+    referralCodeUsed: v.optional(v.string()), // The referral code they used when signing up
     createdAt: v.optional(v.number()),
     updatedAt: v.optional(v.number()),
   })
     .index("by_clerk_id", ["clerkId"])
     .index("by_organization", ["organizationId"])
-    .index("by_account_type", ["accountType"]),
+    .index("by_account_type", ["accountType"])
+    .index("by_referral_code", ["referralCode"])
+    .index("by_referred_by", ["referredBy"]),
 
   organizations: defineTable({
     clerkOrganizationId: v.string(), // Clerk organization ID
@@ -1161,4 +1166,284 @@ export default defineSchema({
   })
     .index("by_post", ["postId"])
     .index("by_user", ["userId"]),
+
+  // Referrals System
+  referrals: defineTable({
+    referrerId: v.id("users"), // User who made the referral
+    referrerClerkId: v.string(),
+    refereeId: v.id("users"), // User who was referred
+    refereeClerkId: v.string(),
+    referralCode: v.string(), // The code that was used
+    status: v.union(
+      v.literal("pending"), // Referral made but not yet converted
+      v.literal("converted"), // Referee signed up for membership
+      v.literal("rewarded"), // Rewards have been given
+      v.literal("expired") // Referral expired without conversion
+    ),
+    conversionDate: v.optional(v.number()), // When referee became a member
+    rewardAmount: v.optional(v.number()), // Reward amount in AUD
+    rewardType: v.optional(v.union(
+      v.literal("discount"), // Percentage or fixed discount
+      v.literal("free_month"), // Free month of membership
+      v.literal("cashback"), // Cash back reward
+      v.literal("points") // Loyalty points
+    )),
+    referrerReward: v.optional(v.number()), // Reward for referrer
+    refereeReward: v.optional(v.number()), // Reward for referee (new member)
+    createdAt: v.number(),
+    updatedAt: v.number(),
+  })
+    .index("by_referrer", ["referrerId"])
+    .index("by_referrer_clerk", ["referrerClerkId"])
+    .index("by_referee", ["refereeId"])
+    .index("by_referee_clerk", ["refereeClerkId"])
+    .index("by_code", ["referralCode"])
+    .index("by_status", ["status"])
+    .index("by_referrer_status", ["referrerId", "status"]),
+
+  // Loyalty Points System
+  loyaltyPoints: defineTable({
+    userId: v.id("users"),
+    clerkId: v.string(),
+    points: v.number(), // Current balance
+    totalEarned: v.number(), // Lifetime points earned
+    totalRedeemed: v.number(), // Lifetime points redeemed
+    lastUpdated: v.number(),
+  })
+    .index("by_user", ["userId"])
+    .index("by_clerk_id", ["clerkId"]),
+
+  // Loyalty Point Transactions
+  loyaltyTransactions: defineTable({
+    userId: v.id("users"),
+    clerkId: v.string(),
+    type: v.union(
+      v.literal("earned"), // Points earned
+      v.literal("redeemed"), // Points redeemed
+      v.literal("expired"), // Points expired
+      v.literal("adjusted") // Manual adjustment
+    ),
+    amount: v.number(), // Positive for earned, negative for redeemed
+    balance: v.number(), // Balance after this transaction
+    source: v.union(
+      v.literal("check_in"),
+      v.literal("referral"),
+      v.literal("purchase"),
+      v.literal("challenge"),
+      v.literal("achievement"),
+      v.literal("redemption"),
+      v.literal("admin_adjustment")
+    ),
+    description: v.string(),
+    expiresAt: v.optional(v.number()), // When points expire (if applicable)
+    relatedId: v.optional(v.string()), // ID of related entity (referral, purchase, etc.)
+    createdAt: v.number(),
+  })
+    .index("by_user", ["userId"])
+    .index("by_clerk_id", ["clerkId"])
+    .index("by_type", ["type"])
+    .index("by_source", ["source"])
+    .index("by_created", ["createdAt"]),
+
+  // Push Notification Subscriptions
+  pushSubscriptions: defineTable({
+    userId: v.id("users"),
+    clerkId: v.string(),
+    endpoint: v.string(), // Push subscription endpoint
+    keys: v.object({
+      p256dh: v.string(), // Public key
+      auth: v.string(), // Auth secret
+    }),
+    userAgent: v.optional(v.string()),
+    deviceType: v.optional(v.union(v.literal("browser"), v.literal("mobile"))),
+    preferences: v.object({
+      achievements: v.boolean(),
+      challenges: v.boolean(),
+      classReminders: v.boolean(),
+      bookings: v.boolean(),
+      streakReminders: v.boolean(),
+      workoutReminders: v.boolean(),
+      specialOffers: v.boolean(),
+      social: v.boolean(),
+    }),
+    isActive: v.boolean(),
+    createdAt: v.number(),
+    updatedAt: v.number(),
+  })
+    .index("by_user", ["userId"])
+    .index("by_clerk_id", ["clerkId"])
+    .index("by_endpoint", ["endpoint"])
+    .index("by_active", ["isActive"]),
+
+  // SMS Subscriptions
+  smsSubscriptions: defineTable({
+    userId: v.id("users"),
+    clerkId: v.string(),
+    phoneNumber: v.string(),
+    preferences: v.object({
+      bookingConfirmations: v.boolean(),
+      classReminders: v.boolean(),
+      paymentAlerts: v.boolean(),
+      accountUpdates: v.boolean(),
+      emergencyNotifications: v.boolean(),
+    }),
+    isActive: v.boolean(),
+    verified: v.boolean(),
+    createdAt: v.number(),
+    updatedAt: v.number(),
+  })
+    .index("by_user", ["userId"])
+    .index("by_clerk_id", ["clerkId"])
+    .index("by_phone", ["phoneNumber"])
+    .index("by_active", ["isActive"]),
+
+  // Friendships
+  friendships: defineTable({
+    userId: v.id("users"),
+    friendId: v.id("users"),
+    userClerkId: v.string(),
+    friendClerkId: v.string(),
+    status: v.union(
+      v.literal("pending"), // Friend request sent
+      v.literal("accepted"), // Friends
+      v.literal("blocked") // Blocked
+    ),
+    requestedBy: v.id("users"), // Who sent the request
+    createdAt: v.number(),
+    updatedAt: v.number(),
+  })
+    .index("by_user", ["userId"])
+    .index("by_friend", ["friendId"])
+    .index("by_user_clerk", ["userClerkId"])
+    .index("by_friend_clerk", ["friendClerkId"])
+    .index("by_status", ["status"])
+    .index("by_user_status", ["userId", "status"])
+    .index("by_friend_status", ["friendId", "status"]),
+
+  // Groups & Communities
+  groups: defineTable({
+    name: v.string(),
+    description: v.string(),
+    creatorId: v.id("users"),
+    creatorClerkId: v.string(),
+    locationId: v.optional(v.id("organizations")),
+    category: v.union(
+      v.literal("location"), // Group by location
+      v.literal("interest"), // Group by interest
+      v.literal("goal"), // Group by fitness goal
+      v.literal("general") // General community group
+    ),
+    interest: v.optional(v.string()), // e.g., "powerlifting", "running", "yoga"
+    goal: v.optional(v.string()), // e.g., "weight_loss", "muscle_gain"
+    isPublic: v.boolean(), // Public vs private group
+    memberCount: v.number(),
+    image: v.optional(v.string()),
+    createdAt: v.number(),
+    updatedAt: v.number(),
+  })
+    .index("by_creator", ["creatorId"])
+    .index("by_location", ["locationId"])
+    .index("by_category", ["category"])
+    .index("by_public", ["isPublic"])
+    .index("by_interest", ["interest"])
+    .index("by_goal", ["goal"]),
+
+  // Group Memberships
+  groupMembers: defineTable({
+    groupId: v.id("groups"),
+    userId: v.id("users"),
+    clerkId: v.string(),
+    role: v.union(
+      v.literal("admin"), // Group admin
+      v.literal("moderator"), // Group moderator
+      v.literal("member") // Regular member
+    ),
+    joinedAt: v.number(),
+  })
+    .index("by_group", ["groupId"])
+    .index("by_user", ["userId"])
+    .index("by_clerk", ["clerkId"])
+    .index("by_group_user", ["groupId", "userId"]),
+
+  // Group Challenges
+  groupChallenges: defineTable({
+    groupId: v.id("groups"),
+    challengeId: v.id("challenges"),
+    createdBy: v.id("users"),
+    createdAt: v.number(),
+  })
+    .index("by_group", ["groupId"])
+    .index("by_challenge", ["challengeId"]),
+
+  // Events & Meetups
+  events: defineTable({
+    title: v.string(),
+    description: v.string(),
+    organizerId: v.id("users"),
+    organizerClerkId: v.string(),
+    groupId: v.optional(v.id("groups")), // If event is part of a group
+    locationId: v.optional(v.id("organizations")),
+    eventType: v.union(
+      v.literal("workshop"), // Fitness workshop
+      v.literal("seminar"), // Nutrition seminar
+      v.literal("social"), // Member social event
+      v.literal("competition"), // Competition
+      v.literal("charity"), // Charity event
+      v.literal("class") // Special class
+    ),
+    startDate: v.number(),
+    endDate: v.number(),
+    capacity: v.optional(v.number()), // Max attendees
+    isPublic: v.boolean(),
+    image: v.optional(v.string()),
+    locationDetails: v.optional(v.string()), // Additional location info
+    createdAt: v.number(),
+    updatedAt: v.number(),
+  })
+    .index("by_organizer", ["organizerId"])
+    .index("by_group", ["groupId"])
+    .index("by_location", ["locationId"])
+    .index("by_type", ["eventType"])
+    .index("by_date", ["startDate"])
+    .index("by_public", ["isPublic"]),
+
+  // Event RSVPs
+  eventRSVPs: defineTable({
+    eventId: v.id("events"),
+    userId: v.id("users"),
+    clerkId: v.string(),
+    status: v.union(
+      v.literal("going"), // Attending
+      v.literal("maybe"), // Maybe attending
+      v.literal("not_going") // Not attending
+    ),
+    rsvpDate: v.number(),
+  })
+    .index("by_event", ["eventId"])
+    .index("by_user", ["userId"])
+    .index("by_clerk", ["clerkId"])
+    .index("by_event_user", ["eventId", "userId"])
+    .index("by_status", ["status"]),
+
+  // Win-Back Campaigns
+  winBackCampaigns: defineTable({
+    userId: v.id("users"),
+    clerkId: v.string(),
+    type: v.union(
+      v.literal("we_miss_you"), // 2 weeks inactive
+      v.literal("come_back"), // 1 month inactive
+      v.literal("special_return") // 3 months inactive
+    ),
+    daysSinceLastActivity: v.number(),
+    sentAt: v.number(),
+    openedAt: v.optional(v.number()),
+    clickedAt: v.optional(v.number()),
+    convertedAt: v.optional(v.number()), // User returned after campaign
+    createdAt: v.number(),
+    updatedAt: v.number(),
+  })
+    .index("by_user", ["userId"])
+    .index("by_clerk", ["clerkId"])
+    .index("by_type", ["type"])
+    .index("by_converted", ["convertedAt"]),
 });

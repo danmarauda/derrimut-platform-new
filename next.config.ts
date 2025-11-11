@@ -46,6 +46,16 @@ const nextConfig: NextConfig = {
     optimizePackageImports: ['lucide-react', '@radix-ui/react-accordion', '@radix-ui/react-dropdown-menu'],
   },
 
+  // Webpack configuration for path aliases
+  webpack: (config, { isServer }) => {
+    // Resolve @/convex/* to ./convex/* (outside src/)
+    config.resolve.alias = {
+      ...config.resolve.alias,
+      '@/convex': require('path').resolve(__dirname, 'convex'),
+    };
+    return config;
+  },
+
   // Security Headers - Task 4.3: Comprehensive Security Headers
   async headers() {
     return [

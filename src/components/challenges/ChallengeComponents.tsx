@@ -39,7 +39,7 @@ export function ChallengeCard({ challenge }: { challenge: any }) {
   );
   
   const userParticipation = userChallenges?.find(
-    uc => uc._id === challenge._id
+    (uc) => uc?._id === challenge._id
   )?.participation;
   
   const progress = userParticipation 
@@ -189,7 +189,7 @@ export function ChallengesList() {
   // Merge user participation data
   const challengesWithParticipation = challenges.map(challenge => {
     const participation = userChallenges?.find(
-      uc => uc._id === challenge._id
+      (uc) => uc?._id === challenge._id
     )?.participation;
     return { ...challenge, participation };
   });

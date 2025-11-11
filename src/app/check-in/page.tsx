@@ -1,9 +1,10 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { useQuery } from "convex/react";
+import { useQuery, useMutation } from "convex/react";
 import { api } from "@/convex/_generated/api";
 import { useUser } from "@clerk/nextjs";
+import { useSearchParams } from "next/navigation";
 import { Id } from "@/convex/_generated/dataModel";
 import {
   QRCodeDisplay,
@@ -17,7 +18,18 @@ import { QrCode, Calendar } from "lucide-react";
 
 export default function CheckInPage() {
   const { user } = useUser();
+  const searchParams = useSearchParams();
   const [selectedLocation, setSelectedLocation] = useState<Id<"organizations"> | null>(null);
+  
+  const trackEmailClick = useMutation(api.winBackCampaigns.trackEmailClickPublic);
+
+  // Track email click if campaignId is in URL
+  useEffect(() => {
+    const campaignId = searchParams?.get("campaignId");
+    if (campaignId && user?.id) {
+      trackEmailClick({ campaignId: campaignId as any }).catch(console.error);
+    }
+  }, [searchParams, user?.id, trackEmailClick]);
   
   // Get user's organization if they have one
   const userOrg = useQuery(
