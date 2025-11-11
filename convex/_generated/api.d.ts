@@ -70,6 +70,7 @@ import type * as users from "../users.js";
 import type * as videoWorkouts from "../videoWorkouts.js";
 import type * as wearables from "../wearables.js";
 import type * as webhooks from "../webhooks.js";
+import type * as webhooksActions from "../webhooksActions.js";
 import type * as winBackCampaigns from "../winBackCampaigns.js";
 import type * as workoutLogging from "../workoutLogging.js";
 import type * as workoutPlanAdjustments from "../workoutPlanAdjustments.js";
@@ -140,6 +141,7 @@ declare const fullApi: ApiFromModules<{
   videoWorkouts: typeof videoWorkouts;
   wearables: typeof wearables;
   webhooks: typeof webhooks;
+  webhooksActions: typeof webhooksActions;
   winBackCampaigns: typeof winBackCampaigns;
   workoutLogging: typeof workoutLogging;
   workoutPlanAdjustments: typeof workoutPlanAdjustments;

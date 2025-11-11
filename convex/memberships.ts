@@ -774,7 +774,12 @@ export const checkExpiredMemberships = mutation({
 export const updateMembershipType = mutation({
   args: {
     membershipId: v.id("memberships"),
-    membershipType: v.string(),
+    membershipType: v.union(
+      v.literal("18-month-minimum"),
+      v.literal("12-month-minimum"),
+      v.literal("no-lock-in"),
+      v.literal("12-month-upfront")
+    ),
     stripePriceId: v.string(),
   },
   handler: async (ctx, args) => {

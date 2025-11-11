@@ -396,7 +396,12 @@ export const resumeMembership = mutation({
 export const changeMembershipTier = action({
   args: {
     membershipId: v.id("memberships"),
-    newMembershipType: v.string(),
+    newMembershipType: v.union(
+      v.literal("18-month-minimum"),
+      v.literal("12-month-minimum"),
+      v.literal("no-lock-in"),
+      v.literal("12-month-upfront")
+    ),
     newPriceId: v.string(),
   },
   handler: async (ctx, args) => {

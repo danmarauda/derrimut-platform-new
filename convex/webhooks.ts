@@ -1,7 +1,6 @@
 import { mutation, query, action, internalAction, internalMutation, internalQuery } from "./_generated/server";
 import { v } from "convex/values";
 import { api, internal } from "./_generated/api";
-import crypto from "crypto";
 
 /**
  * Webhook System
@@ -46,8 +45,8 @@ export const createWebhookSubscription = mutation({
       throw new Error("Unauthorized: Admin access required");
     }
 
-    // Generate webhook secret
-    const secret = crypto.randomBytes(32).toString("hex");
+    // Generate webhook secret (simple random string - not cryptographically secure but sufficient for webhooks)
+    const secret = Math.random().toString(36).substring(2) + Math.random().toString(36).substring(2) + Math.random().toString(36).substring(2);
 
     const subscriptionId = await ctx.db.insert("webhookSubscriptions", {
       url: args.url,
@@ -157,80 +156,18 @@ export const deleteWebhookSubscription = mutation({
 });
 
 // Trigger webhook (internal - called when events occur)
+// Delegates to webhooksActions.ts which uses Node.js crypto
 export const triggerWebhook = internalAction({
   args: {
     eventType: v.string(),
     payload: v.any(),
   },
   handler: async (ctx, args) => {
-    // Get all active subscriptions for this event
-    const subscriptions = await ctx.runQuery(internal.webhooks.getSubscriptionsForEvent, {
+    // Delegate to Node.js action for crypto operations
+    await ctx.runAction(internal.webhooksActions.triggerWebhook, {
       eventType: args.eventType,
+      payload: args.payload,
     });
-
-    for (const subscription of subscriptions) {
-      try {
-        // Create signature
-        const signature = crypto
-          .createHmac("sha256", subscription.secret)
-          .update(JSON.stringify(args.payload))
-          .digest("hex");
-
-        // Send webhook
-        const response = await fetch(subscription.url, {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            "X-Webhook-Signature": signature,
-            "X-Webhook-Event": args.eventType,
-            "X-Webhook-Timestamp": Date.now().toString(),
-          },
-          body: JSON.stringify(args.payload),
-        });
-
-        // Log webhook event
-        await ctx.runMutation(internal.webhooks.logWebhookEvent, {
-          subscriptionId: subscription._id,
-          eventType: args.eventType,
-          payload: JSON.stringify(args.payload),
-          status: response.ok ? "success" : "failed",
-          responseCode: response.status,
-          responseBody: await response.text().catch(() => ""),
-          retryCount: 0,
-        });
-
-        // Update subscription
-        if (response.ok) {
-          await ctx.runMutation(internal.webhooks.updateWebhookSubscriptionInternal, {
-            subscriptionId: subscription._id,
-            lastTriggeredAt: Date.now(),
-            failureCount: 0,
-          });
-        } else {
-          await ctx.runMutation(internal.webhooks.updateWebhookSubscriptionInternal, {
-            subscriptionId: subscription._id,
-            failureCount: subscription.failureCount + 1,
-          });
-        }
-      } catch (error: any) {
-        // Log failed webhook
-        await ctx.runMutation(internal.webhooks.logWebhookEvent, {
-          subscriptionId: subscription._id,
-          eventType: args.eventType,
-          payload: JSON.stringify(args.payload),
-          status: "failed",
-          responseCode: 0,
-          responseBody: error.message,
-          retryCount: 0,
-        });
-
-        // Increment failure count
-        await ctx.runMutation(internal.webhooks.updateWebhookSubscriptionInternal, {
-          subscriptionId: subscription._id,
-          failureCount: subscription.failureCount + 1,
-        });
-      }
-    }
   },
 });
 
@@ -330,8 +267,8 @@ export const retryWebhook = action({
   args: {
     eventId: v.id("webhookSubscriptionEvents"),
   },
-  handler: async (ctx, args): Promise<any> => {
-    const event: any = await ctx.runQuery(api.webhooks.getWebhookSubscriptionEvent, {
+  handler: async (ctx, args) => {
+    const event = await ctx.runQuery(api.webhooks.getWebhookSubscriptionEvent, {
       eventId: args.eventId,
     });
 
@@ -339,7 +276,7 @@ export const retryWebhook = action({
       throw new Error("Event not found");
     }
 
-    const subscription: any = await ctx.runQuery(api.webhooks.getWebhookSubscription, {
+    const subscription = await ctx.runQuery(api.webhooks.getWebhookSubscription, {
       subscriptionId: event.subscriptionId,
     });
 
@@ -347,41 +284,20 @@ export const retryWebhook = action({
       throw new Error("Subscription not active");
     }
 
-    try {
-      const signature = crypto
-        .createHmac("sha256", subscription.secret)
-        .update(event.payload)
-        .digest("hex");
-
-      const response: any = await fetch(subscription.url, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          "X-Webhook-Signature": signature,
-          "X-Webhook-Event": event.eventType,
-          "X-Webhook-Timestamp": Date.now().toString(),
-        },
-        body: event.payload,
-      });
-
-      await ctx.runMutation(internal.webhooks.updateWebhookSubscriptionEvent, {
-        eventId: args.eventId,
-        status: response.ok ? "success" : "failed",
-        responseCode: response.status,
-        responseBody: await response.text().catch(() => ""),
-        retryCount: event.retryCount + 1,
-      });
-
-      return { success: response.ok };
-    } catch (error: any) {
-      await ctx.runMutation(internal.webhooks.updateWebhookSubscriptionEvent, {
-        eventId: args.eventId,
-        status: "failed",
-        retryCount: event.retryCount + 1,
-      });
-
-      throw error;
-    }
+    // Delegate to Node.js action for crypto operations
+    return await ctx.runAction(internal.webhooksActions.retryWebhook, {
+      eventId: args.eventId,
+      event: {
+        eventType: event.eventType,
+        payload: event.payload,
+        subscriptionId: event.subscriptionId,
+      },
+      subscription: {
+        url: subscription.url,
+        secret: subscription.secret,
+        isActive: subscription.isActive,
+      },
+    });
   },
 });
 

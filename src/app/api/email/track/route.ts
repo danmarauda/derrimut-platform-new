@@ -8,13 +8,25 @@ const convex = new ConvexHttpClient(process.env.NEXT_PUBLIC_CONVEX_URL!);
 export async function GET(request: NextRequest) {
   const searchParams = request.nextUrl.searchParams;
   const campaignId = searchParams.get("campaignId");
+  const recipientClerkId = searchParams.get("recipientClerkId");
+  const type = searchParams.get("type"); // "open" or "click"
 
   if (campaignId) {
     try {
-      // Track email open
-      await convex.mutation(api.winBackCampaigns.trackEmailOpenPublic, {
-        campaignId: campaignId as any,
-      });
+      // Check if it's a win-back campaign or marketing campaign
+      if (type === "open") {
+        // Try win-back campaign first
+        try {
+          await convex.mutation(api.winBackCampaigns.trackEmailOpenPublic, {
+            campaignId: campaignId as any,
+          });
+        } catch {
+          // If it fails, try marketing campaign
+          await convex.mutation(api.marketingAutomation.trackEmailOpen, {
+            campaignId: campaignId as any,
+          });
+        }
+      }
     } catch (error) {
       console.error("Error tracking email open:", error);
     }
@@ -41,9 +53,17 @@ export async function POST(request: NextRequest) {
     const { campaignId } = body;
 
     if (campaignId) {
-      await convex.mutation(api.winBackCampaigns.trackEmailClickPublic, {
-        campaignId: campaignId as any,
-      });
+      // Try win-back campaign first
+      try {
+        await convex.mutation(api.winBackCampaigns.trackEmailClickPublic, {
+          campaignId: campaignId as any,
+        });
+      } catch {
+        // If it fails, try marketing campaign
+        await convex.mutation(api.marketingAutomation.trackEmailClick, {
+          campaignId: campaignId as any,
+        });
+      }
     }
 
     return NextResponse.json({ success: true });
