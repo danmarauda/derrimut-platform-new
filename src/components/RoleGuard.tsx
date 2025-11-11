@@ -25,7 +25,20 @@ export function RoleGuard({ allowedRoles, children, fallback }: RoleGuardProps) 
     );
   }
 
-  if (!allowedRoles.includes(userRole as "superadmin" | "admin" | "trainer" | "user")) {
+  // Role hierarchy: superadmin > admin > trainer > user
+  const roleHierarchy = {
+    superadmin: 4,
+    admin: 3,
+    trainer: 2,
+    user: 1,
+  };
+
+  const userRoleLevel = roleHierarchy[userRole as "superadmin" | "admin" | "trainer" | "user"] ?? 0;
+  const maxAllowedRoleLevel = Math.max(
+    ...allowedRoles.map(role => roleHierarchy[role] ?? 0)
+  );
+
+  if (userRoleLevel < maxAllowedRoleLevel) {
     return fallback || (
       <div className="flex items-center justify-center min-h-[400px]">
         <div className="text-center max-w-md mx-auto p-8">

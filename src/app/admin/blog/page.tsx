@@ -6,6 +6,7 @@ import { useAuth } from "@clerk/nextjs";
 import { api } from "../../../../convex/_generated/api";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
 import { AdminLayout } from "@/components/AdminLayout";
 import { 
@@ -22,27 +23,6 @@ import {
   Download
 } from "lucide-react";
 import Link from "next/link";
-
-// Theme-compatible Badge component
-const Badge = ({ children, className = "", variant = "default" }: { 
-  children: React.ReactNode; 
-  className?: string; 
-  variant?: "default" | "outline" | "secondary" | "destructive"
-}) => {
-  const baseClasses = "inline-flex items-center rounded-md border px-2.5 py-0.5 text-xs font-semibold transition-colors";
-  const variantClasses = {
-    default: "border-transparent bg-primary/20 text-primary",
-    outline: "border-border text-muted-foreground bg-transparent",
-    secondary: "border-transparent bg-orange-100 text-orange-800 dark:bg-orange-600/20 dark:text-orange-400",
-    destructive: "border-transparent bg-red-100 text-red-800 dark:bg-red-900/20 dark:text-red-300"
-  };
-  
-  return (
-    <div className={`${baseClasses} ${variantClasses[variant]} ${className}`}>
-      {children}
-    </div>
-  );
-};
 
 const AdminBlogPage = () => {
   const { isSignedIn } = useAuth();
@@ -173,7 +153,7 @@ const AdminBlogPage = () => {
           <div className="flex gap-2">
             <Button
               onClick={handleExportPosts}
-              variant="outline"
+              variant="secondary"
               className="border-border text-foreground hover:bg-accent"
             >
               <Download className="h-4 w-4 mr-2" />
@@ -289,7 +269,7 @@ const AdminBlogPage = () => {
                   setStatusFilter("all");
                   setCategoryFilter("all");
                 }}
-                variant="outline"
+                variant="secondary"
                 className="border-gray-600 text-gray-300 hover:border-red-500"
               >
                 Clear Filters
@@ -319,13 +299,13 @@ const AdminBlogPage = () => {
                         <h3 className="font-semibold text-foreground text-lg">{post.title}</h3>
                         <Badge 
                           variant={
-                            post.status === "published" ? "default" :
-                            post.status === "draft" ? "secondary" : "destructive"
+                            post.status === "published" ? "standard" :
+                            post.status === "draft" ? "standard" : "accent"
                           }
                         >
                           {post.status}
                         </Badge>
-                        {post.isFeatured && <Badge variant="outline">Featured</Badge>}
+                        {post.isFeatured && <Badge variant="premium">Featured</Badge>}
                       </div>
                       
                       <p className="text-muted-foreground text-sm mb-3 line-clamp-2">
@@ -349,7 +329,7 @@ const AdminBlogPage = () => {
                           <Heart className="h-4 w-4" />
                           {post.likes} likes
                         </div>
-                        <Badge variant="outline">{post.category}</Badge>
+                        <Badge variant="standard">{post.category}</Badge>
                       </div>
                     </div>
 
@@ -357,7 +337,7 @@ const AdminBlogPage = () => {
                       {post.status === "published" && (
                         <Link href={`/blog/${post.slug}`} target="_blank">
                           <Button
-                            variant="outline"
+                            variant="secondary"
                             size="sm"
                             className="border-border text-foreground hover:border-blue-500 hover:text-blue-500"
                           >
@@ -368,7 +348,7 @@ const AdminBlogPage = () => {
                       
                       <Link href={`/admin/blog/edit/${post._id}`}>
                         <Button
-                          variant="outline"
+                          variant="secondary"
                           size="sm"
                           className="border-border text-foreground hover:border-yellow-500 hover:text-yellow-500"
                         >
@@ -378,7 +358,7 @@ const AdminBlogPage = () => {
                       
                       <Button
                         onClick={() => handleDeletePost(post._id)}
-                        variant="outline"
+                        variant="secondary"
                         size="sm"
                         className="border-border text-foreground hover:border-red-500 hover:text-red-500"
                       >

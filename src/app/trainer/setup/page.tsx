@@ -340,7 +340,7 @@ export default function TrainerSetup() {
             <Button
               onClick={() => setStep(step - 1)}
               disabled={step === 1}
-              variant="outline"
+              variant="secondary"
               className="border-border text-foreground hover:bg-accent disabled:opacity-50"
             >
               Previous

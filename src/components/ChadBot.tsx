@@ -382,7 +382,7 @@ const ChadBotComponent = () => {
         </div>
         <Button
           onClick={() => setIsOpen(false)}
-          variant="ghost"
+          variant="tertiary"
           size="sm"
           className="text-primary-foreground hover:bg-primary-foreground/20"
         >

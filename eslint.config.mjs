@@ -13,7 +13,10 @@ const eslintConfig = [
   ...compat.extends("next/core-web-vitals", "next/typescript"),
   {
     rules: {
-      "@typescript-eslint/no-explicit-any": "off",
+      // Warn when using 'any' type to encourage proper typing
+      "@typescript-eslint/no-explicit-any": "warn",
+      // Disable the rule that prevents using <img> instead of next/image
+      // Note: This is disabled for external images and specific use cases
       "@next/next/no-img-element": "off",
     },
   },

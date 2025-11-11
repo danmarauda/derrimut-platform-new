@@ -8,6 +8,7 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
 import {
   Clock,
   Users,
@@ -25,30 +26,6 @@ import { useParams } from "next/navigation";
 import { useQuery } from "convex/react";
 import { api } from "../../../../convex/_generated/api";
 import { Id } from "../../../../convex/_generated/dataModel";
-
-// Simple Badge component
-const Badge = ({
-  children,
-  className = "",
-  variant = "default",
-}: {
-  children: React.ReactNode;
-  className?: string;
-  variant?: "default" | "outline";
-}) => {
-  const baseClasses =
-    "inline-flex items-center rounded-md border px-2.5 py-0.5 text-xs font-semibold transition-colors";
-  const variantClasses =
-    variant === "outline"
-      ? "border-border text-muted-foreground bg-transparent"
-      : "border-transparent bg-primary/20 text-primary";
-
-  return (
-    <div className={`${baseClasses} ${variantClasses} ${className}`}>
-      {children}
-    </div>
-  );
-};
 
 const RecipeDetailPage = () => {
   const params = useParams();
@@ -129,7 +106,7 @@ const RecipeDetailPage = () => {
         <div className="mb-6">
           <Link href="/recipes">
             <Button
-              variant="outline"
+              variant="secondary"
               className="border-primary/30 text-primary hover:bg-primary/10"
             >
               <ArrowLeft className="h-4 w-4 mr-2" />
@@ -203,7 +180,7 @@ const RecipeDetailPage = () => {
                 {recipe.tags.slice(0, 4).map((tag: string) => (
                   <Badge
                     key={tag}
-                    variant="outline"
+                    variant="standard"
                     className="border-border text-muted-foreground"
                   >
                     {tag}
@@ -219,7 +196,7 @@ const RecipeDetailPage = () => {
               {recipe.tags.slice(0, 6).map((tag: string) => (
                 <Badge
                   key={tag}
-                  variant="outline"
+                    variant="standard"
                   className="border-border text-muted-foreground"
                 >
                   {tag}

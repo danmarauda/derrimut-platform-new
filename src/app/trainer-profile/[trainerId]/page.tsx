@@ -9,6 +9,7 @@ import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { DERRIMUT_BRAND } from "@/constants/branding";
 import { 
   Calendar, 
   Clock, 
@@ -155,7 +156,7 @@ export default function TrainerProfilePage() {
 
                 <div className="flex flex-wrap gap-2 mb-4">
                   {trainerProfile.specializations.map((spec: string, index: number) => (
-                    <Badge key={index} variant="secondary" className="bg-primary/20 text-primary border border-primary/30 text-xs">
+                    <Badge variant="standard" className="bg-primary/20 text-primary border border-primary/30 text-xs">
                       {spec.replace('_', ' ')}
                     </Badge>
                   ))}

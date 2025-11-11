@@ -1,7 +1,13 @@
 import type { NextConfig } from "next";
 import { withSentryConfig } from "@sentry/nextjs";
 
+// Bundle Analyzer (optional, run with ANALYZE=true npm run build)
+const withBundleAnalyzer = require('@next/bundle-analyzer')({
+  enabled: process.env.ANALYZE === 'true',
+});
+
 const nextConfig: NextConfig = {
+
   // Next.js 16: Enhanced image optimization
   images: {
     unoptimized: false,
@@ -30,6 +36,26 @@ const nextConfig: NextConfig = {
     } : false,
   },
 
+  // Performance optimizations
+  poweredByHeader: false, // Remove X-Powered-By header for security
+  compress: true, // Enable gzip compression
+  // Note: SWC minification is default in Next.js 16, no need to specify
+
+  // Experimental features for better performance
+  experimental: {
+    optimizePackageImports: ['lucide-react', '@radix-ui/react-accordion', '@radix-ui/react-dropdown-menu'],
+  },
+
+  // Webpack configuration for path aliases
+  webpack: (config, { isServer }) => {
+    // Resolve @/convex/* to ./convex/* (outside src/)
+    config.resolve.alias = {
+      ...config.resolve.alias,
+      '@/convex': require('path').resolve(__dirname, 'convex'),
+    };
+    return config;
+  },
+
   // Security Headers - Task 4.3: Comprehensive Security Headers
   async headers() {
     return [
@@ -41,11 +67,11 @@ const nextConfig: NextConfig = {
             key: 'Content-Security-Policy',
             value: [
               "default-src 'self'",
-              "script-src 'self' 'unsafe-eval' 'unsafe-inline' https://clerk.com https://*.clerk.accounts.dev https://js.stripe.com https://cdn.vapi.ai https://browser.sentry-cdn.com",
+              "script-src 'self' 'unsafe-eval' 'unsafe-inline' https://clerk.com https://*.clerk.accounts.dev https://clerk.derrimut.aliaslabs.ai https://js.stripe.com https://cdn.vapi.ai https://browser.sentry-cdn.com https://va.vercel-scripts.com",
               "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com",
               "img-src 'self' data: blob: https: http:",
               "font-src 'self' data: https://fonts.gstatic.com",
-              "connect-src 'self' https://*.convex.cloud https://clerk.com https://*.clerk.accounts.dev https://api.stripe.com https://api.vapi.ai https://generativelanguage.googleapis.com https://*.sentry.io wss://*.convex.cloud",
+              "connect-src 'self' https://*.convex.cloud https://clerk.com https://*.clerk.accounts.dev https://accounts.derrimut.aliaslabs.ai https://clerk.derrimut.aliaslabs.ai https://api.stripe.com https://api.vapi.ai https://generativelanguage.googleapis.com https://*.sentry.io wss://*.convex.cloud https://vapi.ai https://va.vercel-scripts.com",
               "frame-src 'self' https://js.stripe.com https://hooks.stripe.com https://clerk.com https://*.clerk.accounts.dev",
               "worker-src 'self' blob:",
               "object-src 'none'",
@@ -116,5 +142,7 @@ const sentryWebpackPluginOptions = {
   },
 };
 
-// Export configuration with Sentry
-export default withSentryConfig(nextConfig, sentryWebpackPluginOptions);
+// Export configuration with Sentry and Bundle Analyzer
+export default withBundleAnalyzer(
+  withSentryConfig(nextConfig, sentryWebpackPluginOptions)
+);

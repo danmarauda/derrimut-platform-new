@@ -21,7 +21,10 @@ import {
   PanelLeftOpen,
   PanelLeftClose,
   Building2,
-  Crown
+  Crown,
+  Mail,
+  Webhook,
+  TrendingUp
 } from "lucide-react";
 import { useUser } from "@clerk/nextjs";
 import { useQuery } from "convex/react";
@@ -70,6 +73,10 @@ export function AdminLayout({
     { href: "/admin/salary", icon: DollarSign, label: "Salary", active: pathname.startsWith("/admin/salary") },
     { href: "/admin/inventory", icon: Package, label: "Inventory", active: pathname.startsWith("/admin/inventory") },
     { href: "/admin/memberships", icon: Settings, label: "Memberships", active: pathname === "/admin/memberships" },
+    { href: "/admin/referrals", icon: TrendingUp, label: "Referrals", active: pathname === "/admin/referrals" },
+    { href: "/admin/marketing-campaigns", icon: Mail, label: "Marketing", active: pathname === "/admin/marketing-campaigns" },
+    { href: "/admin/webhooks", icon: Webhook, label: "Webhooks", active: pathname === "/admin/webhooks" },
+    { href: "/admin/win-back-campaigns", icon: Bell, label: "Win-Back", active: pathname === "/admin/win-back-campaigns" },
     { href: "/admin/recipes", icon: ChefHat, label: "Recipes", active: pathname === "/admin/recipes" },
     { href: "/admin/blog", icon: FileText, label: "Blog", active: pathname.startsWith("/admin/blog") },
     { href: "/admin/marketplace", icon: ShoppingBag, label: "Marketplace", active: pathname === "/admin/marketplace" },
@@ -113,7 +120,7 @@ export function AdminLayout({
       <div className="fixed inset-0 top-16 bg-background text-foreground z-[60] flex flex-col">
         {/* Mobile Menu Button - Floating Left */}
         <Button
-          variant="ghost"
+          variant="tertiary"
           size="sm"
           className="lg:hidden fixed top-20 left-4 z-30 p-2 h-10 w-10 text-foreground hover:text-primary hover:bg-accent/60 border-2 border-transparent hover:border-primary/20 bg-card/80 backdrop-blur-sm shadow-lg"
           onClick={() => setSidebarOpen(!sidebarOpen)}

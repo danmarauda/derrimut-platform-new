@@ -4,13 +4,41 @@ import { Webhook } from "svix";
 import { api } from "./_generated/api";
 import { httpAction, type ActionCtx } from "./_generated/server";
 import { Id } from "./_generated/dataModel";
-import { GoogleGenerativeAI } from "@google/generative-ai";
 import type { WorkoutPlan, DietPlan, WorkoutDay, WorkoutRoutine, DietMeal, FitnessPlanRequest } from "../src/types/fitness";
 import type { StripeSession, StripeSubscription, ShippingAddress, BookingSessionMetadata, MarketplaceSessionMetadata } from "../src/types/stripe";
 
 const http = httpRouter();
 
-const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY!);
+/**
+ * Call AI Gateway API route to generate text
+ * This uses Vercel AI Gateway for rate limiting, cost tracking, and monitoring
+ */
+async function generateTextViaGateway(prompt: string, model: string = "gemini-2.5-flash", temperature: number = 0.4, responseFormat?: { type: 'json_object' }): Promise<string> {
+  // Get the Next.js app URL from environment or use default
+  const nextjsUrl = process.env.NEXTJS_URL || process.env.NEXT_PUBLIC_CONVEX_URL?.replace('/convex', '') || 'http://localhost:3000';
+  const apiUrl = `${nextjsUrl}/api/ai/generate`;
+
+  const response = await fetch(apiUrl, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({
+      prompt,
+      model,
+      temperature,
+      responseFormat,
+    }),
+  });
+
+  if (!response.ok) {
+    const error = await response.json().catch(() => ({ error: 'Unknown error' }));
+    throw new Error(`AI Gateway error: ${error.error || response.statusText}`);
+  }
+
+  const data = await response.json();
+  return data.text;
+}
 
 http.route({
   path: "/clerk-webhook",
@@ -244,15 +272,6 @@ http.route({
 
       console.log("Payload is here:", payload);
 
-      const model = genAI.getGenerativeModel({
-        model: "gemini-2.5-flash",
-        generationConfig: {
-          temperature: 0.4, // lower temperature for more predictable outputs
-          topP: 0.9,
-          responseMimeType: "application/json",
-        },
-      });
-
       const workoutPrompt = `You are an experienced fitness coach creating a personalized workout plan based on:
       Age: ${age}
       Height: ${height}
@@ -296,8 +315,13 @@ http.route({
       
       DO NOT add any fields that are not in this example. Your response must be a valid JSON object with no additional text.`;
 
-      const workoutResult = await model.generateContent(workoutPrompt);
-      const workoutPlanText = workoutResult.response.text();
+      // Generate workout plan using Vercel AI Gateway
+      const workoutPlanText = await generateTextViaGateway(
+        workoutPrompt,
+        "gemini-2.5-flash",
+        0.4,
+        { type: 'json_object' }
+      );
 
       // VALIDATE THE INPUT COMING FROM AI
       let workoutPlan = JSON.parse(workoutPlanText);
@@ -340,8 +364,13 @@ http.route({
         
         DO NOT add any fields that are not in this example. Your response must be a valid JSON object with no additional text.`;
 
-      const dietResult = await model.generateContent(dietPrompt);
-      const dietPlanText = dietResult.response.text();
+      // Generate diet plan using Vercel AI Gateway
+      const dietPlanText = await generateTextViaGateway(
+        dietPrompt,
+        "gemini-2.5-flash",
+        0.4,
+        { type: 'json_object' }
+      );
 
       // VALIDATE THE INPUT COMING FROM AI
       let dietPlan = JSON.parse(dietPlanText);
@@ -591,6 +620,28 @@ http.route({
           });
           
           console.log("✅ Membership created successfully!");
+
+          // Send membership welcome email
+          try {
+            const plan = await ctx.runQuery(api.memberships.getMembershipPlanByType, {
+              membershipType: createdMembershipType,
+            });
+
+            if (createdUser.email && plan) {
+              await ctx.runAction(api.emails.sendMembershipWelcome, {
+                to: createdUser.email,
+                userName: createdUser.name || "Member",
+                membershipType: createdMembershipType,
+                startDate: new Date(createdCurrentPeriodStart * 1000).toISOString(),
+                endDate: new Date(createdCurrentPeriodEnd * 1000).toISOString(),
+                price: plan.price,
+              });
+              console.log("✅ Membership welcome email sent");
+            }
+          } catch (emailError) {
+            console.error("⚠️ Error sending membership welcome email:", emailError);
+            // Don't fail the membership if email fails
+          }
           break;
 
         case "customer.subscription.updated":
@@ -681,10 +732,52 @@ http.route({
         case "invoice.payment_failed":
           const failedInvoice = event.data.object;
           if (failedInvoice.subscription) {
+            // Update membership status
             await ctx.runMutation(api.memberships.updateMembershipStatus, {
               stripeSubscriptionId: failedInvoice.subscription,
               status: "pending",
             });
+
+            // Get membership to find user
+            const membership = await ctx.runQuery(api.memberships.getMembershipBySubscription, {
+              subscriptionId: failedInvoice.subscription,
+            });
+
+            if (membership) {
+              // Get user to find phone number
+              const user = await ctx.runQuery(api.users.getUserByClerkId, {
+                clerkId: membership.clerkId,
+              });
+
+              if (user) {
+                // Get SMS subscription to get phone number
+                const smsSubscription = await ctx.runQuery(api.smsNotifications.getUserSMSSubscriptionForAction, {
+                  clerkId: membership.clerkId,
+                });
+
+                if (smsSubscription && smsSubscription.phoneNumber && smsSubscription.preferences.paymentAlerts) {
+                  // Send payment failure SMS
+                  await ctx.scheduler.runAfter(0, api.smsNotifications.sendSMS, {
+                    clerkId: membership.clerkId,
+                    phoneNumber: smsSubscription.phoneNumber,
+                    message: `Derrimut 24:7: Your payment failed ($${failedInvoice.amount_due / 100}). Update payment method: ${process.env.NEXTJS_URL || "https://derrimut-platform.vercel.app"}/membership?retry=true`,
+                    type: "payment_alert",
+                  });
+                }
+
+                // Send payment failure notification
+                await ctx.scheduler.runAfter(0, api.notifications.createNotificationWithPush, {
+                  userId: membership.userId,
+                  clerkId: membership.clerkId,
+                  type: "system",
+                  title: "Payment Failed",
+                  message: `Your membership payment failed. Please update your payment method to continue your membership.`,
+                  link: `/membership?retry=true`,
+                  sendPush: true,
+                  skipAuthCheck: true,
+                });
+              }
+            }
           }
           break;
 
@@ -798,6 +891,62 @@ async function handleMarketplaceOrder(
 
       console.log("✅ Payment status updated successfully:", paymentUpdate);
       console.log("✅ Final order number:", orderResult.orderNumber);
+
+      // Award loyalty points for purchase (1 point per $1 spent)
+      try {
+        const order = await ctx.runQuery(api.orders.getOrderById, {
+          orderId: orderResult.orderId,
+        });
+        
+        if (order && order.totalAmount > 0) {
+          const pointsEarned = Math.floor(order.totalAmount); // 1 point per AUD
+          await ctx.scheduler.runAfter(0, api.loyalty.addPointsWithExpiration, {
+            clerkId,
+            points: pointsEarned,
+            source: "purchase",
+            description: `Purchase: Order ${orderResult.orderNumber}`,
+            relatedId: orderResult.orderId,
+          });
+          console.log(`✅ Awarded ${pointsEarned} loyalty points for purchase`);
+        }
+      } catch (pointsError) {
+        console.error("⚠️ Error awarding loyalty points:", pointsError);
+        // Don't fail the order if points fail
+      }
+
+      // Send order confirmation email
+      try {
+        const user = await ctx.runQuery(api.users.getUserByClerkId, {
+          clerkId,
+        });
+
+        const order = await ctx.runQuery(api.orders.getOrderById, {
+          orderId: orderResult.orderId,
+        });
+
+        if (user && order && user.email) {
+          await ctx.runAction(api.emails.sendOrderConfirmation, {
+            to: user.email,
+            userName: user.name || "Customer",
+            orderNumber: orderResult.orderNumber,
+            orderDate: new Date(order.createdAt).toISOString(),
+            items: order.items.map((item: any) => ({
+              name: item.productName,
+              quantity: item.quantity,
+              price: item.pricePerItem,
+            })),
+            subtotal: order.subtotal,
+            shipping: order.shippingCost,
+            tax: order.tax,
+            total: order.totalAmount,
+            shippingAddress: order.shippingAddress,
+          });
+          console.log("✅ Order confirmation email sent");
+        }
+      } catch (emailError) {
+        console.error("⚠️ Error sending order confirmation email:", emailError);
+        // Don't fail the order if email fails
+      }
       
     } catch (convexError) {
       console.error("❌ Error with Convex operations:", convexError);
@@ -903,6 +1052,30 @@ async function handleBookingPayment(
     });
 
     console.log("✅ Paid booking created successfully:", bookingId, "for session:", session.id);
+
+    // Send booking confirmation email
+    try {
+      const trainer = await ctx.runQuery(api.trainerProfiles.getTrainerById, {
+        trainerId: trainerId as Id<"trainerProfiles">,
+      });
+
+      if (trainer && user.email) {
+        await ctx.runAction(api.emails.sendBookingConfirmation, {
+          to: user.email,
+          userName: user.name || "Member",
+          trainerName: trainer.name,
+          sessionDate,
+          sessionTime: startTime,
+          sessionType,
+          duration: parseInt(duration),
+          bookingId: bookingId.toString(),
+        });
+        console.log("✅ Booking confirmation email sent");
+      }
+    } catch (emailError) {
+      console.error("⚠️ Error sending booking confirmation email:", emailError);
+      // Don't fail the booking if email fails
+    }
   } catch (error) {
     console.error("❌ Error creating booking:", error);
     console.error("❌ Error stack:", error instanceof Error ? error.stack : "No stack trace");

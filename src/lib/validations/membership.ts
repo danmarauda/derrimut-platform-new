@@ -15,9 +15,7 @@ export const membershipTypeSchema = z.enum([
   '12-month-minimum',
   'no-lock-in',
   '12-month-upfront'
-], {
-  errorMap: () => ({ message: 'Invalid membership type' })
-});
+], { message: 'Invalid membership type' });
 
 // Membership status enum
 export const membershipStatusSchema = z.enum([
@@ -25,9 +23,7 @@ export const membershipStatusSchema = z.enum([
   'pending',
   'cancelled',
   'suspended'
-], {
-  errorMap: () => ({ message: 'Invalid membership status' })
-});
+], { message: 'Invalid membership status' });
 
 // Create membership schema
 export const createMembershipSchema = z.object({

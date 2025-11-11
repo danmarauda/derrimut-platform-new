@@ -286,7 +286,7 @@ export default function TrainerApplicationsPage() {
           <div className="flex items-center gap-4">
             <Button
               onClick={handleExportApplications}
-              variant="outline"
+              variant="secondary"
               className="border-border text-foreground hover:bg-accent"
             >
               <Download className="h-4 w-4 mr-2" />

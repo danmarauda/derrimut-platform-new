@@ -381,7 +381,7 @@ function ReviewsContent() {
                   <div className="flex gap-3 mt-6">
                     <Button
                       onClick={() => setSelectedBooking(null)}
-                      variant="outline"
+                      variant="secondary"
                       className="flex-1 border-border text-foreground hover:bg-muted"
                     >
                       Cancel

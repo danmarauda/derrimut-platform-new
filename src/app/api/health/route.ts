@@ -252,5 +252,9 @@ export async function HEAD() {
 }
 
 // Next.js 16: Export route config
+// Use Node.js runtime for process.uptime() access
+// Health checks need Node.js APIs for comprehensive monitoring
 export const runtime = 'nodejs';
 export const dynamic = 'force-dynamic';
+// Cache health checks for 10 seconds to reduce load
+export const revalidate = 10;

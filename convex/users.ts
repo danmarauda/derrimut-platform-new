@@ -1,5 +1,18 @@
 import { mutation, query } from "./_generated/server";
 import { v } from "convex/values";
+import { api } from "./_generated/api";
+
+// Generate a unique referral code
+function generateReferralCode(name: string): string {
+  // Take first 3 letters of name, uppercase, add random 4-digit number
+  const namePart = name
+    .replace(/[^a-zA-Z]/g, "")
+    .substring(0, 3)
+    .toUpperCase()
+    .padEnd(3, "X");
+  const randomPart = Math.floor(1000 + Math.random() * 9000).toString();
+  return `${namePart}${randomPart}`;
+}
 
 export const syncUser = mutation({
   args: {
@@ -26,10 +39,31 @@ export const syncUser = mutation({
       return existingUser._id;
     }
 
+    // Generate referral code for new user
+    let referralCode = generateReferralCode(args.name);
+    let attempts = 0;
+    const maxAttempts = 10;
+
+    // Ensure uniqueness
+    while (attempts < maxAttempts) {
+      const existing = await ctx.db
+        .query("users")
+        .withIndex("by_referral_code", (q) => q.eq("referralCode", referralCode))
+        .first();
+
+      if (!existing) {
+        break; // Code is unique
+      }
+
+      referralCode = generateReferralCode(args.name);
+      attempts++;
+    }
+
     return await ctx.db.insert("users", {
       ...args,
       role: "user", // Default role for new users
       accountType: "personal", // Default to personal account
+      referralCode, // Assign referral code
       createdAt: Date.now(),
       updatedAt: Date.now(),
     });
@@ -51,6 +85,10 @@ export const updateUser = mutation({
 
     if (!existingUser) return;
 
+    // Track changes for SMS notification
+    const emailChanged = existingUser.email !== args.email;
+    const nameChanged = existingUser.name !== args.name;
+
     // Ensure required fields exist
     const updateData: any = {
       ...args,
@@ -65,7 +103,18 @@ export const updateUser = mutation({
       updateData.createdAt = Date.now();
     }
 
-    return await ctx.db.patch(existingUser._id, updateData);
+    await ctx.db.patch(existingUser._id, updateData);
+
+    // Send account update SMS if email or name changed
+    if ((emailChanged || nameChanged) && existingUser.phoneNumber) {
+      await ctx.scheduler.runAfter(0, api.smsNotifications.sendAccountUpdateSMS, {
+        clerkId: args.clerkId,
+        phoneNumber: existingUser.phoneNumber,
+        changeType: emailChanged ? "email" : "name",
+      });
+    }
+
+    return existingUser._id;
   },
 });
 

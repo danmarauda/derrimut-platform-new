@@ -79,7 +79,7 @@ export default function NewDesignSystemPage() {
                 <Brain className="w-5 h-5" />
                 Get Started
               </PremiumButton>
-              <PremiumButton variant="ghost" className="px-8 py-3">
+              <PremiumButton variant="outline" className="px-8 py-3">
                 View Components
                 <ArrowRight className="w-4 h-4" />
               </PremiumButton>
@@ -361,7 +361,7 @@ export default function NewDesignSystemPage() {
               <PremiumButton variant="primary" className="px-8 py-3">
                 Start Your Journey
               </PremiumButton>
-              <PremiumButton variant="ghost" className="px-8 py-3">
+              <PremiumButton variant="outline" className="px-8 py-3">
                 View Documentation
               </PremiumButton>
             </div>

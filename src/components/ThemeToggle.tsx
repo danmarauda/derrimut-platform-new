@@ -16,7 +16,7 @@ export function ThemeToggle() {
 
   if (!mounted) {
     return (
-      <Button variant="ghost" size="icon" className="w-9 h-9">
+      <Button variant="tertiary" size="icon" className="w-9 h-9">
         <Sun className="h-4 w-4" />
         <span className="sr-only">Toggle theme</span>
       </Button>
@@ -29,7 +29,7 @@ export function ThemeToggle() {
 
   return (
     <Button
-      variant="ghost"
+      variant="tertiary"
       size="icon"
       onClick={cycleTheme}
       className="w-9 h-9 hover:bg-accent/50 transition-colors"

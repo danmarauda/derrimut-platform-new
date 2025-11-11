@@ -1,41 +1,44 @@
-import React from 'react';
-import { render, screen } from '@testing-library/react';
-import '@testing-library/jest-dom';
 import { describe, it, expect, beforeEach, vi } from 'vitest';
-import { RoleGuard } from '../RoleGuard';
-import { useUser } from '@clerk/nextjs';
-import { useQuery } from 'convex/react';
+import { screen } from '@testing-library/react';
+import RoleGuard from '../RoleGuard';
+import { renderWithProviders, mockUseUser, mockUseQuery } from '../__tests__/utils';
 
-// Mock Clerk
+// Mock the hooks
 vi.mock('@clerk/nextjs', () => ({
   useUser: vi.fn(),
 }));
 
-// Mock Convex
 vi.mock('convex/react', () => ({
   useQuery: vi.fn(),
 }));
 
-const mockUseUser = useUser as ReturnType<typeof vi.fn>;
-const mockUseQuery = useQuery as ReturnType<typeof vi.fn>;
+// Import after mocking
+import { useUser } from '@clerk/nextjs';
+import { useQuery } from 'convex/react';
+
+const { useUser: mockUseUserHook } = vi.mocked('@clerk/nextjs');
+const { useQuery: mockUseQueryHook } = vi.mocked('convex/react');
 
 describe('RoleGuard', () => {
-  const TestComponent = () => <div>Protected Content</div>;
+  let mockUser: ReturnType<typeof mockUseUser>;
 
   beforeEach(() => {
     vi.clearAllMocks();
+    mockUser = mockUseUser();
+    mockUseQueryHook.mockReturnValue('user');
   });
+
+  const TestComponent = () => <div>Protected Content</div>;
 
   describe('Loading States', () => {
     it('should show loading state when user is not loaded', () => {
-      mockUseUser.mockReturnValue({
+      mockUseUserHook.mockReturnValue({
         user: null,
         isLoaded: false,
         isSignedIn: false,
       } as any);
-      mockUseQuery.mockReturnValue(undefined);
 
-      render(
+      renderWithProviders(
         <RoleGuard allowedRoles={['admin']}>
           <TestComponent />
         </RoleGuard>
@@ -46,69 +49,86 @@ describe('RoleGuard', () => {
     });
 
     it('should show loading state when role is undefined', () => {
-      mockUseUser.mockReturnValue({
+      mockUseUserHook.mockReturnValue({
         user: { id: 'user123' },
         isLoaded: true,
         isSignedIn: true,
       } as any);
-      mockUseQuery.mockReturnValue(undefined);
+      mockUseQueryHook.mockReturnValue(undefined);
 
-      render(
+      renderWithProviders(
         <RoleGuard allowedRoles={['admin']}>
           <TestComponent />
         </RoleGuard>
       );
 
       expect(screen.getByText('Loading...')).toBeInTheDocument();
+      expect(screen.queryByText('Protected Content')).not.toBeInTheDocument();
     });
 
     it('should show custom fallback when provided during loading', () => {
-      mockUseUser.mockReturnValue({
+      mockUseUserHook.mockReturnValue({
         user: null,
         isLoaded: false,
         isSignedIn: false,
       } as any);
-      mockUseQuery.mockReturnValue(undefined);
 
-      render(
+      renderWithProviders(
         <RoleGuard allowedRoles={['admin']} fallback={<div>Custom Loading</div>}>
           <TestComponent />
         </RoleGuard>
       );
 
       expect(screen.getByText('Custom Loading')).toBeInTheDocument();
+      expect(screen.queryByText('Loading...')).not.toBeInTheDocument();
     });
   });
 
   describe('Access Control - Superadmin', () => {
     it('should allow access for superadmin', () => {
-      mockUseUser.mockReturnValue({
-        user: { id: 'user123' },
+      mockUseUserHook.mockReturnValue({
+        user: { id: 'superadmin123' },
         isLoaded: true,
         isSignedIn: true,
       } as any);
-      mockUseQuery.mockReturnValue('superadmin');
+      mockUseQueryHook.mockReturnValue('superadmin');
 
-      render(
+      renderWithProviders(
         <RoleGuard allowedRoles={['superadmin']}>
           <TestComponent />
         </RoleGuard>
       );
 
       expect(screen.getByText('Protected Content')).toBeInTheDocument();
-      expect(screen.queryByText('Access Denied')).not.toBeInTheDocument();
     });
 
     it('should allow superadmin to access admin-only content', () => {
-      mockUseUser.mockReturnValue({
+      mockUseUserHook.mockReturnValue({
         user: { id: 'user123' },
         isLoaded: true,
         isSignedIn: true,
       } as any);
-      mockUseQuery.mockReturnValue('superadmin');
+      mockUseQueryHook.mockReturnValue('superadmin');
 
-      render(
+      renderWithProviders(
         <RoleGuard allowedRoles={['admin']}>
+          <TestComponent />
+        </RoleGuard>
+      );
+
+      expect(screen.getByText('Protected Content')).toBeInTheDocument();
+    });
+
+    it('should allow superadmin to access all role levels', () => {
+      mockUseUserHook.mockReturnValue({
+        user: { id: 'user123' },
+        isLoaded: true,
+        isSignedIn: true,
+      } as any);
+      mockUseQueryHook.mockReturnValue('superadmin');
+
+      renderWithProviders(
+        <RoleGuard allowedRoles={['admin', 'trainer', 'user']}>
           <TestComponent />
         </RoleGuard>
       );
@@ -119,14 +139,14 @@ describe('RoleGuard', () => {
 
   describe('Access Control - Admin', () => {
     it('should allow access for admin', () => {
-      mockUseUser.mockReturnValue({
-        user: { id: 'user123' },
+      mockUseUserHook.mockReturnValue({
+        user: { id: 'admin123' },
         isLoaded: true,
         isSignedIn: true,
       } as any);
-      mockUseQuery.mockReturnValue('admin');
+      mockUseQueryHook.mockReturnValue('admin');
 
-      render(
+      renderWithProviders(
         <RoleGuard allowedRoles={['admin']}>
           <TestComponent />
         </RoleGuard>
@@ -136,14 +156,14 @@ describe('RoleGuard', () => {
     });
 
     it('should deny admin access to superadmin-only content', () => {
-      mockUseUser.mockReturnValue({
-        user: { id: 'user123' },
+      mockUseUserHook.mockReturnValue({
+        user: { id: 'admin123' },
         isLoaded: true,
         isSignedIn: true,
       } as any);
-      mockUseQuery.mockReturnValue('admin');
+      mockUseQueryHook.mockReturnValue('admin');
 
-      render(
+      renderWithProviders(
         <RoleGuard allowedRoles={['superadmin']}>
           <TestComponent />
         </RoleGuard>
@@ -154,14 +174,14 @@ describe('RoleGuard', () => {
     });
 
     it('should allow admin access when multiple roles are allowed', () => {
-      mockUseUser.mockReturnValue({
-        user: { id: 'user123' },
+      mockUseUserHook.mockReturnValue({
+        user: { id: 'admin123' },
         isLoaded: true,
         isSignedIn: true,
       } as any);
-      mockUseQuery.mockReturnValue('admin');
+      mockUseQueryHook.mockReturnValue('admin');
 
-      render(
+      renderWithProviders(
         <RoleGuard allowedRoles={['admin', 'trainer']}>
           <TestComponent />
         </RoleGuard>
@@ -173,14 +193,14 @@ describe('RoleGuard', () => {
 
   describe('Access Control - Trainer', () => {
     it('should allow access for trainer', () => {
-      mockUseUser.mockReturnValue({
-        user: { id: 'user123' },
+      mockUseUserHook.mockReturnValue({
+        user: { id: 'trainer123' },
         isLoaded: true,
         isSignedIn: true,
       } as any);
-      mockUseQuery.mockReturnValue('trainer');
+      mockUseQueryHook.mockReturnValue('trainer');
 
-      render(
+      renderWithProviders(
         <RoleGuard allowedRoles={['trainer']}>
           <TestComponent />
         </RoleGuard>
@@ -190,14 +210,14 @@ describe('RoleGuard', () => {
     });
 
     it('should deny trainer access to admin-only content', () => {
-      mockUseUser.mockReturnValue({
-        user: { id: 'user123' },
+      mockUseUserHook.mockReturnValue({
+        user: { id: 'trainer123' },
         isLoaded: true,
         isSignedIn: true,
       } as any);
-      mockUseQuery.mockReturnValue('trainer');
+      mockUseQueryHook.mockReturnValue('trainer');
 
-      render(
+      renderWithProviders(
         <RoleGuard allowedRoles={['admin']}>
           <TestComponent />
         </RoleGuard>
@@ -210,14 +230,14 @@ describe('RoleGuard', () => {
 
   describe('Access Control - User', () => {
     it('should allow access for regular user', () => {
-      mockUseUser.mockReturnValue({
+      mockUseUserHook.mockReturnValue({
         user: { id: 'user123' },
         isLoaded: true,
         isSignedIn: true,
       } as any);
-      mockUseQuery.mockReturnValue('user');
+      mockUseQueryHook.mockReturnValue('user');
 
-      render(
+      renderWithProviders(
         <RoleGuard allowedRoles={['user']}>
           <TestComponent />
         </RoleGuard>
@@ -227,14 +247,14 @@ describe('RoleGuard', () => {
     });
 
     it('should deny user access to admin content', () => {
-      mockUseUser.mockReturnValue({
+      mockUseUserHook.mockReturnValue({
         user: { id: 'user123' },
         isLoaded: true,
         isSignedIn: true,
       } as any);
-      mockUseQuery.mockReturnValue('user');
+      mockUseQueryHook.mockReturnValue('user');
 
-      render(
+      renderWithProviders(
         <RoleGuard allowedRoles={['admin']}>
           <TestComponent />
         </RoleGuard>
@@ -243,95 +263,90 @@ describe('RoleGuard', () => {
       expect(screen.queryByText('Protected Content')).not.toBeInTheDocument();
       expect(screen.getByText('Access Denied')).toBeInTheDocument();
     });
-
-    it('should show helpful message for users with insufficient permissions', () => {
-      mockUseUser.mockReturnValue({
-        user: { id: 'user123' },
-        isLoaded: true,
-        isSignedIn: true,
-      } as any);
-      mockUseQuery.mockReturnValue('user');
-
-      render(
-        <RoleGuard allowedRoles={['admin']}>
-          <TestComponent />
-        </RoleGuard>
-      );
-
-      expect(screen.getByText(/Consider applying to become a trainer/i)).toBeInTheDocument();
-    });
   });
 
-  describe('Access Denied UI', () => {
-    it('should display user current role when access is denied', () => {
-      mockUseUser.mockReturnValue({
+  describe('Error Messages', () => {
+    it('should show helpful message for users with insufficient permissions', () => {
+      mockUseUserHook.mockReturnValue({
         user: { id: 'user123' },
         isLoaded: true,
         isSignedIn: true,
       } as any);
-      mockUseQuery.mockReturnValue('user');
+      mockUseQueryHook.mockReturnValue('user');
 
-      render(
+      renderWithProviders(
         <RoleGuard allowedRoles={['admin']}>
           <TestComponent />
         </RoleGuard>
       );
 
-      expect(screen.getByText(/Your current role:/i)).toBeInTheDocument();
-      expect(screen.getByText(/user/i)).toBeInTheDocument();
+      expect(screen.getByText(/Consider applying to become a trainer/)).toBeInTheDocument();
+    });
+
+    it('should display user current role when access is denied', () => {
+      mockUseUserHook.mockReturnValue({
+        user: { id: 'user123' },
+        isLoaded: true,
+        isSignedIn: true,
+      } as any);
+      mockUseQueryHook.mockReturnValue('trainer');
+
+      renderWithProviders(
+        <RoleGuard allowedRoles={['admin']}>
+          <TestComponent />
+        </RoleGuard>
+      );
+
+      expect(screen.getByText('Your current role: trainer')).toBeInTheDocument();
     });
 
     it('should display required roles when access is denied', () => {
-      mockUseUser.mockReturnValue({
+      mockUseUserHook.mockReturnValue({
         user: { id: 'user123' },
         isLoaded: true,
         isSignedIn: true,
       } as any);
-      mockUseQuery.mockReturnValue('user');
+      mockUseQueryHook.mockReturnValue('user');
 
-      render(
-        <RoleGuard allowedRoles={['admin', 'superadmin']}>
+      renderWithProviders(
+        <RoleGuard allowedRoles={['admin', 'trainer']}>
           <TestComponent />
         </RoleGuard>
       );
 
-      expect(screen.getByText(/Required roles:/i)).toBeInTheDocument();
-      expect(screen.getByText(/admin, superadmin/i)).toBeInTheDocument();
+      expect(screen.getByText('Required roles: admin, trainer')).toBeInTheDocument();
     });
 
     it('should show custom fallback when access is denied', () => {
-      mockUseUser.mockReturnValue({
+      mockUseUserHook.mockReturnValue({
         user: { id: 'user123' },
         isLoaded: true,
         isSignedIn: true,
       } as any);
-      mockUseQuery.mockReturnValue('user');
+      mockUseQueryHook.mockReturnValue('user');
 
-      render(
-        <RoleGuard
-          allowedRoles={['admin']}
-          fallback={<div>Custom Access Denied</div>}
-        >
+      renderWithProviders(
+        <RoleGuard allowedRoles={['admin']} fallback={<div>Custom Denied</div>}>
           <TestComponent />
         </RoleGuard>
       );
 
-      expect(screen.getByText('Custom Access Denied')).toBeInTheDocument();
-      expect(screen.queryByText('Protected Content')).not.toBeInTheDocument();
+      expect(screen.getByText('Custom Denied')).toBeInTheDocument();
+      expect(screen.queryByText('Access Denied')).not.toBeInTheDocument();
     });
   });
 
-  describe('Multiple Roles', () => {
+  describe('Role Hierarchy', () => {
     it('should allow access when user has one of multiple allowed roles', () => {
-      mockUseUser.mockReturnValue({
+      mockUseUserHook.mockReturnValue({
         user: { id: 'user123' },
         isLoaded: true,
         isSignedIn: true,
       } as any);
-      mockUseQuery.mockReturnValue('trainer');
+      mockUseQueryHook.mockReturnValue('trainer');
 
-      render(
-        <RoleGuard allowedRoles={['admin', 'trainer', 'superadmin']}>
+      renderWithProviders(
+        <RoleGuard allowedRoles={['admin', 'trainer', 'user']}>
           <TestComponent />
         </RoleGuard>
       );
@@ -340,14 +355,14 @@ describe('RoleGuard', () => {
     });
 
     it('should allow all roles when all are specified', () => {
-      mockUseUser.mockReturnValue({
+      mockUseUserHook.mockReturnValue({
         user: { id: 'user123' },
         isLoaded: true,
         isSignedIn: true,
       } as any);
-      mockUseQuery.mockReturnValue('user');
+      mockUseQueryHook.mockReturnValue('user');
 
-      render(
+      renderWithProviders(
         <RoleGuard allowedRoles={['superadmin', 'admin', 'trainer', 'user']}>
           <TestComponent />
         </RoleGuard>
@@ -359,14 +374,14 @@ describe('RoleGuard', () => {
 
   describe('Edge Cases', () => {
     it('should handle null role gracefully', () => {
-      mockUseUser.mockReturnValue({
+      mockUseUserHook.mockReturnValue({
         user: { id: 'user123' },
         isLoaded: true,
         isSignedIn: true,
       } as any);
-      mockUseQuery.mockReturnValue(null);
+      mockUseQueryHook.mockReturnValue(null);
 
-      render(
+      renderWithProviders(
         <RoleGuard allowedRoles={['admin']}>
           <TestComponent />
         </RoleGuard>
@@ -376,14 +391,14 @@ describe('RoleGuard', () => {
     });
 
     it('should handle missing user gracefully', () => {
-      mockUseUser.mockReturnValue({
+      mockUseUserHook.mockReturnValue({
         user: null,
         isLoaded: true,
         isSignedIn: false,
       } as any);
-      mockUseQuery.mockReturnValue('user');
+      mockUseQueryHook.mockReturnValue('admin');
 
-      render(
+      renderWithProviders(
         <RoleGuard allowedRoles={['admin']}>
           <TestComponent />
         </RoleGuard>

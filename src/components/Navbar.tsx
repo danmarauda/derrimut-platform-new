@@ -10,6 +10,8 @@ import { useState, useEffect } from "react";
 import { ShoppingCart, Menu, X } from "lucide-react";
 import { ThemeAwareLogo } from "./ThemeAwareLogo";
 import { DERRIMUT_BRAND } from "@/constants/branding";
+import { clerkAppearance } from "@/lib/clerk-appearance";
+import { NotificationBell } from "@/components/notifications";
 
 const Navbar = () => {
   const { isSignedIn, user } = useUser();
@@ -59,9 +61,9 @@ const Navbar = () => {
   }
 
   return (
-    <header className="fixed top-0 left-0 right-0 z-50 bg-background/90 backdrop-blur-md border-b border-border/50 py-2">
+      <header className="fixed top-0 left-0 right-0 z-50 bg-neutral-950/90 backdrop-blur-xl border-b border-white/10 py-2" style={{ backgroundImage: 'linear-gradient(to bottom, rgba(10, 10, 10, 0.5), transparent)' }}>
       <div
-        className="container mx-auto flex items-center justify-between px-4"
+        className="container mx-auto flex items-center justify-between px-4 lg:px-8"
         suppressHydrationWarning
       >
         {/* LOGO */}
@@ -73,10 +75,10 @@ const Navbar = () => {
             <ThemeAwareLogo width={48} height={48} className="object-contain" />
           </div>
           <div className="flex flex-col" suppressHydrationWarning>
-            <span className="text-lg font-bold text-foreground leading-tight">
+            <span className="text-lg font-semibold text-white leading-tight tracking-tight">
               {DERRIMUT_BRAND.nameShort.toUpperCase()}
             </span>
-            <span className="text-xs text-muted-foreground uppercase tracking-wider">
+            <span className="text-xs text-white/60 uppercase tracking-wider">
               24/7 FITNESS
             </span>
           </div>
@@ -86,79 +88,79 @@ const Navbar = () => {
         <nav className="hidden lg:flex items-center gap-8">
           <Link
             href="/"
-            className={`text-foreground hover:text-primary transition-colors text-sm font-medium relative pb-2 ${
-              pathname === "/" ? "" : ""
+            className={`text-white/80 hover:text-white transition-colors text-sm font-normal relative pb-2 ${
+              pathname === "/" ? "text-white" : ""
             }`}
           >
             <span>Home</span>
             {pathname === "/" && (
-              <div className="absolute bottom-0 left-0 w-full h-0.5 bg-primary"></div>
+              <div className="absolute bottom-0 left-0 w-full h-0.5 bg-white"></div>
             )}
           </Link>
           <Link
             href="/generate-program"
-            className={`text-foreground hover:text-primary transition-colors text-sm font-medium relative pb-2 ${
-              pathname === "/generate-program" ? "" : ""
+            className={`text-white/80 hover:text-white transition-colors text-sm font-normal relative pb-2 ${
+              pathname === "/generate-program" ? "text-white" : ""
             }`}
           >
             <span>AI Plan Generator</span>
             {pathname === "/generate-program" && (
-              <div className="absolute bottom-0 left-0 w-full h-0.5 bg-primary"></div>
+              <div className="absolute bottom-0 left-0 w-full h-0.5 bg-white"></div>
             )}
           </Link>
           <Link
             href="/recipes"
-            className={`text-foreground hover:text-primary transition-colors text-sm font-medium relative pb-2 ${
-              pathname === "/recipes" ? "" : ""
+            className={`text-white/80 hover:text-white transition-colors text-sm font-normal relative pb-2 ${
+              pathname === "/recipes" ? "text-white" : ""
             }`}
           >
             <span>Recipes</span>
             {pathname === "/recipes" && (
-              <div className="absolute bottom-0 left-0 w-full h-0.5 bg-primary"></div>
+              <div className="absolute bottom-0 left-0 w-full h-0.5 bg-white"></div>
             )}
           </Link>
           <Link
             href="/membership"
-            className={`text-foreground hover:text-primary transition-colors text-sm font-medium relative pb-2 ${
-              pathname === "/membership" ? "" : ""
+            className={`text-white/80 hover:text-white transition-colors text-sm font-normal relative pb-2 ${
+              pathname === "/membership" ? "text-white" : ""
             }`}
           >
             <span>Membership</span>
             {pathname === "/membership" && (
-              <div className="absolute bottom-0 left-0 w-full h-0.5 bg-primary"></div>
+              <div className="absolute bottom-0 left-0 w-full h-0.5 bg-white"></div>
             )}
           </Link>
           <Link
             href="/trainer-booking"
-            className={`text-foreground hover:text-primary transition-colors text-sm font-medium relative pb-2 ${
-              pathname === "/trainer-booking" ? "" : ""
+            className={`text-white/80 hover:text-white transition-colors text-sm font-normal relative pb-2 ${
+              pathname === "/trainer-booking" ? "text-white" : ""
             }`}
           >
             <span>Trainer Booking</span>
             {pathname === "/trainer-booking" && (
-              <div className="absolute bottom-0 left-0 w-full h-0.5 bg-primary"></div>
+              <div className="absolute bottom-0 left-0 w-full h-0.5 bg-white"></div>
             )}
           </Link>
           <Link
             href="/blog"
-            className={`text-foreground hover:text-primary transition-colors text-sm font-medium relative pb-2 ${
-              pathname.startsWith("/blog") ? "" : ""
+            className={`text-white/80 hover:text-white transition-colors text-sm font-normal relative pb-2 ${
+              pathname.startsWith("/blog") ? "text-white" : ""
             }`}
           >
             <span>Blog</span>
             {pathname.startsWith("/blog") && (
-              <div className="absolute bottom-0 left-0 w-full h-0.5 bg-primary"></div>
+              <div className="absolute bottom-0 left-0 w-full h-0.5 bg-white"></div>
             )}
           </Link>
           <Link
             href="/marketplace"
-            className={`text-foreground hover:text-primary transition-colors text-sm font-medium relative pb-2 ${
-              pathname === "/marketplace" ? "" : ""
+            className={`text-white/80 hover:text-white transition-colors text-sm font-normal relative pb-2 ${
+              pathname === "/marketplace" ? "text-white" : ""
             }`}
           >
             <span>Marketplace</span>
             {pathname === "/marketplace" && (
-              <div className="absolute bottom-0 left-0 w-full h-0.5 bg-primary"></div>
+              <div className="absolute bottom-0 left-0 w-full h-0.5 bg-white"></div>
             )}
           </Link>
 
@@ -195,6 +197,65 @@ const Navbar = () => {
           )}
 
           {userRole === "user" && (
+            <>
+              <Link
+                href="/check-in"
+                className={`text-foreground hover:text-primary transition-colors text-sm font-medium relative pb-2 ${
+                  pathname === "/check-in" ? "" : ""
+                }`}
+              >
+                <span>Check In</span>
+                {pathname === "/check-in" && (
+                  <div className="absolute bottom-0 left-0 w-full h-0.5 bg-primary"></div>
+                )}
+              </Link>
+              <Link
+                href="/equipment"
+                className={`text-foreground hover:text-primary transition-colors text-sm font-medium relative pb-2 ${
+                  pathname === "/equipment" ? "" : ""
+                }`}
+              >
+                <span>Equipment</span>
+                {pathname === "/equipment" && (
+                  <div className="absolute bottom-0 left-0 w-full h-0.5 bg-primary"></div>
+                )}
+              </Link>
+              <Link
+                href="/classes"
+                className={`text-foreground hover:text-primary transition-colors text-sm font-medium relative pb-2 ${
+                  pathname === "/classes" ? "" : ""
+                }`}
+              >
+                <span>Classes</span>
+                {pathname === "/classes" && (
+                  <div className="absolute bottom-0 left-0 w-full h-0.5 bg-primary"></div>
+                )}
+              </Link>
+              <Link
+                href="/challenges"
+                className={`text-foreground hover:text-primary transition-colors text-sm font-medium relative pb-2 ${
+                  pathname === "/challenges" ? "" : ""
+                }`}
+              >
+                <span>Challenges</span>
+                {pathname === "/challenges" && (
+                  <div className="absolute bottom-0 left-0 w-full h-0.5 bg-primary"></div>
+                )}
+              </Link>
+              <Link
+                href="/community"
+                className={`text-foreground hover:text-primary transition-colors text-sm font-medium relative pb-2 ${
+                  pathname === "/community" ? "" : ""
+                }`}
+              >
+                <span>Community</span>
+                {pathname === "/community" && (
+                  <div className="absolute bottom-0 left-0 w-full h-0.5 bg-primary"></div>
+                )}
+              </Link>
+            </>
+          )}
+          {userRole === "user" && (
             <Link
               href="/become-trainer"
               className={`text-foreground hover:text-primary transition-colors text-sm font-medium relative pb-2 ${
@@ -211,22 +272,25 @@ const Navbar = () => {
 
         {/* AUTH BUTTONS & MOBILE MENU */}
         <div className="flex items-center gap-4" suppressHydrationWarning>
-          {/* Shopping Cart Icon */}
+          {/* Shopping Cart Icon & Notifications */}
           {isSignedIn && (
-            <Link href="/marketplace/cart" className="relative">
-              <Button
-                variant="ghost"
-                size="sm"
-                className="text-foreground hover:text-primary hover:bg-accent/10 p-2"
-              >
-                <ShoppingCart className="h-5 w-5" />
-                {cartSummary && cartSummary.totalItems > 0 && (
-                  <span className="absolute -top-1 -right-1 bg-primary text-primary-foreground text-xs rounded-full h-5 w-5 flex items-center justify-center font-bold">
-                    {cartSummary.totalItems > 9 ? "9+" : cartSummary.totalItems}
-                  </span>
-                )}
-              </Button>
-            </Link>
+            <>
+              <Link href="/marketplace/cart" className="relative">
+                <Button
+                  variant="tertiary"
+                  size="sm"
+                  className="text-white/90 hover:text-white hover:bg-white/10 p-2"
+                >
+                  <ShoppingCart className="h-5 w-5" />
+                  {cartSummary && cartSummary.totalItems > 0 && (
+                    <span className="absolute -top-1 -right-1 bg-primary text-primary-foreground text-xs rounded-full h-5 w-5 flex items-center justify-center font-bold">
+                      {cartSummary.totalItems > 9 ? "9+" : cartSummary.totalItems}
+                    </span>
+                  )}
+                </Button>
+              </Link>
+              <NotificationBell />
+            </>
           )}
 
           {/* Desktop Auth */}
@@ -241,26 +305,22 @@ const Navbar = () => {
                 </Link>
                 <UserButton
                   afterSignOutUrl="/"
-                  appearance={{
-                    elements: {
-                      avatarBox: "h-10 w-10",
-                    },
-                  }}
+                  appearance={clerkAppearance}
                 />
               </>
             ) : (
               <>
                 <SignInButton mode="modal">
                   <Button
-                    variant="ghost"
-                    className="text-foreground hover:text-primary border border-border hover:border-primary rounded-full px-6 py-2 transition-all duration-300 bg-transparent hover:bg-accent/10"
+                    variant="tertiary"
+                    className="text-white/90 hover:text-white border border-white/10 hover:border-white/20 rounded-full px-4 py-2 transition-all bg-white/10 hover:bg-white/15 backdrop-blur text-sm font-normal"
                   >
                     Login
                   </Button>
                 </SignInButton>
 
                 <SignUpButton mode="modal">
-                  <Button className="bg-primary hover:bg-primary/90 text-primary-foreground rounded-full px-6 py-2 font-semibold transition-all duration-300 shadow-lg hover:shadow-primary/25">
+                  <Button className="bg-zinc-100 hover:bg-white text-zinc-900 rounded-full px-4 py-2 font-medium transition-all hover:-translate-y-0.5 text-sm tracking-tight">
                     Sign Up
                   </Button>
                 </SignUpButton>
@@ -270,9 +330,9 @@ const Navbar = () => {
 
           {/* Mobile Menu Button */}
           <Button
-            variant="ghost"
+            variant="tertiary"
             size="sm"
-            className="lg:hidden text-foreground hover:text-primary p-2"
+            className="lg:hidden text-white/90 hover:text-white p-2"
             onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
           >
             {mobileMenuOpen ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
@@ -282,108 +342,193 @@ const Navbar = () => {
 
       {/* Mobile Navigation Menu */}
       {mobileMenuOpen && (
-        <div className="lg:hidden fixed inset-0 top-16 z-40">
-          <div className="bg-background border-b border-border shadow-lg">
-            <nav className="container mx-auto px-4 py-4 space-y-1 max-h-[calc(100vh-4rem)] overflow-y-auto">
-              {/* Navigation Links */}
-              <div className="space-y-1">
-                <Link
-                  href="/"
-                  className={`block py-3 px-4 text-sm font-medium transition-colors duration-200 ${
-                    pathname === "/" 
-                      ? "text-primary bg-red-50 dark:bg-red-950/30 rounded-md" 
-                      : "text-foreground hover:text-primary"
-                  }`}
-                  onClick={() => setMobileMenuOpen(false)}
-                >
-                  Home
-                </Link>
+        <div className="lg:hidden fixed inset-0 top-16 z-40 bg-black/95 backdrop-blur-xl">
+          <div className="flex flex-col h-full pt-6 pb-8 px-6">
+            <nav className="flex-1 space-y-6">
+              <Link
+                href="/"
+                className={`block text-2xl font-normal transition-colors ${
+                  pathname === "/" 
+                    ? "text-white" 
+                    : "text-white/80 hover:text-white"
+                }`}
+                onClick={() => setMobileMenuOpen(false)}
+              >
+                Home
+              </Link>
                 
-                <Link
-                  href="/generate-program"
-                  className={`block py-3 px-4 text-sm font-medium transition-colors duration-200 ${
-                    pathname === "/generate-program" 
-                      ? "text-primary bg-red-50 dark:bg-red-950/30 rounded-md" 
-                      : "text-foreground hover:text-primary"
-                  }`}
-                  onClick={() => setMobileMenuOpen(false)}
-                >
-                  AI Plan Generator
-                </Link>
-                
-                <Link
-                  href="/recipes"
-                  className={`block py-3 px-4 text-sm font-medium transition-colors duration-200 ${
-                    pathname === "/recipes" 
-                      ? "text-primary bg-red-50 dark:bg-red-950/30 rounded-md" 
-                      : "text-foreground hover:text-primary"
-                  }`}
-                  onClick={() => setMobileMenuOpen(false)}
-                >
-                  Recipes
-                </Link>
-                
-                <Link
-                  href="/membership"
-                  className={`block py-3 px-4 text-sm font-medium transition-colors duration-200 ${
-                    pathname === "/membership" 
-                      ? "text-primary bg-red-50 dark:bg-red-950/30 rounded-md" 
-                      : "text-foreground hover:text-primary"
-                  }`}
-                  onClick={() => setMobileMenuOpen(false)}
-                >
-                  Membership
-                </Link>
-                
-                <Link
-                  href="/trainer-booking"
-                  className={`block py-3 px-4 text-sm font-medium transition-colors duration-200 ${
-                    pathname === "/trainer-booking" 
-                      ? "text-primary bg-red-50 dark:bg-red-950/30 rounded-md" 
-                      : "text-foreground hover:text-primary"
-                  }`}
-                  onClick={() => setMobileMenuOpen(false)}
-                >
-                  Trainer Booking
-                </Link>
-                
-                <Link
-                  href="/blog"
-                  className={`block py-3 px-4 text-sm font-medium transition-colors duration-200 ${
-                    pathname.startsWith("/blog") 
-                      ? "text-primary bg-red-50 dark:bg-red-950/30 rounded-md" 
-                      : "text-foreground hover:text-primary"
-                  }`}
-                  onClick={() => setMobileMenuOpen(false)}
-                >
-                  Blog
-                </Link>
-                
-                <Link
-                  href="/marketplace"
-                  className={`block py-3 px-4 text-sm font-medium transition-colors duration-200 ${
-                    pathname === "/marketplace" 
-                      ? "text-primary bg-red-50 dark:bg-red-950/30 rounded-md" 
-                      : "text-foreground hover:text-primary"
-                  }`}
-                  onClick={() => setMobileMenuOpen(false)}
-                >
-                  Marketplace
-                </Link>
-              </div>
+              <Link
+                href="/generate-program"
+                className={`block text-2xl font-normal transition-colors ${
+                  pathname === "/generate-program" 
+                    ? "text-white" 
+                    : "text-white/80 hover:text-white"
+                }`}
+                onClick={() => setMobileMenuOpen(false)}
+              >
+                AI Plan Generator
+              </Link>
+              
+              <Link
+                href="/recipes"
+                className={`block text-2xl font-normal transition-colors ${
+                  pathname === "/recipes" 
+                    ? "text-white" 
+                    : "text-white/80 hover:text-white"
+                }`}
+                onClick={() => setMobileMenuOpen(false)}
+              >
+                Recipes
+              </Link>
+              
+              <Link
+                href="/membership"
+                className={`block text-2xl font-normal transition-colors ${
+                  pathname === "/membership" 
+                    ? "text-white" 
+                    : "text-white/80 hover:text-white"
+                }`}
+                onClick={() => setMobileMenuOpen(false)}
+              >
+                Membership
+              </Link>
+              
+              {isSignedIn && (
+                <>
+                  <Link
+                    href="/check-in"
+                    className={`block text-2xl font-normal transition-colors ${
+                      pathname === "/check-in" 
+                        ? "text-white" 
+                        : "text-white/80 hover:text-white"
+                    }`}
+                    onClick={() => setMobileMenuOpen(false)}
+                  >
+                    Check In
+                  </Link>
+                  
+                  <Link
+                    href="/equipment"
+                    className={`block text-2xl font-normal transition-colors ${
+                      pathname === "/equipment" 
+                        ? "text-white" 
+                        : "text-white/80 hover:text-white"
+                    }`}
+                    onClick={() => setMobileMenuOpen(false)}
+                  >
+                    Equipment
+                  </Link>
+                  
+                  <Link
+                    href="/classes"
+                    className={`block text-2xl font-normal transition-colors ${
+                      pathname === "/classes" 
+                        ? "text-white" 
+                        : "text-white/80 hover:text-white"
+                    }`}
+                    onClick={() => setMobileMenuOpen(false)}
+                  >
+                    Classes
+                  </Link>
+                  
+                  <Link
+                    href="/challenges"
+                    className={`block text-2xl font-normal transition-colors ${
+                      pathname === "/challenges" 
+                        ? "text-white" 
+                        : "text-white/80 hover:text-white"
+                    }`}
+                    onClick={() => setMobileMenuOpen(false)}
+                  >
+                    Challenges
+                  </Link>
+                  
+                  <Link
+                    href="/achievements"
+                    className={`block text-2xl font-normal transition-colors ${
+                      pathname === "/achievements" 
+                        ? "text-white" 
+                        : "text-white/80 hover:text-white"
+                    }`}
+                    onClick={() => setMobileMenuOpen(false)}
+                  >
+                    Achievements
+                  </Link>
+                  
+                  <Link
+                    href="/community"
+                    className={`block text-2xl font-normal transition-colors ${
+                      pathname === "/community" 
+                        ? "text-white" 
+                        : "text-white/80 hover:text-white"
+                    }`}
+                    onClick={() => setMobileMenuOpen(false)}
+                  >
+                    Community
+                  </Link>
+                  
+                  <Link
+                    href="/engagement"
+                    className={`block text-2xl font-normal transition-colors ${
+                      pathname === "/engagement" 
+                        ? "text-white" 
+                        : "text-white/80 hover:text-white"
+                    }`}
+                    onClick={() => setMobileMenuOpen(false)}
+                  >
+                    Analytics
+                  </Link>
+                </>
+              )}
+              
+              <Link
+                href="/trainer-booking"
+                className={`block text-2xl font-normal transition-colors ${
+                  pathname === "/trainer-booking" 
+                    ? "text-white" 
+                    : "text-white/80 hover:text-white"
+                }`}
+                onClick={() => setMobileMenuOpen(false)}
+              >
+                Trainer Booking
+              </Link>
+              
+              <Link
+                href="/blog"
+                className={`block text-2xl font-normal transition-colors ${
+                  pathname.startsWith("/blog") 
+                    ? "text-white" 
+                    : "text-white/80 hover:text-white"
+                }`}
+                onClick={() => setMobileMenuOpen(false)}
+              >
+                Blog
+              </Link>
+              
+              <Link
+                href="/marketplace"
+                className={`block text-2xl font-normal transition-colors ${
+                  pathname === "/marketplace" 
+                    ? "text-white" 
+                    : "text-white/80 hover:text-white"
+                }`}
+                onClick={() => setMobileMenuOpen(false)}
+              >
+                Marketplace
+              </Link>
 
               {/* Role-based navigation */}
               {(userRole === "admin" || userRole === "trainer" || userRole === "user") && (
                 <>
-                  <div className="h-px bg-border my-3"></div>
-                  <div className="space-y-1">
+                  <div className="h-px bg-white/10 my-6"></div>
+                  <div className="space-y-4">
                     {userRole === "admin" && (
                       <Link
                         href="/admin"
-                        className={`block py-3 px-4 text-sm font-medium transition-colors duration-200 ${
+                        className={`block text-xl font-normal transition-colors ${
                           pathname.startsWith("/admin") 
-                            ? "text-primary bg-red-50 dark:bg-red-950/30 rounded-md" 
-                            : "text-primary hover:bg-red-50/50 dark:hover:bg-red-950/20"
+                            ? "text-white" 
+                            : "text-white/80 hover:text-white"
                         }`}
                         onClick={() => setMobileMenuOpen(false)}
                       >
@@ -394,10 +539,10 @@ const Navbar = () => {
                     {(userRole === "trainer" || userRole === "admin") && (
                       <Link
                         href="/trainer"
-                        className={`block py-3 px-4 text-sm font-medium transition-colors duration-200 ${
+                        className={`block text-xl font-normal transition-colors ${
                           pathname === "/trainer" || pathname.startsWith("/trainer/")
-                            ? "text-secondary bg-orange-50 dark:bg-orange-950/30 rounded-md" 
-                            : "text-secondary hover:bg-orange-50/50 dark:hover:bg-orange-950/20"
+                            ? "text-white" 
+                            : "text-white/80 hover:text-white"
                         }`}
                         onClick={() => setMobileMenuOpen(false)}
                       >
@@ -408,10 +553,10 @@ const Navbar = () => {
                     {userRole === "user" && (
                       <Link
                         href="/become-trainer"
-                        className={`block py-3 px-4 text-sm font-medium transition-colors duration-200 ${
+                        className={`block text-xl font-normal transition-colors ${
                           pathname === "/become-trainer" 
-                            ? "text-primary bg-red-50 dark:bg-red-950/30 rounded-md" 
-                            : "text-foreground hover:text-primary"
+                            ? "text-white" 
+                            : "text-white/80 hover:text-white"
                         }`}
                         onClick={() => setMobileMenuOpen(false)}
                       >
@@ -423,18 +568,18 @@ const Navbar = () => {
               )}
 
               {/* Mobile Auth Section */}
-              <div className="pt-3 border-t border-border">
+              <div className="pt-8 border-t border-white/10 mt-6">
                 {isSignedIn ? (
                   <>
                     <Link
                       href="/profile"
-                      className="block py-3 px-4 text-sm font-medium text-foreground hover:text-primary transition-colors duration-200"
+                      className="block text-lg font-normal text-white/80 hover:text-white transition-colors mb-4"
                       onClick={() => setMobileMenuOpen(false)}
                     >
                       Profile
                     </Link>
                     
-                    <div className="flex items-center gap-3 py-3 px-4">
+                    <div className="flex items-center gap-3">
                       <UserButton
                         afterSignOutUrl="/"
                         appearance={{
@@ -443,15 +588,15 @@ const Navbar = () => {
                           },
                         }}
                       />
-                      <span className="text-sm text-muted-foreground">Account Settings</span>
+                      <span className="text-sm text-white/60">Account Settings</span>
                     </div>
                   </>
                 ) : (
-                  <div className="space-y-2">
+                  <div className="space-y-3">
                     <SignInButton mode="modal">
                       <Button
-                        variant="ghost"
-                        className="w-full justify-center text-sm text-foreground hover:text-primary border border-border hover:border-primary rounded-md px-4 py-3 transition-colors duration-200"
+                        variant="tertiary"
+                        className="w-full justify-center text-sm text-white/90 hover:text-white border border-white/10 hover:border-white/20 rounded-full px-6 py-3 transition-all bg-white/10 hover:bg-white/15 backdrop-blur"
                         onClick={() => setMobileMenuOpen(false)}
                       >
                         Login
@@ -460,7 +605,7 @@ const Navbar = () => {
 
                     <SignUpButton mode="modal">
                       <Button
-                        className="w-full text-sm bg-primary hover:bg-primary/90 text-primary-foreground rounded-md px-4 py-3 font-medium transition-colors duration-200"
+                        className="w-full text-sm bg-zinc-100 hover:bg-white text-zinc-900 rounded-full px-6 py-3 font-medium transition-all hover:-translate-y-0.5 tracking-tight"
                         onClick={() => setMobileMenuOpen(false)}
                       >
                         Sign Up

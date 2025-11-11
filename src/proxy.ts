@@ -5,15 +5,31 @@ const isProtectedRoute = createRouteMatcher([
   "/profile", 
   "/admin(.*)", 
   "/trainer(.*)", 
-  "/become-trainer"
+  "/become-trainer",
+  // S-Tier Feature Routes - require authentication
+  "/check-in",
+  "/achievements",
+  "/challenges",
+  "/equipment",
+  "/classes",
+  "/community",
+  "/engagement",
+  "/notifications"
 ]);
 
 /**
- * Next.js 16 Proxy Handler
- * Replaces middleware.ts with proxy.ts for better performance and Next.js 16 compatibility
+ * Next.js 16 Proxy Handler (Edge Runtime Optimized)
  * 
- * Note: Clerk's clerkMiddleware still works with Next.js 16, but using proxy.ts
- * follows the new convention and provides better type safety.
+ * Optimized for Vercel Edge Network:
+ * - Runs on Edge Runtime for lowest latency
+ * - Minimal dependencies
+ * - Fast route matching
+ * - Proper caching headers
+ * 
+ * Best Practices:
+ * - Use edge runtime for authentication middleware
+ * - Cache static route checks
+ * - Minimize external API calls
  */
 export default clerkMiddleware(async (auth, req) => {
   // Protect routes that require authentication
@@ -25,9 +41,11 @@ export default clerkMiddleware(async (auth, req) => {
 export const config = {
   matcher: [
     // Skip Next.js internals and all static files, unless found in search params
-    "/((?!_next|[^?]*\\.(?:html?|css|js(?!on)|jpe?g|webp|png|gif|svg|ttf|woff2?|ico|csv|docx?|xlsx?|zip|webmanifest)).*)",
+    // Note: manifest.json is handled by Next.js automatically, so we exclude it
+    "/((?!_next|[^?]*\\.(?:html?|css|js(?!on)|jpe?g|webp|png|gif|svg|ttf|woff2?|ico|csv|docx?|xlsx?|zip|webmanifest|json)).*)",
     // Always run for API routes
     "/(api|trpc)(.*)",
   ],
+  // Clerk middleware automatically runs on Edge Runtime for optimal performance
 };
 

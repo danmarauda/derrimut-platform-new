@@ -316,7 +316,7 @@ const DietPlansPage = () => {
                     <div className="flex gap-4">
                       <Button 
                         onClick={() => downloadDietPlan(currentPlan)}
-                        variant="outline"
+                        variant="secondary"
                         className="border-primary/30 text-primary hover:bg-primary/10"
                       >
                         <Download className="h-4 w-4 mr-2" />

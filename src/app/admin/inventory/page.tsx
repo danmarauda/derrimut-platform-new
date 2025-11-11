@@ -231,7 +231,7 @@ export default function InventoryPage() {
           <div className="flex gap-2">
             <Button
               onClick={handleExportInventory}
-              variant="outline"
+              variant="secondary"
               className="border-border text-foreground hover:bg-accent"
             >
               <Download className="h-4 w-4 mr-2" />
@@ -527,7 +527,7 @@ export default function InventoryPage() {
                           <div className="flex items-center gap-1">
                             <Button
                               size="sm"
-                              variant="outline"
+                              variant="secondary"
                               className="h-8 w-8 p-0 border-border hover:bg-accent"
                               onClick={() => {
                                 setEditingItem(item);
@@ -541,7 +541,7 @@ export default function InventoryPage() {
                               <>
                                 <Button
                                   size="sm"
-                                  variant="outline"
+                                  variant="secondary"
                                   className="h-8 px-2 text-xs border-green-500 text-green-600 hover:bg-green-50"
                                   onClick={() => handleQuickAction(item._id, "check_out")}
                                 >
@@ -549,7 +549,7 @@ export default function InventoryPage() {
                                 </Button>
                                 <Button
                                   size="sm"
-                                  variant="outline"
+                                  variant="secondary"
                                   className="h-8 px-2 text-xs border-yellow-500 text-yellow-600 hover:bg-yellow-50"
                                   onClick={() => handleQuickAction(item._id, "maintenance")}
                                 >
@@ -561,7 +561,7 @@ export default function InventoryPage() {
                             {item.inUseQuantity > 0 && (
                               <Button
                                 size="sm"
-                                variant="outline"
+                                variant="secondary"
                                 className="h-8 px-2 text-xs border-blue-500 text-blue-600 hover:bg-blue-50"
                                 onClick={() => handleQuickAction(item._id, "check_in")}
                               >
@@ -571,7 +571,7 @@ export default function InventoryPage() {
 
                             <Button
                               size="sm"
-                              variant="outline"
+                              variant="secondary"
                               className="h-8 w-8 p-0 border-red-500 text-red-600 hover:bg-red-50"
                               onClick={() => handleDelete(item._id)}
                             >

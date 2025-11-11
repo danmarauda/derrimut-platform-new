@@ -27,9 +27,7 @@ Sentry.init({
   // Integration configuration
   integrations: [
     // HTTP integration for tracking HTTP requests
-    Sentry.httpIntegration({
-      failedRequestStatusCodes: [[400, 599]],
-    }),
+    Sentry.httpIntegration(),
     // Note: nodeProfilingIntegration() disabled - not compatible with Turbopack in Next.js 15.2.4
     // Re-enable after upgrading to Next.js 15.4.1+
   ],

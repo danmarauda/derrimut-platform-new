@@ -1,8 +1,9 @@
 "use client";
 
-import { ClerkProvider, useAuth, useOrganization, useOrganizationList } from "@clerk/nextjs";
+import { ClerkProvider, useAuth } from "@clerk/nextjs";
 import { ConvexReactClient } from "convex/react";
 import { ConvexProviderWithClerk } from "convex/react-clerk";
+import { clerkAppearance } from "@/lib/clerk-appearance";
 
 const convexUrl =
   process.env.NEXT_PUBLIC_CONVEX_URL ??
@@ -19,19 +20,11 @@ function ConvexClerkProvider({ children }: { children: React.ReactNode }) {
     <ClerkProvider 
       publishableKey={process.env.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY!}
       afterSignOutUrl="/"
-      // Enable Organizations for location/franchise management
-      organization={{
-        // Allow users to create organizations (locations/franchises)
-        allowOrganizationCreation: true,
-        // Maximum number of organizations a user can create
-        maxAllowedMemberships: 1, // Users can only be admin of one location
-      }}
+      appearance={clerkAppearance}
     >
       <ConvexProviderWithClerk 
         client={convex} 
         useAuth={useAuth}
-        useOrganization={useOrganization}
-        useOrganizationList={useOrganizationList}
       >
         {children}
       </ConvexProviderWithClerk>

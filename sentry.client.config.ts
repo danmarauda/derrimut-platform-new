@@ -37,19 +37,10 @@ Sentry.init({
     }),
 
     // Browser tracing for performance monitoring
-    Sentry.browserTracingIntegration({
-      // Tracing Origins
-      tracePropagationTargets: [
-        'localhost',
-        /^https:\/\/derrimut\.aliaslabs\.ai/,
-        /^https:\/\/.*\.convex\.cloud/,
-      ],
-    }),
+    Sentry.browserTracingIntegration(),
 
     // HTTP client integration
-    Sentry.httpClientIntegration({
-      failedRequestStatusCodes: [[400, 599]], // Report failed requests
-    }),
+    Sentry.httpClientIntegration(),
   ],
 
   // Error filtering
@@ -120,12 +111,6 @@ Sentry.init({
 
   // Debug mode (only in development)
   debug: SENTRY_ENVIRONMENT === 'development',
-
-  // Enable auto session tracking
-  autoSessionTracking: true,
-
-  // Send client reports
-  sendClientReports: true,
 });
 
 // Export Sentry for use in components

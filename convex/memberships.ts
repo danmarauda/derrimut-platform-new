@@ -16,14 +16,32 @@ export const getMembershipPlans = query({
   },
 });
 
-// Get user's current membership
-export const getUserMembership = query({
-  args: { clerkId: v.string() },
+// Get membership plan by type
+export const getMembershipPlanByType = query({
+  args: { membershipType: v.union(
+    v.literal("18-month-minimum"),
+    v.literal("12-month-minimum"),
+    v.literal("no-lock-in"),
+    v.literal("12-month-upfront")
+  ) },
+  handler: async (ctx, args) => {
+    const plan = await ctx.db
+      .query("membershipPlans")
+      .withIndex("by_type", (q) => q.eq("type", args.membershipType))
+      .filter((q) => q.eq(q.field("isActive"), true))
+      .first();
+    
+    return plan;
+  },
+});
+
+// Get membership by Stripe subscription ID
+export const getMembershipBySubscriptionId = query({
+  args: { stripeSubscriptionId: v.string() },
   handler: async (ctx, args) => {
     const membership = await ctx.db
       .query("memberships")
-      .withIndex("by_clerk_id", (q) => q.eq("clerkId", args.clerkId))
-      .filter((q) => q.eq(q.field("status"), "active"))
+      .withIndex("by_subscription", (q) => q.eq("stripeSubscriptionId", args.stripeSubscriptionId))
       .first();
     
     return membership;
@@ -87,6 +105,15 @@ export const upsertMembership = mutation({
         cancelAtPeriodEnd: false,
         updatedAt: Date.now(),
       });
+      
+      // Convert referral if user was referred (only if status changed to active)
+      const user = await ctx.db.get(args.userId);
+      if (user && (user.referredBy || user.referralCodeUsed)) {
+        await ctx.scheduler.runAfter(0, api.referrals.convertReferral, {
+          refereeClerkId: args.clerkId,
+        });
+      }
+      
       return existingBySubscription._id;
     }
 
@@ -119,6 +146,14 @@ export const upsertMembership = mutation({
       createdAt: Date.now(),
       updatedAt: Date.now(),
     });
+
+    // Convert referral if user was referred
+    const user = await ctx.db.get(args.userId);
+    if (user && (user.referredBy || user.referralCodeUsed)) {
+      await ctx.scheduler.runAfter(0, api.referrals.convertReferral, {
+        refereeClerkId: args.clerkId,
+      });
+    }
 
     return membershipId;
   },
@@ -207,6 +242,14 @@ export const createMembership = mutation({
       createdAt: Date.now(),
       updatedAt: Date.now(),
     });
+
+    // Convert referral if user was referred
+    const user = await ctx.db.get(args.userId);
+    if (user && (user.referredBy || user.referralCodeUsed)) {
+      await ctx.scheduler.runAfter(0, api.referrals.convertReferral, {
+        refereeClerkId: args.clerkId,
+      });
+    }
 
     return membershipId;
   },
@@ -679,6 +722,13 @@ export const createMembershipFromSession = mutation({
         updatedAt: Date.now(),
       });
 
+      // Convert referral if user was referred
+      if (user.referredBy || user.referralCodeUsed) {
+        await ctx.scheduler.runAfter(0, api.referrals.convertReferral, {
+          refereeClerkId: args.clerkId,
+        });
+      }
+
       console.log("✅ Membership created from session:", membershipId);
       return await ctx.db.get(membershipId);
 
@@ -717,6 +767,22 @@ export const checkExpiredMemberships = mutation({
 
     console.log(`🕐 Updated ${updatedCount} expired memberships`);
     return { updatedCount, expiredMemberships: expiredMemberships.length };
+  },
+});
+
+// Update membership type and price (for tier changes)
+export const updateMembershipType = mutation({
+  args: {
+    membershipId: v.id("memberships"),
+    membershipType: v.string(),
+    stripePriceId: v.string(),
+  },
+  handler: async (ctx, args) => {
+    await ctx.db.patch(args.membershipId, {
+      membershipType: args.membershipType,
+      stripePriceId: args.stripePriceId,
+      updatedAt: Date.now(),
+    });
   },
 });
 

@@ -9,6 +9,7 @@
   --color-foreground: var(--foreground);
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
+  --font-inter: var(--font-inter);
   --color-sidebar-ring: var(--sidebar-ring);
   --color-sidebar-border: var(--sidebar-border);
   --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
@@ -108,65 +109,81 @@
   --sidebar-accent-foreground: #ffffff;
   --sidebar-border: #cbd5e1;
   --sidebar-ring: var(--gym-red);
+
+  /* RGB versions for rgba() usage in gradients */
+  --primary-rgb: 220, 38, 38;        /* gym-red */
+  --secondary-rgb: 234, 88, 12;      /* gym-orange */
+  --foreground-rgb: 0, 0, 0;         /* black */
+  --background-rgb: 255, 255, 255;   /* white */
 }
 
 .dark {
-  /* Dark Gym Theme Colors */
+  /* Premium Dark Theme Colors - Based on reference design system */
   --gym-black: #000000;
-  --gym-dark: #0a0a0a;
+  --gym-dark: #0a0a0a; /* neutral-950 */
   --gym-gray: #1f2937;
   --gym-gray-light: #374151;
   --gym-gray-lighter: #4b5563;
   --gym-gray-subtle: #1a1a1a;
 
-  /* Dark Theme Background */
-  --background: var(--gym-black);
+  /* Dark Theme Background - Premium dark */
+  --background: #0a0a0a; /* neutral-950 */
   --foreground: #ffffff;
 
-  /* Card and popover elements */
-  --card: #1a1a1a;
+  /* Card and popover elements - Glassmorphic */
+  --card: rgba(255, 255, 255, 0.05); /* bg-white/5 */
   --card-foreground: #ffffff;
-  --popover: #1a1a1a;
+  --popover: rgba(255, 255, 255, 0.05);
   --popover-foreground: #ffffff;
 
-  /* Primary - Red */
-  --primary: var(--gym-red);
+  /* Primary - Removed brand colors, using neutral for compatibility */
+  --primary: rgba(255, 255, 255, 0.10); /* Neutral glassmorphic for compatibility */
   --primary-foreground: #ffffff;
 
-  /* Secondary - Orange */
-  --secondary: var(--gym-orange);
+  /* Secondary - Removed brand colors, using neutral for compatibility */
+  --secondary: rgba(255, 255, 255, 0.15); /* Neutral glassmorphic for compatibility */
   --secondary-foreground: #ffffff;
 
-  /* Accent - Subtle gray for better dark theme integration */
-  --accent: #262626;
+  /* Accent - Subtle glassmorphic */
+  --accent: rgba(255, 255, 255, 0.05);
   --accent-foreground: #ffffff;
 
-  /* Muted elements */
-  --muted: #404040;
-  --muted-foreground: #d1d5db;
+  /* Muted elements - Premium opacity levels */
+  --muted: rgba(255, 255, 255, 0.1); /* border-white/10 */
+  --muted-foreground: rgba(255, 255, 255, 0.6); /* text-white/60 */
 
   /* System colors */
   --destructive: #f87171;
-  --border: rgba(220, 38, 38, 0.3);
-  --input: rgba(220, 38, 38, 0.3);
-  --ring: var(--gym-red);
+  --border: rgba(255, 255, 255, 0.1); /* border-white/10 */
+  --input: rgba(255, 255, 255, 0.1);
+  --ring: rgba(255, 255, 255, 0.6); /* focus ring */
 
-  /* Chart colors - dark theme */
-  --chart-1: var(--gym-red);
-  --chart-2: var(--gym-orange);
-  --chart-3: var(--gym-red-bright);
-  --chart-4: var(--gym-orange-bright);
-  --chart-5: #f97316;
+  /* Chart colors - dark theme (neutral palette) */
+  --chart-1: rgba(255, 255, 255, 0.8);   /* White with opacity */
+  --chart-2: rgba(255, 255, 255, 0.6);   /* White with opacity */
+  --chart-3: rgba(255, 255, 255, 0.4);   /* White with opacity */
+  --chart-4: rgba(255, 255, 255, 0.3);   /* White with opacity */
+  --chart-5: rgba(52, 211, 153, 0.8);    /* Emerald accent */
 
-  /* Sidebar colors */
-  --sidebar: #1a1a1a;
+  /* Sidebar colors - Premium dark */
+  --sidebar: rgba(255, 255, 255, 0.05);
   --sidebar-foreground: #ffffff;
-  --sidebar-primary: var(--gym-red);
+  --sidebar-primary: rgba(255, 255, 255, 0.10); /* Neutral instead of red */
   --sidebar-primary-foreground: #ffffff;
-  --sidebar-accent: var(--gym-orange);
+  --sidebar-accent: rgba(255, 255, 255, 0.1);
   --sidebar-accent-foreground: #ffffff;
-  --sidebar-border: rgba(220, 38, 38, 0.3);
-  --sidebar-ring: var(--gym-red);
+  --sidebar-border: rgba(255, 255, 255, 0.1);
+  --sidebar-ring: rgba(255, 255, 255, 0.6);
+
+  /* RGB versions for rgba() usage in gradients (dark mode) */
+  --primary-rgb: 255, 255, 255;      /* white (neutral) */
+  --secondary-rgb: 255, 255, 255;    /* white (neutral) */
+  --foreground-rgb: 255, 255, 255;   /* white */
+  --background-rgb: 10, 10, 10;      /* neutral-950 */
+  
+  /* Emerald accent colors for success states */
+  --emerald-500: 16, 185, 129;       /* RGB for emerald-500 */
+  --emerald-400: 52, 211, 153;       /* RGB for emerald-400 */
 }
 
 @layer base {
@@ -174,12 +191,46 @@
     @apply border-border outline-ring/50;
   }
   body {
-    @apply bg-background text-foreground;
+    @apply bg-background text-foreground antialiased;
   }
   /* https://tailwindcss.com/docs/upgrade-guide#buttons-use-the-default-cursor */
   button:not(:disabled),
   [role="button"]:not(:disabled) {
     cursor: pointer;
+  }
+}
+
+@layer components {
+  /* Border Gradient Effect - Premium glassmorphic border */
+  .border-gradient {
+    position: relative;
+  }
+
+  .border-gradient::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
+    padding: 1px;
+    -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+    -webkit-mask-composite: xor;
+    mask-composite: exclude;
+    background: linear-gradient(225deg, rgba(255, 255, 255, 0.0) 0%, rgba(255, 255, 255, 0.2) 50%, rgba(255, 255, 255, 0.0) 100%);
+    pointer-events: none;
+  }
+
+  /* Focus Visible Ring - Premium styling */
+  .focus-visible-ring {
+    @apply focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/60 focus-visible:ring-offset-2 focus-visible:ring-offset-neutral-950;
+  }
+
+  /* Scroll Animation Utility */
+  .animate-on-scroll {
+    animation-play-state: paused !important;
+  }
+
+  .animate-on-scroll.animate {
+    animation-play-state: running !important;
   }
 }
 
@@ -236,6 +287,33 @@
 
 .animate-fadeIn {
   animation: fadeIn 0.5s ease-in-out forwards;
+}
+
+/* Premium Design System Animations */
+@keyframes fadeSlideIn {
+  0% {
+    opacity: 0;
+    transform: translateY(30px);
+    filter: blur(8px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+    filter: blur(0px);
+  }
+}
+
+@keyframes scrollBlur {
+  from {
+    filter: blur(0px);
+  }
+  to {
+    filter: blur(100px);
+  }
+}
+
+.animate-fade-slide-in {
+  animation: fadeSlideIn 1s ease-out forwards;
 }
 
 /* Price Range Slider Styles */

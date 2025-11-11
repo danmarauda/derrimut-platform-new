@@ -19,7 +19,22 @@ import {
   Menu,
   X,
   PanelLeftOpen,
-  PanelLeftClose
+  PanelLeftClose,
+  Users,
+  Coins,
+  Sparkles,
+  Share2,
+  TrendingUp,
+  Camera,
+  UtensilsCrossed,
+  Video,
+  Watch,
+  MessageSquare,
+  Gift,
+  Radio,
+  Webhook,
+  BarChart3,
+  FileText
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useState, useEffect } from "react";
@@ -59,6 +74,22 @@ export function UserLayout({
     { href: "/profile/fitness-plans", icon: Dumbbell, label: "Workout Plans", active: pathname === "/profile/fitness-plans" },
     { href: "/profile/diet-plans", icon: Apple, label: "Diet Plans", active: pathname === "/profile/diet-plans" },
     { href: "/profile/training-sessions", icon: Activity, label: "Training Sessions", active: pathname === "/profile/training-sessions" },
+    { href: "/profile/referrals", icon: Users, label: "Referrals", active: pathname === "/profile/referrals" },
+    { href: "/profile/loyalty", icon: Coins, label: "Loyalty Points", active: pathname === "/profile/loyalty" },
+    { href: "/profile/friends", icon: Users, label: "Friends", active: pathname === "/profile/friends" },
+    { href: "/groups", icon: Users, label: "Groups", active: pathname === "/groups" },
+    { href: "/events", icon: Calendar, label: "Events", active: pathname === "/events" },
+    { href: "/profile/group-workouts", icon: Activity, label: "Group Workouts", active: pathname === "/profile/group-workouts" },
+    { href: "/profile/recommendations", icon: Sparkles, label: "Recommendations", active: pathname === "/profile/recommendations" },
+    { href: "/profile/social-sharing", icon: Share2, label: "Share", active: pathname === "/profile/social-sharing" },
+    { href: "/profile/progress", icon: TrendingUp, label: "Progress", active: pathname === "/profile/progress" },
+    { href: "/profile/nutrition", icon: UtensilsCrossed, label: "Nutrition", active: pathname === "/profile/nutrition" },
+    { href: "/profile/workouts", icon: Dumbbell, label: "Workouts", active: pathname === "/profile/workouts" },
+    { href: "/profile/videos", icon: Video, label: "Video Library", active: pathname === "/profile/videos" },
+    { href: "/profile/wearables", icon: Watch, label: "Wearables", active: pathname === "/profile/wearables" },
+    { href: "/messages", icon: MessageSquare, label: "Messages", active: pathname === "/messages" },
+    { href: "/profile/gift-cards", icon: Gift, label: "Gift Cards", active: pathname === "/profile/gift-cards" },
+    { href: "/live-streams", icon: Radio, label: "Live Streams", active: pathname === "/live-streams" },
     { href: "/reviews", icon: Star, label: "Reviews", active: pathname === "/reviews" },
     { href: "/profile/orders", icon: Package, label: "Orders", active: pathname === "/profile/orders" },
     { href: "/profile/payment-slips", icon: Receipt, label: "Payment Slips", active: pathname === "/profile/payment-slips" },
@@ -99,7 +130,7 @@ export function UserLayout({
       <div className="lg:hidden relative z-20 pt-20 pb-4 px-4">
         <div className="flex items-center gap-4">
           <Button
-            variant="ghost"
+            variant="tertiary"
             size="sm"
             onClick={() => setSidebarOpen(!sidebarOpen)}
             className="p-2 h-10 w-10 flex-shrink-0"

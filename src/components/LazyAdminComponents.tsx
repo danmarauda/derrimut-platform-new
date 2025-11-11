@@ -6,13 +6,18 @@
 import { lazy } from 'react';
 
 // Admin Dashboard Components
-export const AdminLayout = lazy(() => import('@/components/AdminLayout'));
-export const RoleGuard = lazy(() => import('@/components/RoleGuard'));
+// Note: AdminLayout and RoleGuard are named exports, not default exports
+// Import them directly instead of using lazy()
+export { AdminLayout } from '@/components/AdminLayout';
+export { RoleGuard } from '@/components/RoleGuard';
 
 // Heavy UI Components
-export const RichTextEditor = lazy(() => import('@/components/ui/RichTextEditor'));
+// RichTextEditor is a named export
+export const RichTextEditor = lazy(() => import('@/components/ui/RichTextEditor').then(mod => ({ default: mod.RichTextEditor })));
+// LeafletMap is a default export
 export const LeafletMap = lazy(() => import('@/components/LeafletMap'));
-export const InventoryModal = lazy(() => import('@/components/InventoryModal'));
+// InventoryModal is a named export
+export const InventoryModal = lazy(() => import('@/components/InventoryModal').then(mod => ({ default: mod.InventoryModal })));
 
 // Admin Feature Pages (lazy load entire page components)
 export const AdminSalaryPage = lazy(() => import('@/app/admin/salary/page'));
