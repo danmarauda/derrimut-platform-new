@@ -277,9 +277,10 @@ export default function EventsPage() {
                           </div>
                         </div>
                       </div>
-                    </CardContent>
-                  </Card>
-                ))}
+                        </CardContent>
+                      </Card>
+                    </Link>
+                  ))}
               </div>
             ) : (
               <div className="text-center py-12 text-white/60">

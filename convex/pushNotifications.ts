@@ -176,9 +176,9 @@ export const sendPushNotification = action({
       v.literal("social")
     ),
   },
-  handler: async (ctx, args) => {
+  handler: async (ctx, args): Promise<{ sent: number; message?: string }> => {
     // Get user's active push subscriptions
-    const subscriptions = await ctx.runQuery(api.pushNotifications.getUserPushSubscriptionsForAction, {
+    const subscriptions: any[] = await ctx.runQuery(api.pushNotifications.getUserPushSubscriptionsForAction, {
       clerkId: args.clerkId,
     });
 
@@ -187,7 +187,7 @@ export const sendPushNotification = action({
     }
 
     // Check preferences for this notification type
-    const preferenceMap: Record<string, keyof typeof subscriptions[0]["preferences"]> = {
+    const preferenceMap: Record<string, string> = {
       achievement: "achievements",
       challenge: "challenges",
       class_reminder: "classReminders",
@@ -203,7 +203,7 @@ export const sendPushNotification = action({
 
     // Filter subscriptions based on preferences
     const eligibleSubscriptions = subscriptions.filter(
-      (sub) => sub.preferences[preferenceKey] === true
+      (sub: any) => sub.preferences[preferenceKey] === true
     );
 
     if (eligibleSubscriptions.length === 0) {
@@ -263,8 +263,7 @@ export const sendPushNotification = action({
 
     return {
       sent: sentCount,
-      total: eligibleSubscriptions.length,
-      errors: errors.length > 0 ? errors : undefined,
+      message: errors.length > 0 ? `Some notifications failed: ${errors.join(", ")}` : undefined,
     };
   },
 });
@@ -301,9 +300,9 @@ export const createNotificationWithPush = mutation({
     link: v.optional(v.string()),
     sendPush: v.optional(v.boolean()),
   },
-  handler: async (ctx, args) => {
+  handler: async (ctx, args): Promise<string> => {
     // Create in-app notification
-    const notificationId = await ctx.runMutation(api.notifications.createNotification, {
+    const notificationId: string = await ctx.runMutation(api.notifications.createNotification, {
       userId: args.userId,
       clerkId: args.clerkId,
       type: args.type,

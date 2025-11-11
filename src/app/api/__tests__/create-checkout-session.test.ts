@@ -8,30 +8,35 @@ import { POST } from '../create-checkout-session/route';
 import { NextRequest } from 'next/server';
 import Stripe from 'stripe';
 
-// Mock Stripe
+const { mockStripeCreate } = vi.hoisted(() => {
+  const mockStripeCreate = vi.fn();
+  return { mockStripeCreate };
+});
+
 vi.mock('stripe', () => {
   return {
-    default: vi.fn().mockImplementation(() => ({
-      checkout: {
-        sessions: {
-          create: vi.fn(),
-        },
-      },
-    })),
+    default: class {
+      constructor(secretKey?: string, options?: any) {
+        return {
+          checkout: {
+            sessions: {
+              create: mockStripeCreate,
+            },
+          },
+        };
+      }
+    }
   };
 });
 
 describe('POST /api/create-checkout-session', () => {
-  let mockStripeCreate: ReturnType<typeof vi.fn>;
   let mockRequest: Partial<NextRequest>;
 
-  beforeEach(() => {
+beforeEach(() => {
     vi.clearAllMocks();
-
-    // Get the mocked Stripe instance
-    const StripeConstructor = Stripe as any;
-    const stripeInstance = new StripeConstructor();
-    mockStripeCreate = stripeInstance.checkout.sessions.create;
+    
+    // Ensure production mode for security (hide error details)
+    vi.stubEnv('NODE_ENV', 'production');
 
     // Setup mock request
     mockRequest = {
@@ -209,7 +214,8 @@ describe('POST /api/create-checkout-session', () => {
 
       expect(response.status).toBe(500);
       expect(data.error).toBe('Internal server error');
-      expect(data.details).toBe('Invalid price ID');
+      // In production, error details are hidden
+      expect(data.details).toBeUndefined();
     });
 
     it('should handle network errors', async () => {
@@ -285,7 +291,8 @@ describe('POST /api/create-checkout-session', () => {
       const response = await POST(mockRequest as NextRequest);
       const data = await response.json();
 
-      expect(data.details).not.toContain('sk_live');
+      // In production, error details should be hidden
+      expect(data.details).toBeUndefined();
     });
 
     it('should include metadata for webhook processing', async () => {

@@ -14,6 +14,8 @@ export default defineSchema({
     referralCode: v.optional(v.string()), // Unique referral code for this user
     referredBy: v.optional(v.id("users")), // User who referred this user
     referralCodeUsed: v.optional(v.string()), // The referral code they used when signing up
+    phoneNumber: v.optional(v.string()), // User's phone number for SMS
+    timezone: v.optional(v.string()), // User's timezone (e.g., "Australia/Melbourne")
     createdAt: v.optional(v.number()),
     updatedAt: v.optional(v.number()),
   })
@@ -1446,4 +1448,519 @@ export default defineSchema({
     .index("by_clerk", ["clerkId"])
     .index("by_type", ["type"])
     .index("by_converted", ["convertedAt"]),
+
+  // Special Offers & Promotions
+  specialOffers: defineTable({
+    title: v.string(),
+    description: v.string(),
+    discountCode: v.optional(v.string()),
+    discountPercent: v.optional(v.number()),
+    discountAmount: v.optional(v.number()),
+    validUntil: v.number(), // Timestamp
+    link: v.optional(v.string()),
+    imageUrl: v.optional(v.string()),
+    targetAudience: v.union(
+      v.literal("all"),
+      v.literal("active_members"),
+      v.literal("inactive_members"),
+      v.literal("new_members")
+    ),
+    status: v.union(v.literal("active"), v.literal("expired"), v.literal("cancelled")),
+    sentCount: v.number(),
+    openedCount: v.number(),
+    clickedCount: v.number(),
+    createdAt: v.number(),
+    createdBy: v.id("users"),
+  })
+    .index("by_status", ["status"])
+    .index("by_valid_until", ["validUntil"])
+    .index("by_created", ["createdAt"]),
+
+  // Group Chat Messages
+  groupMessages: defineTable({
+    groupId: v.id("groups"),
+    userId: v.id("users"),
+    clerkId: v.string(),
+    message: v.string(),
+    imageUrl: v.optional(v.string()),
+    createdAt: v.number(),
+  })
+    .index("by_group", ["groupId"])
+    .index("by_user", ["userId"])
+    .index("by_clerk", ["clerkId"])
+    .index("by_group_created", ["groupId", "createdAt"]),
+
+  // Event Media (Photos/Videos)
+  eventMedia: defineTable({
+    eventId: v.id("events"),
+    userId: v.id("users"),
+    clerkId: v.string(),
+    type: v.union(v.literal("photo"), v.literal("video")),
+    url: v.string(),
+    thumbnailUrl: v.optional(v.string()),
+    caption: v.optional(v.string()),
+    createdAt: v.number(),
+  })
+    .index("by_event", ["eventId"])
+    .index("by_user", ["userId"])
+    .index("by_clerk", ["clerkId"])
+    .index("by_event_created", ["eventId", "createdAt"]),
+
+  // Group Workouts (Workouts with friends)
+  groupWorkouts: defineTable({
+    organizerId: v.id("users"),
+    organizerClerkId: v.string(),
+    title: v.string(),
+    description: v.string(),
+    locationId: v.id("organizations"),
+    scheduledTime: v.number(),
+    maxParticipants: v.optional(v.number()),
+    participants: v.array(v.id("users")),
+    status: v.union(v.literal("scheduled"), v.literal("completed"), v.literal("cancelled")),
+    createdAt: v.number(),
+    updatedAt: v.number(),
+  })
+    .index("by_organizer", ["organizerId"])
+    .index("by_location", ["locationId"])
+    .index("by_scheduled_time", ["scheduledTime"])
+    .index("by_status", ["status"]),
+
+  // Advanced Progress Tracking
+  progressTracking: defineTable({
+    userId: v.id("users"),
+    clerkId: v.string(),
+    type: v.union(
+      v.literal("weight"),
+      v.literal("body_fat"),
+      v.literal("measurement"),
+      v.literal("photo"),
+      v.literal("strength")
+    ),
+    value: v.optional(v.number()), // For weight, body fat, measurements
+    unit: v.optional(v.string()), // "kg", "lbs", "cm", "inches", "%"
+    measurementType: v.optional(v.string()), // "chest", "waist", "arms", etc.
+    photoUrl: v.optional(v.string()),
+    photoType: v.optional(v.union(v.literal("before"), v.literal("after"), v.literal("progress"))),
+    notes: v.optional(v.string()),
+    exerciseName: v.optional(v.string()), // For strength tracking
+    exerciseData: v.optional(v.object({
+      sets: v.number(),
+      reps: v.number(),
+      weight: v.number(),
+      pr: v.optional(v.boolean()), // Personal record
+    })),
+    recordedAt: v.number(),
+    createdAt: v.number(),
+  })
+    .index("by_user", ["userId"])
+    .index("by_clerk", ["clerkId"])
+    .index("by_type", ["type"])
+    .index("by_user_type", ["userId", "type"])
+    .index("by_recorded", ["recordedAt"]),
+
+  // Nutrition Tracking
+  nutritionEntries: defineTable({
+    userId: v.id("users"),
+    clerkId: v.string(),
+    date: v.number(), // Timestamp for the day
+    mealType: v.union(
+      v.literal("breakfast"),
+      v.literal("lunch"),
+      v.literal("dinner"),
+      v.literal("snack"),
+      v.literal("pre_workout"),
+      v.literal("post_workout")
+    ),
+    foodName: v.string(),
+    quantity: v.number(),
+    unit: v.string(), // "g", "ml", "serving", "piece"
+    calories: v.number(),
+    protein: v.number(), // grams
+    carbs: v.number(), // grams
+    fats: v.number(), // grams
+    fiber: v.optional(v.number()),
+    sugar: v.optional(v.number()),
+    sodium: v.optional(v.number()),
+    barcode: v.optional(v.string()), // For scanned products
+    nutritionixId: v.optional(v.string()), // Nutritionix food ID
+    createdAt: v.number(),
+  })
+    .index("by_user", ["userId"])
+    .index("by_clerk", ["clerkId"])
+    .index("by_date", ["date"])
+    .index("by_user_date", ["userId", "date"]),
+
+  // Workout Logs
+  workoutLogs: defineTable({
+    userId: v.id("users"),
+    clerkId: v.string(),
+    workoutName: v.string(),
+    workoutDate: v.number(),
+    duration: v.number(), // minutes
+    exercises: v.array(v.object({
+      exerciseName: v.string(),
+      sets: v.array(v.object({
+        reps: v.number(),
+        weight: v.number(),
+        restTime: v.optional(v.number()), // seconds
+        notes: v.optional(v.string()),
+        isPr: v.optional(v.boolean()), // Personal record
+      })),
+      notes: v.optional(v.string()),
+    })),
+    totalVolume: v.number(), // Total weight lifted
+    caloriesBurned: v.optional(v.number()),
+    notes: v.optional(v.string()),
+    templateId: v.optional(v.id("workoutTemplates")),
+    shared: v.optional(v.boolean()), // Shared to community
+    createdAt: v.number(),
+  })
+    .index("by_user", ["userId"])
+    .index("by_clerk", ["clerkId"])
+    .index("by_date", ["workoutDate"])
+    .index("by_user_date", ["userId", "workoutDate"]),
+
+  // Workout Templates
+  workoutTemplates: defineTable({
+    userId: v.id("users"),
+    clerkId: v.string(),
+    name: v.string(),
+    description: v.optional(v.string()),
+    exercises: v.array(v.object({
+      exerciseName: v.string(),
+      sets: v.number(),
+      reps: v.number(),
+      weight: v.optional(v.number()),
+      restTime: v.optional(v.number()),
+      notes: v.optional(v.string()),
+    })),
+    estimatedDuration: v.number(), // minutes
+    category: v.optional(v.string()), // "strength", "cardio", "hiit", etc.
+    isPublic: v.boolean(),
+    createdAt: v.number(),
+    updatedAt: v.number(),
+  })
+    .index("by_user", ["userId"])
+    .index("by_clerk", ["clerkId"])
+    .index("by_public", ["isPublic"]),
+
+  // Video Workout Library
+  videoWorkouts: defineTable({
+    title: v.string(),
+    description: v.string(),
+    videoUrl: v.string(), // Vimeo/Mux URL
+    thumbnailUrl: v.string(),
+    duration: v.number(), // seconds
+    category: v.union(
+      v.literal("hiit"),
+      v.literal("yoga"),
+      v.literal("strength"),
+      v.literal("cardio"),
+      v.literal("pilates"),
+      v.literal("stretching"),
+      v.literal("dance"),
+      v.literal("boxing")
+    ),
+    difficulty: v.union(v.literal("beginner"), v.literal("intermediate"), v.literal("advanced")),
+    instructorId: v.optional(v.id("users")),
+    instructorName: v.string(),
+    instructorImage: v.optional(v.string()),
+    caloriesBurned: v.optional(v.number()),
+    equipment: v.array(v.string()), // ["dumbbells", "mat", "resistance_bands"]
+    tags: v.array(v.string()),
+    viewCount: v.number(),
+    completionCount: v.number(),
+    rating: v.number(), // Average rating 0-5
+    ratingCount: v.number(),
+    isFeatured: v.boolean(),
+    isActive: v.boolean(),
+    createdAt: v.number(),
+    updatedAt: v.number(),
+  })
+    .index("by_category", ["category"])
+    .index("by_difficulty", ["difficulty"])
+    .index("by_instructor", ["instructorId"])
+    .index("by_featured", ["isFeatured"])
+    .index("by_active", ["isActive"]),
+
+  // Video Workout Views & Completions
+  videoWorkoutViews: defineTable({
+    userId: v.id("users"),
+    clerkId: v.string(),
+    videoWorkoutId: v.id("videoWorkouts"),
+    viewedAt: v.number(),
+    completed: v.boolean(),
+    completedAt: v.optional(v.number()),
+    progress: v.number(), // Percentage watched 0-100
+    rating: v.optional(v.number()), // 1-5 stars
+    review: v.optional(v.string()),
+    favorited: v.boolean(),
+    createdAt: v.number(),
+  })
+    .index("by_user", ["userId"])
+    .index("by_clerk", ["clerkId"])
+    .index("by_video", ["videoWorkoutId"])
+    .index("by_user_video", ["userId", "videoWorkoutId"]),
+
+  // Wearable Device Data
+  wearableData: defineTable({
+    userId: v.id("users"),
+    clerkId: v.string(),
+    platform: v.union(
+      v.literal("apple_health"),
+      v.literal("google_fit"),
+      v.literal("fitbit"),
+      v.literal("strava")
+    ),
+    dataType: v.union(
+      v.literal("workout"),
+      v.literal("heart_rate"),
+      v.literal("steps"),
+      v.literal("sleep"),
+      v.literal("calories")
+    ),
+    date: v.number(), // Timestamp
+    value: v.number(),
+    unit: v.string(), // "bpm", "steps", "hours", "kcal"
+    workoutType: v.optional(v.string()), // "running", "cycling", "strength", etc.
+    duration: v.optional(v.number()), // seconds
+    metadata: v.optional(v.string()), // JSON string for additional data
+    syncedAt: v.number(),
+    createdAt: v.number(),
+  })
+    .index("by_user", ["userId"])
+    .index("by_clerk", ["clerkId"])
+    .index("by_platform", ["platform"])
+    .index("by_type", ["dataType"])
+    .index("by_user_date", ["userId", "date"]),
+
+  // Wearable Device Connections
+  wearableConnections: defineTable({
+    userId: v.id("users"),
+    clerkId: v.string(),
+    platform: v.union(
+      v.literal("apple_health"),
+      v.literal("google_fit"),
+      v.literal("fitbit"),
+      v.literal("strava")
+    ),
+    accessToken: v.string(), // Encrypted
+    refreshToken: v.optional(v.string()), // Encrypted
+    platformUserId: v.string(),
+    isActive: v.boolean(),
+    lastSyncedAt: v.optional(v.number()),
+    syncFrequency: v.union(v.literal("realtime"), v.literal("hourly"), v.literal("daily")),
+    createdAt: v.number(),
+    updatedAt: v.number(),
+  })
+    .index("by_user", ["userId"])
+    .index("by_clerk", ["clerkId"])
+    .index("by_platform", ["platform"])
+    .index("by_user_platform", ["userId", "platform"]),
+
+  // Predictive Analytics
+  memberPredictions: defineTable({
+    userId: v.id("users"),
+    clerkId: v.string(),
+    churnRisk: v.number(), // 0-100 score
+    churnRiskLevel: v.union(v.literal("low"), v.literal("medium"), v.literal("high")),
+    optimalCheckInTime: v.optional(v.number()), // Hour of day (0-23)
+    workoutCompletionProbability: v.number(), // 0-100
+    goalAchievementTimeline: v.optional(v.number()), // Days estimated
+    engagementScore: v.number(), // 0-100
+    predictedNextCheckIn: v.optional(v.number()), // Timestamp
+    factors: v.array(v.string()), // ["low_engagement", "missed_classes", etc.]
+    calculatedAt: v.number(),
+    createdAt: v.number(),
+  })
+    .index("by_user", ["userId"])
+    .index("by_clerk", ["clerkId"])
+    .index("by_churn_risk", ["churnRisk"])
+    .index("by_risk_level", ["churnRiskLevel"]),
+
+  // Marketing Campaigns
+  marketingCampaigns: defineTable({
+    name: v.string(),
+    description: v.string(),
+    type: v.union(
+      v.literal("welcome_series"),
+      v.literal("onboarding"),
+      v.literal("re_engagement"),
+      v.literal("birthday"),
+      v.literal("anniversary"),
+      v.literal("custom")
+    ),
+    status: v.union(v.literal("draft"), v.literal("active"), v.literal("paused"), v.literal("completed")),
+    targetAudience: v.object({
+      segment: v.union(
+        v.literal("all"),
+        v.literal("new_members"),
+        v.literal("active_members"),
+        v.literal("inactive_members"),
+        v.literal("by_location"),
+        v.literal("by_membership_type"),
+        v.literal("custom")
+      ),
+      locationIds: v.optional(v.array(v.id("organizations"))),
+      membershipTypes: v.optional(v.array(v.string())),
+      customFilters: v.optional(v.string()), // JSON
+    }),
+    emails: v.array(v.object({
+      subject: v.string(),
+      body: v.string(), // HTML
+      delay: v.number(), // Hours after trigger
+      order: v.number(),
+    })),
+    sentCount: v.number(),
+    openedCount: v.number(),
+    clickedCount: v.number(),
+    convertedCount: v.number(),
+    createdBy: v.id("users"),
+    createdAt: v.number(),
+    updatedAt: v.number(),
+    scheduledAt: v.optional(v.number()),
+  })
+    .index("by_status", ["status"])
+    .index("by_type", ["type"])
+    .index("by_created_by", ["createdBy"]),
+
+  // Member Messages (In-App Messaging)
+  memberMessages: defineTable({
+    senderId: v.id("users"),
+    senderClerkId: v.string(),
+    recipientId: v.id("users"),
+    recipientClerkId: v.string(),
+    message: v.string(),
+    messageType: v.union(
+      v.literal("direct"),
+      v.literal("trainer"),
+      v.literal("admin"),
+      v.literal("group_announcement"),
+      v.literal("broadcast")
+    ),
+    groupId: v.optional(v.id("groups")), // For group announcements
+    read: v.boolean(),
+    readAt: v.optional(v.number()),
+    attachments: v.optional(v.array(v.string())), // File URLs
+    createdAt: v.number(),
+  })
+    .index("by_sender", ["senderId"])
+    .index("by_recipient", ["recipientId"])
+    .index("by_sender_clerk", ["senderClerkId"])
+    .index("by_recipient_clerk", ["recipientClerkId"])
+    .index("by_group", ["groupId"])
+    .index("by_read", ["read"])
+    .index("by_created", ["createdAt"]),
+
+  // Live Streaming Classes
+  liveStreamClasses: defineTable({
+    classId: v.id("groupFitnessClasses"),
+    title: v.string(),
+    description: v.string(),
+    streamUrl: v.string(), // Zoom/Google Meet link
+    streamType: v.union(v.literal("zoom"), v.literal("google_meet"), v.literal("custom")),
+    startTime: v.number(),
+    endTime: v.number(),
+    capacity: v.number(),
+    currentViewers: v.number(),
+    recordingUrl: v.optional(v.string()), // For later viewing
+    isLive: v.boolean(),
+    hasChat: v.boolean(),
+    hasReactions: v.boolean(),
+    instructorId: v.id("users"),
+    instructorClerkId: v.string(),
+    createdAt: v.number(),
+    updatedAt: v.number(),
+  })
+    .index("by_class", ["classId"])
+    .index("by_instructor", ["instructorId"])
+    .index("by_start_time", ["startTime"])
+    .index("by_live", ["isLive"]),
+
+  // Live Stream Viewers
+  liveStreamViewers: defineTable({
+    streamId: v.id("liveStreamClasses"),
+    userId: v.id("users"),
+    clerkId: v.string(),
+    joinedAt: v.number(),
+    leftAt: v.optional(v.number()),
+    duration: v.optional(v.number()), // seconds watched
+  })
+    .index("by_stream", ["streamId"])
+    .index("by_user", ["userId"])
+    .index("by_clerk", ["clerkId"]),
+
+  // Gift Cards
+  giftCards: defineTable({
+    code: v.string(), // Unique gift card code
+    amount: v.number(), // AUD
+    balance: v.number(), // Remaining balance
+    purchasedBy: v.id("users"),
+    purchasedByClerkId: v.string(),
+    recipientEmail: v.optional(v.string()),
+    recipientName: v.optional(v.string()),
+    message: v.optional(v.string()),
+    redeemedBy: v.optional(v.id("users")),
+    redeemedByClerkId: v.optional(v.string()),
+    redeemedAt: v.optional(v.number()),
+    expiresAt: v.optional(v.number()),
+    stripePaymentIntentId: v.optional(v.string()),
+    status: v.union(v.literal("active"), v.literal("redeemed"), v.literal("expired")),
+    createdAt: v.number(),
+    updatedAt: v.number(),
+  })
+    .index("by_code", ["code"])
+    .index("by_purchaser", ["purchasedBy"])
+    .index("by_recipient_email", ["recipientEmail"])
+    .index("by_status", ["status"]),
+
+  // Corporate Memberships
+  corporateMemberships: defineTable({
+    companyName: v.string(),
+    contactEmail: v.string(),
+    contactName: v.string(),
+    contactPhone: v.string(),
+    totalMembers: v.number(),
+    discountPercent: v.number(),
+    billingCycle: v.union(v.literal("monthly"), v.literal("quarterly"), v.literal("annually")),
+    status: v.union(v.literal("active"), v.literal("pending"), v.literal("cancelled")),
+    stripeCustomerId: v.optional(v.string()),
+    stripeSubscriptionId: v.optional(v.string()),
+    createdBy: v.id("users"),
+    createdAt: v.number(),
+    updatedAt: v.number(),
+  })
+    .index("by_status", ["status"])
+    .index("by_company", ["companyName"]),
+
+  // Webhook Subscriptions
+  webhookSubscriptions: defineTable({
+    url: v.string(),
+    events: v.array(v.string()), // ["member.check_in", "booking.created", etc.]
+    secret: v.string(), // Webhook secret for verification
+    isActive: v.boolean(),
+    lastTriggeredAt: v.optional(v.number()),
+    failureCount: v.number(),
+    createdBy: v.id("users"),
+    createdAt: v.number(),
+    updatedAt: v.number(),
+  })
+    .index("by_active", ["isActive"])
+    .index("by_url", ["url"]),
+
+  // Webhook Subscription Events Log (for tracking webhook delivery)
+  webhookSubscriptionEvents: defineTable({
+    subscriptionId: v.id("webhookSubscriptions"),
+    eventType: v.string(),
+    payload: v.string(), // JSON string
+    status: v.union(v.literal("pending"), v.literal("success"), v.literal("failed")),
+    responseCode: v.optional(v.number()),
+    responseBody: v.optional(v.string()),
+    retryCount: v.number(),
+    triggeredAt: v.number(),
+    completedAt: v.optional(v.number()),
+  })
+    .index("by_subscription", ["subscriptionId"])
+    .index("by_status", ["status"])
+    .index("by_event_type", ["eventType"]),
 });

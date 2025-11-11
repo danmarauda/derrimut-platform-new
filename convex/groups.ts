@@ -615,3 +615,107 @@ export const getGroupLeaderboard = query({
   },
 });
 
+// Group Chat Functions
+
+// Send a message to group chat
+export const sendGroupMessage = mutation({
+  args: {
+    groupId: v.id("groups"),
+    message: v.string(),
+    imageUrl: v.optional(v.string()),
+  },
+  handler: async (ctx, args) => {
+    const identity = await ctx.auth.getUserIdentity();
+    if (!identity) {
+      throw new Error("Not authenticated");
+    }
+
+    const user = await ctx.db
+      .query("users")
+      .withIndex("by_clerk_id", (q) => q.eq("clerkId", identity.subject))
+      .first();
+
+    if (!user) {
+      throw new Error("User not found");
+    }
+
+    // Verify user is member of group
+    const membership = await ctx.db
+      .query("groupMembers")
+      .withIndex("by_group_user", (q) =>
+        q.eq("groupId", args.groupId).eq("userId", user._id)
+      )
+      .first();
+
+    if (!membership) {
+      throw new Error("Must be a group member to send messages");
+    }
+
+    const messageId = await ctx.db.insert("groupMessages", {
+      groupId: args.groupId,
+      userId: user._id,
+      clerkId: identity.subject,
+      message: args.message,
+      imageUrl: args.imageUrl,
+      createdAt: Date.now(),
+    });
+
+    return messageId;
+  },
+});
+
+// Get group chat messages
+export const getGroupMessages = query({
+  args: {
+    groupId: v.id("groups"),
+    limit: v.optional(v.number()),
+  },
+  handler: async (ctx, args) => {
+    const identity = await ctx.auth.getUserIdentity();
+    if (!identity) {
+      throw new Error("Not authenticated");
+    }
+
+    // Verify user is member
+    const user = await ctx.db
+      .query("users")
+      .withIndex("by_clerk_id", (q) => q.eq("clerkId", identity.subject))
+      .first();
+
+    if (!user) {
+      return [];
+    }
+
+    const membership = await ctx.db
+      .query("groupMembers")
+      .withIndex("by_group_user", (q) =>
+        q.eq("groupId", args.groupId).eq("userId", user._id)
+      )
+      .first();
+
+    if (!membership) {
+      return []; // Not a member, return empty
+    }
+
+    const messages = await ctx.db
+      .query("groupMessages")
+      .withIndex("by_group_created", (q) => q.eq("groupId", args.groupId))
+      .order("desc")
+      .take(args.limit || 50);
+
+    // Enrich with user information
+    const enrichedMessages = await Promise.all(
+      messages.map(async (msg) => {
+        const msgUser = await ctx.db.get(msg.userId);
+        return {
+          ...msg,
+          userName: msgUser?.name || "Unknown",
+          userImage: msgUser?.image,
+        };
+      })
+    );
+
+    return enrichedMessages.reverse(); // Return in chronological order
+  },
+});
+

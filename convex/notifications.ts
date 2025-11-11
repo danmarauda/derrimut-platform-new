@@ -1,5 +1,7 @@
 import { mutation, query } from "./_generated/server";
 import { v } from "convex/values";
+import { api } from "./_generated/api";
+import type { Id } from "./_generated/dataModel";
 
 /**
  * Notifications System
@@ -177,9 +179,9 @@ export const createNotificationWithPush = mutation({
     sendPush: v.optional(v.boolean()),
     skipAuthCheck: v.optional(v.boolean()),
   },
-  handler: async (ctx, args) => {
+  handler: async (ctx, args): Promise<Id<"notifications">> => {
     // Create in-app notification
-    const notificationId = await createNotification(ctx, {
+    const notificationId: Id<"notifications"> = await ctx.runMutation(api.notifications.createNotification, {
       userId: args.userId,
       clerkId: args.clerkId,
       type: args.type,

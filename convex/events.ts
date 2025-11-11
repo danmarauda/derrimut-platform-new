@@ -50,7 +50,7 @@ export const createEvent = mutation({
       const membership = await ctx.db
         .query("groupMembers")
         .withIndex("by_group_user", (q) =>
-          q.eq("groupId", args.groupId).eq("userId", user._id)
+          q.eq("groupId", args.groupId!).eq("userId", user._id)
         )
         .first();
 

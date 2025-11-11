@@ -1,33 +1,28 @@
 import { internalMutation, internalQuery, internalAction, mutation, query } from "./_generated/server";
 import { v } from "convex/values";
 import { api, internal } from "./_generated/api";
-import { cronJobs } from "convex/cron";
+// Note: convex/cron may not be available in all Convex versions
+// import { cronJobs } from "convex/cron";
 
 /**
  * Win-Back Campaigns System
  * Automated email campaigns to re-engage inactive members
+ * 
+ * Note: cronJobs from convex/cron is not available in this version.
+ * These functions can be called manually or scheduled via external cron services.
  */
-
-// Win-back campaign types
-export const winBackCampaigns = cronJobs({
-  // Run daily at 9 AM UTC to check for inactive members
-  checkInactiveMembers: {
-    cron: "0 9 * * *", // Daily at 9 AM UTC
-    args: {},
-  },
-});
 
 // Check for inactive members and send win-back emails
 export const checkInactiveMembers = internalAction({
   args: {},
-  handler: async (ctx) => {
+  handler: async (ctx): Promise<{ campaignsSent: number }> => {
     const now = Date.now();
     const twoWeeksAgo = now - 14 * 24 * 60 * 60 * 1000; // 14 days
     const oneMonthAgo = now - 30 * 24 * 60 * 60 * 1000; // 30 days
     const threeMonthsAgo = now - 90 * 24 * 60 * 60 * 1000; // 90 days
 
     // Get all users with memberships
-    const memberships = await ctx.runQuery(internal.winBackCampaigns.getAllActiveMemberships);
+    const memberships: any[] = await ctx.runQuery(internal.winBackCampaigns.getAllActiveMemberships);
 
     for (const membership of memberships) {
       const user = await ctx.runQuery(internal.winBackCampaigns.getUserById, {
@@ -45,6 +40,19 @@ export const checkInactiveMembers = internalAction({
         ? Math.floor((now - lastCheckIn) / (24 * 60 * 60 * 1000))
         : Math.floor((now - (user.createdAt || now)) / (24 * 60 * 60 * 1000));
 
+      // Identify at-risk members based on inactivity thresholds
+      let campaignType: "we_miss_you" | "come_back" | "special_return" | null = null;
+
+      if (daysSinceLastActivity >= 14 && daysSinceLastActivity < 30) {
+        campaignType = "we_miss_you";
+      } else if (daysSinceLastActivity >= 30 && daysSinceLastActivity < 90) {
+        campaignType = "come_back";
+      } else if (daysSinceLastActivity >= 90) {
+        campaignType = "special_return";
+      }
+
+      if (!campaignType) continue;
+
       // Check if campaign already sent
       const existingCampaign = await ctx.runQuery(
         internal.winBackCampaigns.getCampaignForUser,
@@ -53,9 +61,7 @@ export const checkInactiveMembers = internalAction({
         }
       );
 
-      // Determine which campaign to send
-      let campaignType: "we_miss_you" | "come_back" | "special_return" | null = null;
-
+      // Determine which campaign to send (reuse campaignType from above)
       if (daysSinceLastActivity >= 90 && (!existingCampaign || existingCampaign.type !== "special_return")) {
         campaignType = "special_return";
       } else if (daysSinceLastActivity >= 30 && (!existingCampaign || existingCampaign.type !== "come_back")) {
@@ -87,7 +93,7 @@ export const checkInactiveMembers = internalAction({
       }
     }
 
-    return { processed: memberships.length };
+    return { campaignsSent: memberships.length };
   },
 });
 
@@ -100,9 +106,7 @@ export const getAllActiveMemberships = internalQuery({
     const now = Date.now();
     return memberships.filter(
       (m) =>
-        m.status === "active" &&
-        (!m.endDate || m.endDate > now) &&
-        !m.cancelledAt
+        m.status === "active"
     );
   },
 });
@@ -126,6 +130,20 @@ export const getLastCheckIn = internalQuery({
       .take(1);
 
     return checkIns.length > 0 ? checkIns[0].checkInTime : null;
+  },
+});
+
+// Get existing campaign for user (internal query)
+export const getCampaignForUser = internalQuery({
+  args: { userId: v.id("users") },
+  handler: async (ctx, args) => {
+    const campaigns = await ctx.db
+      .query("winBackCampaigns")
+      .withIndex("by_user", (q) => q.eq("userId", args.userId))
+      .order("desc")
+      .take(1);
+
+    return campaigns.length > 0 ? campaigns[0] : null;
   },
 });
 
@@ -242,9 +260,9 @@ export const recordCampaign = internalMutation({
       type: args.campaignType,
       daysSinceLastActivity: args.daysSinceLastActivity,
       sentAt: Date.now(),
-      openedAt: null,
-      clickedAt: null,
-      convertedAt: null,
+      openedAt: undefined,
+      clickedAt: undefined,
+      convertedAt: undefined,
       createdAt: Date.now(),
       updatedAt: Date.now(),
     });

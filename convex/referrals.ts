@@ -183,6 +183,16 @@ export const convertReferral = mutation({
       return null; // No referral to convert
     }
 
+    // Get referee user
+    const referee = await ctx.db
+      .query("users")
+      .withIndex("by_clerk_id", (q) => q.eq("clerkId", args.refereeClerkId))
+      .first();
+
+    if (!referee) {
+      throw new Error("Referee user not found");
+    }
+
     // Update referral status
     await ctx.db.patch(referral._id, {
       status: "converted",
@@ -195,21 +205,27 @@ export const convertReferral = mutation({
     const REFEREE_REWARD_POINTS = 500; // Points for referee
 
     // Award points to referrer
-    await ctx.scheduler.runAfter(0, api.loyalty.addPoints, {
+    await ctx.scheduler.runAfter(0, api.loyalty.addPointsWithExpiration, {
       clerkId: referral.referrerClerkId,
       points: REFERRER_REWARD_POINTS,
       source: "referral",
-      description: `Referred ${referral.refereeClerkId}`,
+      description: `Referral conversion: ${referee.name || referee.email}`,
       relatedId: referral._id,
     });
 
     // Award points to referee
-    await ctx.scheduler.runAfter(0, api.loyalty.addPoints, {
+    await ctx.scheduler.runAfter(0, api.loyalty.addPointsWithExpiration, {
       clerkId: referral.refereeClerkId,
       points: REFEREE_REWARD_POINTS,
       source: "referral",
-      description: "Signed up with referral code",
+      description: `Referral signup bonus`,
       relatedId: referral._id,
+    });
+
+    // Create Stripe discount code for referee (50% off first month)
+    await ctx.scheduler.runAfter(0, api.stripeDiscounts.createReferralDiscountCode, {
+      referralCode: referral.referralCode,
+      refereeEmail: referee.email,
     });
 
     return referral._id;

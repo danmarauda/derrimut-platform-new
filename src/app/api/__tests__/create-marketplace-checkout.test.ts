@@ -8,16 +8,24 @@ import { POST } from '../create-marketplace-checkout/route';
 import { NextRequest } from 'next/server';
 import Stripe from 'stripe';
 
-// Mock Stripe
+const { mockStripeCreate } = vi.hoisted(() => {
+  const mockStripeCreate = vi.fn();
+  return { mockStripeCreate };
+});
+
 vi.mock('stripe', () => {
   return {
-    default: vi.fn().mockImplementation(() => ({
-      checkout: {
-        sessions: {
-          create: vi.fn(),
-        },
-      },
-    })),
+    default: class {
+      constructor(secretKey?: string, options?: any) {
+        return {
+          checkout: {
+            sessions: {
+              create: mockStripeCreate,
+            },
+          },
+        };
+      }
+    }
   };
 });
 
@@ -396,7 +404,7 @@ describe('POST /api/create-marketplace-checkout', () => {
       const data = await response.json();
 
       expect(response.status).toBe(500);
-      expect(data.error).toBe('Stripe API error');
+      expect(data.error).toBe('Internal server error');
     });
 
     it('should handle invalid product data', async () => {

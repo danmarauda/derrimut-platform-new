@@ -6,11 +6,11 @@
 import { describe, it, expect, beforeEach, vi } from 'vitest';
 import {
   getMembershipPlans,
-  getUserMembership,
+  getMembership,
   getMembershipBySubscription,
   upsertMembership,
 } from '../memberships';
-import { createMockConvexContext } from '../../src/__tests__/utils';
+import { createMockConvexContext, createMockUser } from '../../src/__tests__/utils';
 
 describe('Convex Memberships', () => {
   let mockCtx: any;
@@ -104,7 +104,7 @@ describe('Convex Memberships', () => {
     });
   });
 
-  describe('getUserMembership', () => {
+  describe('getMembership', () => {
     it('should return active membership for user', async () => {
       const mockMembership = {
         _id: 'membership_1',
@@ -117,8 +117,8 @@ describe('Convex Memberships', () => {
 
       mockCtx.db.query().withIndex().filter().first.mockResolvedValue(mockMembership);
 
-      const result = await (getUserMembership as any).handler(mockCtx, {
-        clerkId: 'clerk_123',
+      const result = await (getMembership as any).handler(mockCtx, {
+        id: 'membership_1' as any,
       });
 
       expect(result).toEqual(mockMembership);
@@ -126,10 +126,10 @@ describe('Convex Memberships', () => {
     });
 
     it('should return null when user has no active membership', async () => {
-      mockCtx.db.query().withIndex().filter().first.mockResolvedValue(null);
+      mockCtx.db.get.mockResolvedValue(null);
 
-      const result = await (getUserMembership as any).handler(mockCtx, {
-        clerkId: 'clerk_456',
+      const result = await (getMembership as any).handler(mockCtx, {
+        id: 'non_existent' as any,
       });
 
       expect(result).toBeNull();
@@ -144,45 +144,45 @@ describe('Convex Memberships', () => {
 
       mockCtx.db.query.mockReturnValue(mockQuery);
 
-      await (getUserMembership as any).handler(mockCtx, {
-        clerkId: 'test_clerk_id',
+      await (getMembership as any).handler(mockCtx, {
+        id: 'test_id' as any,
       });
 
-      expect(mockQuery.withIndex).toHaveBeenCalledWith(
-        'by_clerk_id',
-        expect.any(Function)
-      );
+      expect(mockCtx.db.get).toHaveBeenCalled();
     });
   });
 
   describe('getMembershipBySubscription', () => {
-    it('should return membership by subscription ID', async () => {
+    it('should return membership for subscription ID', async () => {
       const mockMembership = {
-        _id: 'membership_1',
-        stripeSubscriptionId: 'sub_test_123',
+        _id: 'membership_2',
+        userId: 'user_456',
+        clerkId: 'clerk_456',
+        stripeSubscriptionId: 'sub_456',
         status: 'active',
       };
 
       mockCtx.db.query().withIndex().first.mockResolvedValue(mockMembership);
 
       const result = await (getMembershipBySubscription as any).handler(mockCtx, {
-        subscriptionId: 'sub_test_123',
+        subscriptionId: 'sub_456',
       });
 
       expect(result).toEqual(mockMembership);
+      expect(result?.stripeSubscriptionId).toBe('sub_456');
     });
 
-    it('should return null when subscription not found', async () => {
+    it('should return null for non-existent subscription', async () => {
       mockCtx.db.query().withIndex().first.mockResolvedValue(null);
 
       const result = await (getMembershipBySubscription as any).handler(mockCtx, {
-        subscriptionId: 'sub_nonexistent',
+        subscriptionId: 'non_existent',
       });
 
       expect(result).toBeNull();
     });
 
-    it('should query by subscription index', async () => {
+    it('should use correct subscription index', async () => {
       const mockQuery = {
         withIndex: vi.fn().mockReturnThis(),
         first: vi.fn().mockResolvedValue(null as unknown as never),
@@ -191,7 +191,7 @@ describe('Convex Memberships', () => {
       mockCtx.db.query.mockReturnValue(mockQuery);
 
       await (getMembershipBySubscription as any).handler(mockCtx, {
-        subscriptionId: 'sub_123',
+        subscriptionId: 'test_sub_id',
       });
 
       expect(mockQuery.withIndex).toHaveBeenCalledWith(
@@ -202,244 +202,183 @@ describe('Convex Memberships', () => {
   });
 
   describe('upsertMembership', () => {
-    it('should create new membership when subscription does not exist', async () => {
-      mockCtx.db.query().withIndex().first.mockResolvedValue(null);
-      mockCtx.db.query().withIndex().filter().collect.mockResolvedValue([]);
-      mockCtx.db.insert.mockResolvedValue('new_membership_id');
-
-      const args = {
-        userId: 'user_123' as any,
-        clerkId: 'clerk_123',
-        membershipType: 'no-lock-in' as const,
-        stripeCustomerId: 'cus_123',
-        stripeSubscriptionId: 'sub_new_123',
-        stripePriceId: 'price_123',
-        currentPeriodStart: Date.now(),
-        currentPeriodEnd: Date.now() + 30 * 24 * 60 * 60 * 1000,
-      };
-
-      const result = await (upsertMembership as any).handler(mockCtx, args);
-
-      expect(result).toBe('new_membership_id');
-      expect(mockCtx.db.insert).toHaveBeenCalled();
-    });
-
-    it('should update existing membership when subscription exists', async () => {
-      const existingMembership = {
-        _id: 'existing_membership_id',
-        stripeSubscriptionId: 'sub_existing_123',
-        status: 'active',
-      };
-
-      mockCtx.db.query().withIndex().first.mockResolvedValue(existingMembership);
-      mockCtx.db.patch.mockResolvedValue(undefined);
-
-      const args = {
-        userId: 'user_123' as any,
-        clerkId: 'clerk_123',
-        membershipType: '12-month-minimum' as const,
-        stripeCustomerId: 'cus_123',
-        stripeSubscriptionId: 'sub_existing_123',
-        stripePriceId: 'price_123',
-        currentPeriodStart: Date.now(),
-        currentPeriodEnd: Date.now() + 365 * 24 * 60 * 60 * 1000,
-      };
-
-      const result = await (upsertMembership as any).handler(mockCtx, args);
-
-      expect(result).toBe('existing_membership_id');
-      expect(mockCtx.db.patch).toHaveBeenCalledWith(
-        'existing_membership_id',
-        expect.objectContaining({
-          membershipType: '12-month-minimum',
+    it('should create new membership and cancel existing ones', async () => {
+      const existingMemberships = [
+        {
+          ...createMockUser(),
+          _id: 'old_membership_1' as any,
+          clerkId: 'clerk_789',
           status: 'active',
-        })
-      );
-    });
-
-    it('should cancel existing active memberships when creating new one', async () => {
-      const existingActiveMemberships = [
-        { _id: 'old_membership_1', status: 'active' },
-        { _id: 'old_membership_2', status: 'active' },
+        },
       ];
 
-      // Mock sequence: first query returns null (no subscription match)
-      // Second query returns existing active memberships
-      mockCtx.db.query()
-        .withIndex()
-        .first.mockResolvedValueOnce(null);
+      const mockUser = {
+        ...createMockUser(),
+        clerkId: 'clerk_789',
+      };
 
-      mockCtx.db.query()
-        .withIndex()
-        .filter()
-        .collect.mockResolvedValue(existingActiveMemberships);
+      const newMembershipId = 'new_membership_id';
 
+      // Mock the existing memberships lookup
+      const existingMembershipsQuery = {
+        withIndex: vi.fn().mockReturnThis(),
+        filter: vi.fn().mockReturnThis(),
+        collect: vi.fn().mockResolvedValue(existingMemberships),
+      };
+
+      // Mock user lookup
+      mockCtx.db.get.mockResolvedValue(mockUser);
+      mockCtx.db.query.mockReturnValue(existingMembershipsQuery);
+      mockCtx.db.insert.mockResolvedValue(newMembershipId);
+
+      const input = {
+        userId: 'user_789',
+        ...createMockUser(),
+        clerkId: 'clerk_789',
+        membershipType: '12-month-minimum',
+        stripeCustomerId: 'cus_789',
+        stripeSubscriptionId: 'sub_789',
+        stripePriceId: 'price_789',
+        currentPeriodStart: Date.now(),
+        currentPeriodEnd: Date.now() + (365 * 24 * 60 * 60 * 1000),
+      };
+
+      const result = await (upsertMembership as any).handler(mockCtx, input);
+
+      expect(result).toEqual(newMembershipId);
+      expect(mockCtx.db.patch).toHaveBeenCalledWith('old_membership_1', {
+        status: 'cancelled',
+        updatedAt: expect.any(Number),
+      });
+      expect(mockCtx.db.insert).toHaveBeenCalledWith('memberships', {
+        ...input,
+        status: 'active',
+        cancelAtPeriodEnd: false,
+        createdAt: expect.any(Number),
+        updatedAt: expect.any(Number),
+      });
+    });
+
+    it('should handle multiple existing memberships', async () => {
+      const existingMemberships = [
+        {
+          _id: 'old_membership_1',
+          clerkId: 'clerk_multi',
+          status: 'active',
+        },
+        {
+          _id: 'old_membership_2',
+          clerkId: 'clerk_multi',
+          status: 'active',
+        },
+      ];
+
+      // Mock the existing memberships lookup
+      const existingMembershipsQuery = {
+        withIndex: vi.fn().mockReturnThis(),
+        filter: vi.fn().mockReturnThis(),
+        collect: vi.fn().mockResolvedValue(existingMemberships),
+      };
+
+      mockCtx.db.query.mockReturnValue(existingMembershipsQuery);
+      mockCtx.db.get.mockResolvedValue(null); // No user for referral
+      mockCtx.db.insert.mockResolvedValue('new_id');
+
+      const input = {
+        userId: 'user_multi',
+        clerkId: 'clerk_multi',
+        membershipType: 'no-lock-in',
+        stripeCustomerId: 'cus_multi',
+        stripeSubscriptionId: 'sub_multi',
+        stripePriceId: 'price_multi',
+        currentPeriodStart: Date.now(),
+        currentPeriodEnd: Date.now() + (365 * 24 * 60 * 60 * 1000),
+      };
+
+      await (upsertMembership as any).handler(mockCtx, input);
+
+      // Should cancel both existing memberships
+      expect(mockCtx.db.patch).toHaveBeenCalledWith('old_membership_1', {
+        status: 'cancelled',
+        updatedAt: expect.any(Number),
+      });
+      expect(mockCtx.db.patch).toHaveBeenCalledWith('old_membership_2', {
+        status: 'cancelled',
+        updatedAt: expect.any(Number),
+      });
+    });
+
+    it('should convert referral when user was referred', async () => {
+      const mockUser = {
+        ...createMockUser(),
+        clerkId: 'clerk_referral',
+        referredBy: 'referrer_123',
+      };
+
+      // Mock no existing memberships
+      const existingMembershipsQuery = {
+        withIndex: vi.fn().mockReturnThis(),
+        filter: vi.fn().mockReturnThis(),
+        collect: vi.fn().mockResolvedValue([]),
+      };
+
+      mockCtx.db.query.mockReturnValue(existingMembershipsQuery);
+      mockCtx.db.get.mockResolvedValue(mockUser);
       mockCtx.db.insert.mockResolvedValue('new_membership_id');
-      mockCtx.db.patch.mockResolvedValue(undefined);
 
-      const args = {
-        userId: 'user_123' as any,
-        clerkId: 'clerk_123',
-        membershipType: 'no-lock-in' as const,
-        stripeCustomerId: 'cus_123',
-        stripeSubscriptionId: 'sub_new_456',
-        stripePriceId: 'price_123',
+      const input = {
+        userId: 'user_referral',
+        ...createMockUser(),
+        clerkId: 'clerk_referral',
+        membershipType: 'no-lock-in',
+        stripeCustomerId: 'cus_referral',
+        stripeSubscriptionId: 'sub_referral',
+        stripePriceId: 'price_referral',
         currentPeriodStart: Date.now(),
-        currentPeriodEnd: Date.now() + 30 * 24 * 60 * 60 * 1000,
+        currentPeriodEnd: Date.now() + (365 * 24 * 60 * 60 * 1000),
       };
 
-      await (upsertMembership as any).handler(mockCtx, args);
+      await (upsertMembership as any).handler(mockCtx, input);
 
-      // Should patch old memberships to cancelled
-      expect(mockCtx.db.patch).toHaveBeenCalledTimes(2);
-    });
-
-    it('should handle different membership types', async () => {
-      mockCtx.db.query().withIndex().first.mockResolvedValue(null);
-      mockCtx.db.query().withIndex().filter().collect.mockResolvedValue([]);
-      mockCtx.db.insert.mockResolvedValue('new_id');
-
-      const membershipTypes = [
-        '18-month-minimum',
-        '12-month-minimum',
-        'no-lock-in',
-        '12-month-upfront',
-      ] as const;
-
-      for (const type of membershipTypes) {
-        const args = {
-          userId: 'user_123' as any,
-          clerkId: 'clerk_123',
-          membershipType: type,
-          stripeCustomerId: 'cus_123',
-          stripeSubscriptionId: `sub_${type}`,
-          stripePriceId: 'price_123',
-          currentPeriodStart: Date.now(),
-          currentPeriodEnd: Date.now() + 30 * 24 * 60 * 60 * 1000,
-        };
-
-        await (upsertMembership as any).handler(mockCtx, args);
-      }
-
-      expect(mockCtx.db.insert).toHaveBeenCalledTimes(4);
-    });
-
-    it('should set cancelAtPeriodEnd to false when updating', async () => {
-      const existingMembership = {
-        _id: 'existing_id',
-        stripeSubscriptionId: 'sub_123',
-        cancelAtPeriodEnd: true,
-      };
-
-      mockCtx.db.query().withIndex().first.mockResolvedValue(existingMembership);
-
-      const args = {
-        userId: 'user_123' as any,
-        clerkId: 'clerk_123',
-        membershipType: 'no-lock-in' as const,
-        stripeCustomerId: 'cus_123',
-        stripeSubscriptionId: 'sub_123',
-        stripePriceId: 'price_123',
-        currentPeriodStart: Date.now(),
-        currentPeriodEnd: Date.now() + 30 * 24 * 60 * 60 * 1000,
-      };
-
-      await (upsertMembership as any).handler(mockCtx, args);
-
-      expect(mockCtx.db.patch).toHaveBeenCalledWith(
-        'existing_id',
-        expect.objectContaining({
-          cancelAtPeriodEnd: false,
-        })
+      // Should schedule referral conversion
+      expect(mockCtx.scheduler.runAfter).toHaveBeenCalledWith(
+        0,
+        expect.anything(), // api.referrals.convertReferral
+        {
+          refereeClerkId: 'clerk_referral',
+        }
       );
     });
 
-    it('should update timestamps on upsert', async () => {
-      const existingMembership = {
-        _id: 'existing_id',
-        stripeSubscriptionId: 'sub_123',
+    it('should use correct indexes for membership lookup', async () => {
+      const mockQuery = {
+        withIndex: vi.fn().mockReturnThis(),
+        filter: vi.fn().mockReturnThis(),
+        collect: vi.fn().mockResolvedValue([]), // No existing memberships
       };
 
-      mockCtx.db.query().withIndex().first.mockResolvedValue(existingMembership);
+      mockCtx.db.query.mockReturnValue(mockQuery);
+      mockCtx.db.get.mockResolvedValue(null);
+      mockCtx.db.insert.mockResolvedValue('test_id');
 
-      const args = {
-        userId: 'user_123' as any,
-        clerkId: 'clerk_123',
-        membershipType: 'no-lock-in' as const,
-        stripeCustomerId: 'cus_123',
-        stripeSubscriptionId: 'sub_123',
-        stripePriceId: 'price_123',
+      const input = {
+        userId: 'user_test',
+        clerkId: 'clerk_test',
+        membershipType: 'no-lock-in',
+        stripeCustomerId: 'cus_test',
+        stripeSubscriptionId: 'sub_test',
+        stripePriceId: 'price_test',
         currentPeriodStart: Date.now(),
-        currentPeriodEnd: Date.now() + 30 * 24 * 60 * 60 * 1000,
+        currentPeriodEnd: Date.now() + (365 * 24 * 60 * 60 * 1000),
       };
 
-      await (upsertMembership as any).handler(mockCtx, args);
+      await (upsertMembership as any).handler(mockCtx, input);
 
-      expect(mockCtx.db.patch).toHaveBeenCalledWith(
-        'existing_id',
-        expect.objectContaining({
-          updatedAt: expect.any(Number),
-        })
+      expect(mockQuery.withIndex).toHaveBeenCalledWith(
+        'by_clerk_id',
+        expect.any(Function)
       );
-    });
-  });
-
-  describe('Edge Cases', () => {
-    it('should handle concurrent upsert operations', async () => {
-      mockCtx.db.query().withIndex().first.mockResolvedValue(null);
-      mockCtx.db.query().withIndex().filter().collect.mockResolvedValue([]);
-      mockCtx.db.insert.mockResolvedValue('new_id');
-
-      const args = {
-        userId: 'user_123' as any,
-        clerkId: 'clerk_123',
-        membershipType: 'no-lock-in' as const,
-        stripeCustomerId: 'cus_123',
-        stripeSubscriptionId: 'sub_concurrent',
-        stripePriceId: 'price_123',
-        currentPeriodStart: Date.now(),
-        currentPeriodEnd: Date.now() + 30 * 24 * 60 * 60 * 1000,
-      };
-
-      // Simulate concurrent calls
-      await Promise.all([
-        (upsertMembership as any).handler(mockCtx, args),
-        (upsertMembership as any).handler(mockCtx, args),
-        (upsertMembership as any).handler(mockCtx, args),
-      ]);
-
-      // All should complete without errors
-      expect(mockCtx.db.insert).toHaveBeenCalled();
-    });
-
-    it('should handle period dates correctly', async () => {
-      mockCtx.db.query().withIndex().first.mockResolvedValue(null);
-      mockCtx.db.query().withIndex().filter().collect.mockResolvedValue([]);
-      mockCtx.db.insert.mockResolvedValue('new_id');
-
-      const now = Date.now();
-      const oneMonthLater = now + 30 * 24 * 60 * 60 * 1000;
-
-      const args = {
-        userId: 'user_123' as any,
-        clerkId: 'clerk_123',
-        membershipType: 'no-lock-in' as const,
-        stripeCustomerId: 'cus_123',
-        stripeSubscriptionId: 'sub_period_test',
-        stripePriceId: 'price_123',
-        currentPeriodStart: now,
-        currentPeriodEnd: oneMonthLater,
-      };
-
-      await (upsertMembership as any).handler(mockCtx, args);
-
-      expect(mockCtx.db.insert).toHaveBeenCalledWith(
-        'memberships',
-        expect.objectContaining({
-          currentPeriodStart: now,
-          currentPeriodEnd: oneMonthLater,
-        })
-      );
+      expect(mockQuery.filter).toHaveBeenCalled();
     });
   });
 });

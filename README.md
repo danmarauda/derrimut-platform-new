@@ -1,17 +1,17 @@
 <div align="center">
 
-# 🏋️ ELITE Gym & Fitness
+# 🏋️ Derrimut 24:7 Gym Platform
 
 ![TypeScript](https://img.shields.io/badge/TypeScript-98.8%25-3178C6?style=for-the-badge&logo=typescript&logoColor=white)
-![Next.js](https://img.shields.io/badge/Next.js-15.2-black?style=for-the-badge&logo=next.js)
+![Next.js](https://img.shields.io/badge/Next.js-16.0-black?style=for-the-badge&logo=next.js)
 ![Convex](https://img.shields.io/badge/Convex-Database-FF6F00?style=for-the-badge)
 ![Stripe](https://img.shields.io/badge/Stripe-Payments-6772E5?style=for-the-badge&logo=stripe&logoColor=white)
 ![Clerk](https://img.shields.io/badge/Clerk-Auth-6C47FF?style=for-the-badge)
 ![Vapi](https://img.shields.io/badge/Vapi-Voice_AI-00D9FF?style=for-the-badge)
 
-**🇱🇰 Sri Lanka's Premier AI-Powered Digital Fitness Management Platform**
+**🇦🇺 Australia's Premier AI-Powered Digital Fitness Management Platform**
 
-[![Live Demo](https://img.shields.io/badge/🌐_Live_Demo-Vercel-black?style=for-the-badge)](https://elite-gym-and-fitness.vercel.app)
+[![Live Demo](https://img.shields.io/badge/🌐_Live_Demo-Vercel-black?style=for-the-badge)](https://derrimut-platform.vercel.app)
 
 [Features](#-features) • [Tech Stack](#️-tech-stack) • [Installation](#-installation) • [Usage](#-usage) • [Architecture](#-architecture)
 
@@ -21,9 +21,9 @@
 
 ## 📋 Overview
 
-**ELITE Gym & Fitness** is a cutting-edge, full-stack fitness management platform engineered specifically for the Sri Lankan fitness industry. Combining the power of modern web technologies with AI-driven personalization, this platform delivers an all-in-one solution for gym members, personal trainers, and facility administrators.
+**Derrimut 24:7 Gym Platform** is a cutting-edge, full-stack fitness management platform engineered specifically for the Australian fitness industry. Combining the power of modern web technologies with AI-driven personalization, this platform delivers an all-in-one solution for gym members, personal trainers, and facility administrators across 18 locations.
 
-Built with **Next.js 15**, **Convex** real-time database, **Stripe** payment processing, **Clerk** authentication, and **Vapi** voice AI for conversational program generation, ELITE transforms how fitness businesses operate and how members achieve their health goals.
+Built with **Next.js 16**, **Convex** real-time database, **Stripe** payment processing, **Clerk** authentication, and **Vapi** voice AI for conversational program generation, Derrimut 24:7 transforms how fitness businesses operate and how members achieve their health goals.
 
 ## ✨ Features
 
@@ -91,9 +91,10 @@ Built with **Next.js 15**, **Convex** real-time database, **Stripe** payment pro
 - **Modern Components** - shadcn/ui component library
 
 ### 🌍 **Localization**
-- **Sri Lankan Focus** - Currency (LKR), language, and cultural considerations
-- **Time Zone Support** - Accurate scheduling for local time (Asia/Colombo)
-- **Local Payment Methods** - Stripe configured for Sri Lankan market
+- **Australian Focus** - Currency (AUD), language, and cultural considerations
+- **Time Zone Support** - Accurate scheduling for local time (Australia/Melbourne)
+- **Local Payment Methods** - Stripe configured for Australian market
+- **Multi-Location** - Support for 18 Derrimut gym locations across Victoria and South Australia
 
 ## 🛠️ Tech Stack
 
@@ -103,7 +104,7 @@ Built with **Next.js 15**, **Convex** real-time database, **Stripe** payment pro
 
 | Technology | Purpose | Version |
 |------------|---------|---------|
-| ![Next.js](https://img.shields.io/badge/Next.js-black?style=flat&logo=next.js) | React framework with App Router and Server Components | 15.2 |
+| ![Next.js](https://img.shields.io/badge/Next.js-black?style=flat&logo=next.js) | React framework with App Router and Server Components | 16.0 |
 | ![TypeScript](https://img.shields.io/badge/TypeScript-3178C6?style=flat&logo=typescript&logoColor=white) | Type-safe development | 5.0+ |
 | ![React](https://img.shields.io/badge/React-61DAFB?style=flat&logo=react&logoColor=black) | UI component library | 19.0 |
 | ![TailwindCSS](https://img.shields.io/badge/Tailwind-38B2AC?style=flat&logo=tailwind-css&logoColor=white) | Utility-first CSS framework | 4.0 |
@@ -169,7 +170,7 @@ Built with **Next.js 15**, **Convex** real-time database, **Stripe** payment pro
 
 ```
 ┌─────────────────────────────────────────────────────────────────┐
-│                       NEXT.JS 15 FRONTEND                       │
+│                       NEXT.JS 16 FRONTEND                       │
 │                     (App Router + React 19)                     │
 │                                                                 │
 │  ┌─────────────┐  ┌──────────────┐  ┌────────────────────┐   │
@@ -244,8 +245,8 @@ Built with **Next.js 15**, **Convex** real-time database, **Stripe** payment pro
 
 1. **Clone the repository**
 ```bash
-git clone https://github.com/PasinduSuraweera/ELITE-Gym-and-Fitness.git
-cd ELITE-Gym-and-Fitness
+git clone https://github.com/danmarauda/derrimut-platform.git
+cd derrimut-platform
 ```
 
 2. **Install dependencies**

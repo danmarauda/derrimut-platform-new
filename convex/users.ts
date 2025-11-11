@@ -1,5 +1,6 @@
 import { mutation, query } from "./_generated/server";
 import { v } from "convex/values";
+import { api } from "./_generated/api";
 
 // Generate a unique referral code
 function generateReferralCode(name: string): string {
@@ -84,6 +85,10 @@ export const updateUser = mutation({
 
     if (!existingUser) return;
 
+    // Track changes for SMS notification
+    const emailChanged = existingUser.email !== args.email;
+    const nameChanged = existingUser.name !== args.name;
+
     // Ensure required fields exist
     const updateData: any = {
       ...args,
@@ -98,7 +103,18 @@ export const updateUser = mutation({
       updateData.createdAt = Date.now();
     }
 
-    return await ctx.db.patch(existingUser._id, updateData);
+    await ctx.db.patch(existingUser._id, updateData);
+
+    // Send account update SMS if email or name changed
+    if ((emailChanged || nameChanged) && existingUser.phoneNumber) {
+      await ctx.scheduler.runAfter(0, api.smsNotifications.sendAccountUpdateSMS, {
+        clerkId: args.clerkId,
+        phoneNumber: existingUser.phoneNumber,
+        changeType: emailChanged ? "email" : "name",
+      });
+    }
+
+    return existingUser._id;
   },
 });
 

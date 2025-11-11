@@ -35,14 +35,13 @@ export const getMembershipPlanByType = query({
   },
 });
 
-// Get user's current membership
-export const getUserMembership = query({
-  args: { clerkId: v.string() },
+// Get membership by Stripe subscription ID
+export const getMembershipBySubscriptionId = query({
+  args: { stripeSubscriptionId: v.string() },
   handler: async (ctx, args) => {
     const membership = await ctx.db
       .query("memberships")
-      .withIndex("by_clerk_id", (q) => q.eq("clerkId", args.clerkId))
-      .filter((q) => q.eq(q.field("status"), "active"))
+      .withIndex("by_subscription", (q) => q.eq("stripeSubscriptionId", args.stripeSubscriptionId))
       .first();
     
     return membership;
@@ -768,6 +767,22 @@ export const checkExpiredMemberships = mutation({
 
     console.log(`🕐 Updated ${updatedCount} expired memberships`);
     return { updatedCount, expiredMemberships: expiredMemberships.length };
+  },
+});
+
+// Update membership type and price (for tier changes)
+export const updateMembershipType = mutation({
+  args: {
+    membershipId: v.id("memberships"),
+    membershipType: v.string(),
+    stripePriceId: v.string(),
+  },
+  handler: async (ctx, args) => {
+    await ctx.db.patch(args.membershipId, {
+      membershipType: args.membershipType,
+      stripePriceId: args.stripePriceId,
+      updatedAt: Date.now(),
+    });
   },
 });
 

@@ -1,6 +1,7 @@
 import { mutation, query } from "./_generated/server";
 import { v } from "convex/values";
 import { Id } from "./_generated/dataModel";
+import { api } from "./_generated/api";
 
 /**
  * Group Fitness Classes System
@@ -129,6 +130,18 @@ export const bookClass = mutation({
       clerkId: identity.subject,
       status: "booked",
       bookedAt: Date.now(),
+    });
+
+    // Send booking confirmation notification
+    await ctx.scheduler.runAfter(0, api.notifications.createNotificationWithPush, {
+      userId: user._id,
+      clerkId: identity.subject,
+      type: "booking",
+      title: "Class Booked",
+      message: `You've successfully booked ${classItem.name}`,
+      link: `/classes`,
+      sendPush: true,
+      skipAuthCheck: true,
     });
 
     return bookingId;

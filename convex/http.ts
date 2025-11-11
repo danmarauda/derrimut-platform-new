@@ -732,10 +732,52 @@ http.route({
         case "invoice.payment_failed":
           const failedInvoice = event.data.object;
           if (failedInvoice.subscription) {
+            // Update membership status
             await ctx.runMutation(api.memberships.updateMembershipStatus, {
               stripeSubscriptionId: failedInvoice.subscription,
               status: "pending",
             });
+
+            // Get membership to find user
+            const membership = await ctx.runQuery(api.memberships.getMembershipBySubscription, {
+              subscriptionId: failedInvoice.subscription,
+            });
+
+            if (membership) {
+              // Get user to find phone number
+              const user = await ctx.runQuery(api.users.getUserByClerkId, {
+                clerkId: membership.clerkId,
+              });
+
+              if (user) {
+                // Get SMS subscription to get phone number
+                const smsSubscription = await ctx.runQuery(api.smsNotifications.getUserSMSSubscriptionForAction, {
+                  clerkId: membership.clerkId,
+                });
+
+                if (smsSubscription && smsSubscription.phoneNumber && smsSubscription.preferences.paymentAlerts) {
+                  // Send payment failure SMS
+                  await ctx.scheduler.runAfter(0, api.smsNotifications.sendSMS, {
+                    clerkId: membership.clerkId,
+                    phoneNumber: smsSubscription.phoneNumber,
+                    message: `Derrimut 24:7: Your payment failed ($${failedInvoice.amount_due / 100}). Update payment method: ${process.env.NEXTJS_URL || "https://derrimut-platform.vercel.app"}/membership?retry=true`,
+                    type: "payment_alert",
+                  });
+                }
+
+                // Send payment failure notification
+                await ctx.scheduler.runAfter(0, api.notifications.createNotificationWithPush, {
+                  userId: membership.userId,
+                  clerkId: membership.clerkId,
+                  type: "system",
+                  title: "Payment Failed",
+                  message: `Your membership payment failed. Please update your payment method to continue your membership.`,
+                  link: `/membership?retry=true`,
+                  sendPush: true,
+                  skipAuthCheck: true,
+                });
+              }
+            }
           }
           break;
 
@@ -858,7 +900,7 @@ async function handleMarketplaceOrder(
         
         if (order && order.totalAmount > 0) {
           const pointsEarned = Math.floor(order.totalAmount); // 1 point per AUD
-          await ctx.scheduler.runAfter(0, api.loyalty.addPoints, {
+          await ctx.scheduler.runAfter(0, api.loyalty.addPointsWithExpiration, {
             clerkId,
             points: pointsEarned,
             source: "purchase",

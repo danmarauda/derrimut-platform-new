@@ -218,10 +218,31 @@ export const updateChallengeProgress = mutation({
           unlockedAt: Date.now(),
           metadata: { challengeId: challenge._id },
         });
+
+        // Send achievement notification
+        await ctx.scheduler.runAfter(0, api.notifications.createNotificationWithPush, {
+          userId: user._id,
+          clerkId: identity.subject,
+          type: "achievement",
+          title: "Challenge Completed! 🏆",
+          message: `You've completed the challenge: ${challenge.title}`,
+          link: `/challenges`,
+          sendPush: true,
+          skipAuthCheck: true,
+        });
+
+        // Notify friends about challenge completion
+        await ctx.scheduler.runAfter(0, api.friends.notifyFriendsOfAchievement, {
+          userId: user._id,
+          clerkId: identity.subject,
+          achievementTitle: challenge.title,
+          achievementDescription: `Completed challenge: ${challenge.description}`,
+          achievementIcon: "🏆",
+        });
       }
 
       // Award loyalty points for challenge completion (200 points)
-      await ctx.scheduler.runAfter(0, api.loyalty.addPoints, {
+      await ctx.scheduler.runAfter(0, api.loyalty.addPointsWithExpiration, {
         clerkId: identity.subject,
         points: 200,
         source: "challenge",

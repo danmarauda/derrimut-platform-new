@@ -1,7 +1,7 @@
 import { mutation, query } from "./_generated/server";
 import { v } from "convex/values";
+import { api, internal } from "./_generated/api";
 import { Id } from "./_generated/dataModel";
-import { api } from "./_generated/api";
 
 /**
  * Member Check-In System
@@ -91,7 +91,7 @@ export const checkInMember = mutation({
     await checkAchievements(ctx, identity.subject, "check_in");
 
     // Award loyalty points for check-in (50 points)
-    await ctx.scheduler.runAfter(0, api.loyalty.addPoints, {
+    await ctx.scheduler.runAfter(0, api.loyalty.addPointsWithExpiration, {
       clerkId: identity.subject,
       points: 50,
       source: "check_in",
@@ -102,6 +102,18 @@ export const checkInMember = mutation({
     // Track win-back campaign conversion (if user returned after being inactive)
     await ctx.scheduler.runAfter(0, api.winBackCampaigns.trackConversion, {
       userId: user._id,
+    });
+
+    // Trigger webhook for check-in event - schedule internal action
+    await ctx.scheduler.runAfter(0, internal.webhooks.triggerWebhook, {
+      eventType: "member.check_in",
+      payload: {
+        userId: user._id,
+        clerkId: identity.subject,
+        locationId: args.locationId,
+        checkInTime: checkInTime,
+        method: args.method,
+      },
     });
 
     return checkInId;
@@ -390,16 +402,25 @@ async function checkAchievements(ctx: any, clerkId: string, action: string) {
             metadata: { count },
           });
 
-          // Create notification
-          await ctx.db.insert("notifications", {
+          // Send achievement notification with push
+          await ctx.scheduler.runAfter(0, api.notifications.createNotificationWithPush, {
             userId: user._id,
             clerkId,
             type: "achievement",
-            title: "Achievement Unlocked!",
-            message: `You've unlocked: ${achievement.title}`,
+            title: "Achievement Unlocked! 🎉",
+            message: `You've unlocked: ${achievement.title} - ${achievement.description}`,
             link: "/profile/achievements",
-            read: false,
-            createdAt: Date.now(),
+            sendPush: true,
+            skipAuthCheck: true,
+          });
+
+          // Notify friends about achievement
+          await ctx.scheduler.runAfter(0, api.friends.notifyFriendsOfAchievement, {
+            userId: user._id,
+            clerkId,
+            achievementTitle: achievement.title,
+            achievementDescription: achievement.description,
+            achievementIcon: achievement.icon,
           });
         }
       }
