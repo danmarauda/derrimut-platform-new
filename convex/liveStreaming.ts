@@ -1,6 +1,6 @@
 import { mutation, query, action } from "./_generated/server";
 import { v } from "convex/values";
-import { api } from "./_generated/api";
+import { api, internal } from "./_generated/api";
 
 /**
  * Live Streaming Classes System
@@ -321,22 +321,28 @@ export const notifyClassAttendees = action({
     classId: v.id("groupFitnessClasses"),
   },
   handler: async (ctx, args) => {
-    // Get class bookings - bookings table doesn't have classId field
-    // Query all bookings and filter by sessionType if needed, or skip this feature
-    // Note: bookings are for personal training sessions, not group fitness classes
-    const bookings: any[] = [];
+    // Get class bookings for group fitness classes
+    const bookings = await ctx.runQuery(internal.groupClasses.getClassBookingsForNotification, {
+      classId: args.classId,
+    });
 
-    // Send notifications
+    // Send notifications to all booked members
     for (const booking of bookings) {
-      await ctx.scheduler.runAfter(0, api.notifications.createNotificationWithPush, {
+      const user = await ctx.runQuery(internal.notificationScheduler.getUserById, {
         userId: booking.userId,
-        clerkId: booking.userClerkId || "",
-        type: "booking",
-        title: "Live Stream Available",
-        message: "A live stream is now available for your booked class!",
-        link: `/live-stream/${args.streamId}`,
-        sendPush: true,
       });
+
+      if (user) {
+        await ctx.scheduler.runAfter(0, api.notifications.createNotificationWithPush, {
+          userId: booking.userId,
+          clerkId: user.clerkId,
+          type: "booking",
+          title: "Live Stream Available",
+          message: "A live stream is now available for your booked class!",
+          link: `/live-streams/${args.streamId}`,
+          sendPush: true,
+        });
+      }
     }
   },
 });

@@ -1,8 +1,6 @@
-"use node";
-
 import { mutation, query, action } from "./_generated/server";
 import { v } from "convex/values";
-import { api } from "./_generated/api";
+import { api, internal } from "./_generated/api";
 
 /**
  * Push Notifications System
@@ -162,7 +160,7 @@ export const getUserPushSubscriptions = query({
   },
 });
 
-// Send push notification (action - calls external API)
+// Send push notification (action - delegates to Node.js action)
 export const sendPushNotification = action({
   args: {
     clerkId: v.string(),
@@ -179,94 +177,8 @@ export const sendPushNotification = action({
     ),
   },
   handler: async (ctx, args): Promise<{ sent: number; message?: string }> => {
-    // Get user's active push subscriptions
-    const subscriptions: any[] = await ctx.runQuery(api.pushNotifications.getUserPushSubscriptionsForAction, {
-      clerkId: args.clerkId,
-    });
-
-    if (subscriptions.length === 0) {
-      return { sent: 0, message: "No active subscriptions" };
-    }
-
-    // Check preferences for this notification type
-    const preferenceMap: Record<string, string> = {
-      achievement: "achievements",
-      challenge: "challenges",
-      class_reminder: "classReminders",
-      booking: "bookings",
-      system: "specialOffers",
-      social: "social",
-    };
-
-    const preferenceKey = preferenceMap[args.type];
-    if (!preferenceKey) {
-      return { sent: 0, message: "Invalid notification type" };
-    }
-
-    // Filter subscriptions based on preferences
-    const eligibleSubscriptions = subscriptions.filter(
-      (sub: any) => sub.preferences[preferenceKey] === true
-    );
-
-    if (eligibleSubscriptions.length === 0) {
-      return { sent: 0, message: "No subscriptions with preferences enabled" };
-    }
-
-    // Get VAPID keys from environment
-    const publicKey = process.env.NEXT_PUBLIC_VAPID_PUBLIC_KEY;
-    const privateKey = process.env.VAPID_PRIVATE_KEY;
-
-    if (!publicKey || !privateKey) {
-      console.warn("VAPID keys not configured, skipping push notification");
-      return { sent: 0, message: "VAPID keys not configured" };
-    }
-
-    const webpush = require("web-push");
-    webpush.setVapidDetails("mailto:notifications@derrimut.aliaslabs.ai", publicKey, privateKey);
-
-    let sentCount = 0;
-    const errors: string[] = [];
-
-    // Send to each subscription
-    for (const subscription of eligibleSubscriptions) {
-      try {
-        const payload = JSON.stringify({
-          title: args.title,
-          message: args.message,
-          link: args.link,
-          type: args.type,
-          icon: "/logo.png",
-        });
-
-        await webpush.sendNotification(
-          {
-            endpoint: subscription.endpoint,
-            keys: {
-              p256dh: subscription.keys.p256dh,
-              auth: subscription.keys.auth,
-            },
-          },
-          payload
-        );
-
-        sentCount++;
-      } catch (error: any) {
-        console.error("Error sending push notification:", error);
-        errors.push(error.message);
-
-        // If subscription is invalid, mark as inactive
-        if (error.statusCode === 410 || error.statusCode === 404) {
-          await ctx.runMutation(api.pushNotifications.unsubscribeFromPush, {
-            endpoint: subscription.endpoint,
-          });
-        }
-      }
-    }
-
-    return {
-      sent: sentCount,
-      message: errors.length > 0 ? `Some notifications failed: ${errors.join(", ")}` : undefined,
-    };
+    // Delegate to Node.js action for web-push
+    return await ctx.runAction(internal.pushNotificationsActions.sendPushNotificationInternal, args);
   },
 });
 

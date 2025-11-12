@@ -1,4 +1,4 @@
-import { mutation, query } from "./_generated/server";
+import { mutation, query, internalQuery } from "./_generated/server";
 import { v } from "convex/values";
 import { Id } from "./_generated/dataModel";
 import { api } from "./_generated/api";
@@ -302,6 +302,24 @@ export const createClass = mutation({
       createdAt: Date.now(),
     });
 
-    return classId;
+  },
+});
+
+// Get class bookings for notification (internal)
+export const getClassBookingsForNotification = internalQuery({
+  args: {
+    classId: v.id("groupClasses"),
+  },
+  handler: async (ctx, args) => {
+    const bookings = await ctx.db
+      .query("classBookings")
+      .withIndex("by_class", (q) => q.eq("classId", args.classId))
+      .filter((q) => q.eq(q.field("status"), "booked"))
+      .collect();
+
+    return bookings.map((booking) => ({
+      userId: booking.userId,
+      clerkId: booking.clerkId,
+    }));
   },
 });

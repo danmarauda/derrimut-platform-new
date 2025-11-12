@@ -267,7 +267,7 @@ export const retryWebhook = action({
   args: {
     eventId: v.id("webhookSubscriptionEvents"),
   },
-  handler: async (ctx, args) => {
+  handler: async (ctx, args): Promise<{ success: boolean; error?: string }> => {
     const event = await ctx.runQuery(api.webhooks.getWebhookSubscriptionEvent, {
       eventId: args.eventId,
     });

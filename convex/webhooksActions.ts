@@ -45,14 +45,22 @@ export const triggerWebhook = internalAction({
         await ctx.runMutation(internal.webhooks.logWebhookEvent, {
           subscriptionId: subscription._id,
           eventType: args.eventType,
-          success: response.ok,
-          statusCode: response.status,
-          responseBody: response.ok ? null : await response.text(),
+          payload: JSON.stringify(args.payload),
+          status: response.ok ? "success" : "failed",
+          responseCode: response.status,
+          responseBody: response.ok ? undefined : await response.text(),
+          retryCount: 0,
         });
 
-        // Update failure count
-        if (!response.ok) {
-          await ctx.runMutation(internal.webhooks.updateSubscriptionFailureCount, {
+        // Update subscription
+        if (response.ok) {
+          await ctx.runMutation(internal.webhooks.updateWebhookSubscriptionInternal, {
+            subscriptionId: subscription._id,
+            lastTriggeredAt: Date.now(),
+            failureCount: 0,
+          });
+        } else {
+          await ctx.runMutation(internal.webhooks.updateWebhookSubscriptionInternal, {
             subscriptionId: subscription._id,
             failureCount: subscription.failureCount + 1,
           });
@@ -63,13 +71,15 @@ export const triggerWebhook = internalAction({
         await ctx.runMutation(internal.webhooks.logWebhookEvent, {
           subscriptionId: subscription._id,
           eventType: args.eventType,
-          success: false,
-          statusCode: 0,
+          payload: JSON.stringify(args.payload),
+          status: "failed",
+          responseCode: 0,
           responseBody: errorMessage,
+          retryCount: 0,
         });
 
         // Update failure count
-        await ctx.runMutation(internal.webhooks.updateSubscriptionFailureCount, {
+        await ctx.runMutation(internal.webhooks.updateWebhookSubscriptionInternal, {
           subscriptionId: subscription._id,
           failureCount: subscription.failureCount + 1,
         });
@@ -133,22 +143,24 @@ export const retryWebhook = internalAction({
       });
 
       // Update event status
-      await ctx.runMutation(internal.webhooks.updateWebhookEventStatus, {
+      await ctx.runMutation(internal.webhooks.updateWebhookSubscriptionEvent, {
         eventId: args.eventId,
         status: response.ok ? "success" : "failed",
         responseCode: response.status,
         responseBody: response.ok ? undefined : await response.text(),
+        retryCount: 1,
       });
 
-      return { success: response.ok, statusCode: response.status };
+      return { success: response.ok };
     } catch (error: unknown) {
       const errorMessage = error instanceof Error ? error.message : String(error);
       // Update event status
-      await ctx.runMutation(internal.webhooks.updateWebhookEventStatus, {
+      await ctx.runMutation(internal.webhooks.updateWebhookSubscriptionEvent, {
         eventId: args.eventId,
         status: "failed",
         responseCode: 0,
         responseBody: errorMessage,
+        retryCount: 1,
       });
 
       return { success: false, error: errorMessage };

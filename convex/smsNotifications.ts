@@ -1,8 +1,6 @@
-"use node";
-
 import { mutation, query, action } from "./_generated/server";
 import { v } from "convex/values";
-import { api } from "./_generated/api";
+import { api, internal } from "./_generated/api";
 
 /**
  * SMS Notifications System
@@ -195,7 +193,7 @@ export const getUserSMSSubscriptionForAction = query({
   },
 });
 
-// Send SMS notification (action)
+// Send SMS notification (action - delegates to Node.js action)
 export const sendSMS = action({
   args: {
     clerkId: v.string(),
@@ -210,63 +208,12 @@ export const sendSMS = action({
     ),
   },
   handler: async (ctx, args) => {
-    // Get subscription to check preferences
-    const subscription = await ctx.runQuery(api.smsNotifications.getUserSMSSubscriptionForAction, {
-      clerkId: args.clerkId,
-    });
-
-    if (!subscription || !subscription.isActive || !subscription.verified) {
-      return { sent: false, message: "SMS subscription not active or verified" };
-    }
-
-    // Check preferences
-    const preferenceMap: Record<string, keyof typeof subscription["preferences"]> = {
-      booking_confirmation: "bookingConfirmations",
-      class_reminder: "classReminders",
-      payment_alert: "paymentAlerts",
-      account_update: "accountUpdates",
-      emergency: "emergencyNotifications",
-    };
-
-    const preferenceKey = preferenceMap[args.type];
-    if (!preferenceKey || !subscription.preferences[preferenceKey]) {
-      return { sent: false, message: "SMS preference disabled for this type" };
-    }
-
-    // Send SMS via Twilio or AWS SNS
-    const twilioAccountSid = process.env.TWILIO_ACCOUNT_SID;
-    const twilioAuthToken = process.env.TWILIO_AUTH_TOKEN;
-    const twilioPhoneNumber = process.env.TWILIO_PHONE_NUMBER;
-
-    if (twilioAccountSid && twilioAuthToken && twilioPhoneNumber) {
-      // Use Twilio
-      const twilio = require("twilio")(twilioAccountSid, twilioAuthToken);
-
-      try {
-        await twilio.messages.create({
-          body: args.message,
-          from: twilioPhoneNumber,
-          to: args.phoneNumber,
-        });
-
-        return { sent: true, provider: "twilio" };
-      } catch (error: any) {
-        console.error("Error sending SMS via Twilio:", error);
-        return { sent: false, error: error.message };
-      }
-    } else {
-      // Fallback: Log for now (implement AWS SNS if needed)
-      console.log("SMS would be sent:", {
-        to: args.phoneNumber,
-        message: args.message,
-        type: args.type,
-      });
-      return { sent: false, message: "SMS provider not configured" };
-    }
+    // Delegate to Node.js action for Twilio
+    return await ctx.runAction(internal.smsNotificationsActions.sendSMSInternal, args);
   },
 });
 
-// Send account update SMS
+// Send account update SMS (delegates to Node.js action)
 export const sendAccountUpdateSMS = action({
   args: {
     clerkId: v.string(),
@@ -274,125 +221,34 @@ export const sendAccountUpdateSMS = action({
     changeType: v.union(v.literal("email"), v.literal("name"), v.literal("phone")),
   },
   handler: async (ctx, args): Promise<{ sent: boolean; message?: string }> => {
-    // Get subscription to check preferences
-    const subscription = await ctx.runQuery(api.smsNotifications.getUserSMSSubscriptionForAction, {
-      clerkId: args.clerkId,
-    });
-
-    if (!subscription || !subscription.isActive || !subscription.verified) {
-      return { sent: false, message: "SMS subscription not active or verified" };
-    }
-
-    // Check preferences
-    if (!subscription.preferences.accountUpdates) {
-      return { sent: false, message: "Account update SMS preference disabled" };
-    }
-
-    const message = `Derrimut 24:7: Your account ${args.changeType} has been updated. If this wasn't you, please contact support immediately.`;
-
-    // Send SMS
-    return await ctx.runAction(api.smsNotifications.sendSMS, {
-      clerkId: args.clerkId,
-      phoneNumber: args.phoneNumber,
-      message,
-      type: "account_update",
-    });
+    return await ctx.runAction(internal.smsNotificationsActions.sendAccountUpdateSMSInternal, args);
   },
 });
 
-// Send emergency notification SMS (admin only)
+// Send emergency notification SMS (admin only - delegates to Node.js action)
 export const sendEmergencySMS = action({
   args: {
     message: v.string(),
     targetAudience: v.union(
       v.literal("all"),
       v.literal("active_members"),
-      v.literal("inactive_members")
+      v.literal("location_specific")
     ),
+    locationId: v.optional(v.id("organizations")),
   },
   handler: async (ctx, args) => {
-    // Get all users based on audience
-    let users: any[] = [];
-    
-    if (args.targetAudience === "all") {
-      users = await ctx.runQuery(api.specialOffers.getAllUsers);
-    } else if (args.targetAudience === "active_members") {
-      users = await ctx.runQuery(api.specialOffers.getActiveMembers);
-    } else if (args.targetAudience === "inactive_members") {
-      users = await ctx.runQuery(api.specialOffers.getInactiveMembers);
-    }
-
-    let sentCount = 0;
-
-    for (const user of users) {
-      // Get SMS subscription
-      const subscription = await ctx.runQuery(
-        api.smsNotifications.getUserSMSSubscriptionForAction,
-        {
-          clerkId: user.clerkId,
-        }
-      );
-
-      if (
-        subscription &&
-        subscription.isActive &&
-        subscription.verified &&
-        subscription.preferences.emergencyNotifications
-      ) {
-        await ctx.runAction(api.smsNotifications.sendSMS, {
-          clerkId: user.clerkId,
-          phoneNumber: subscription.phoneNumber,
-          message: `🚨 EMERGENCY: ${args.message}`,
-          type: "emergency",
-        });
-
-        sentCount++;
-      }
-    }
-
-    return { sent: sentCount, totalUsers: users.length };
+    return await ctx.runAction(internal.smsNotificationsActions.sendEmergencySMSInternal, args);
   },
 });
 
-// Send verification code
+// Send verification code (delegates to Node.js action)
 export const sendVerificationCode = action({
   args: {
     subscriptionId: v.id("smsSubscriptions"),
     phoneNumber: v.string(),
   },
   handler: async (ctx, args) => {
-    // Generate 6-digit code
-    const code = Math.floor(100000 + Math.random() * 900000).toString();
-
-    // Store code temporarily (in a real implementation, use a separate table with expiration)
-    // For now, we'll just send the SMS
-
-    const message = `Your Derrimut verification code is: ${code}`;
-
-    // Send via Twilio
-    const twilioAccountSid = process.env.TWILIO_ACCOUNT_SID;
-    const twilioAuthToken = process.env.TWILIO_AUTH_TOKEN;
-    const twilioPhoneNumber = process.env.TWILIO_PHONE_NUMBER;
-
-    if (twilioAccountSid && twilioAuthToken && twilioPhoneNumber) {
-      const twilio = require("twilio")(twilioAccountSid, twilioAuthToken);
-
-      try {
-        await twilio.messages.create({
-          body: message,
-          from: twilioPhoneNumber,
-          to: args.phoneNumber,
-        });
-
-        // Store verification code (implement proper storage with expiration)
-        return { sent: true, code }; // In production, don't return code
-      } catch (error: any) {
-        console.error("Error sending verification SMS:", error);
-        return { sent: false, error: error.message };
-      }
-    }
-
-    return { sent: false, message: "SMS provider not configured" };
+    return await ctx.runAction(internal.smsNotificationsActions.sendVerificationCodeInternal, args);
   },
 });
 
